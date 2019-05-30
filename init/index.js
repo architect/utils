@@ -37,7 +37,7 @@ module.exports = function init(callback) {
   if (arc.static)
     functions = functions.concat(assets)
 
-  // generate http functions
+  // generate minimal lambda functions
   if (arc.http) {
     let type = 'http'
     functions = functions.concat(arc.http.map(route=> {
@@ -45,12 +45,54 @@ module.exports = function init(callback) {
     }))
   }
 
-  //let eventFunctions = arc.events.map()
-  //let queueFunctions = arc.queues.map()
-  //let tableFunctions = arc.tables.map()
-  //let wsFunctions = arc.ws.map()
+  if (arc.events) {
+    let type = 'events'
+    functions = functions.concat(arc.events.map(name=> {
+      return code.bind({}, {type, runtime, name})
+    }))
+  }
 
-  // the holy trinity of async
-  parallel(functions, callback)
+  if (arc.queues) {
+    let type = 'queues'
+    functions = functions.concat(arc.queues.map(name=> {
+      return code.bind({}, {type, runtime, name})
+    }))
+  }
+
+  /**
+   *
+   * TODO scheduled
+  if (arc.scheduled) {
+    let type = 'scheduled'
+    functions = functions.concat(arc.scheduled.map(tuple=> {
+      let name = tuple.shift()
+      let rule = tuple.join(' ').trim()
+      return code.bind({}, {type, runtime, name})
+    }))
+  }
+
+   * TODO ws lamddaaaa
+   * TODO generate dynamo streams code
+   * let tables
+  if (arc.tables) {
+    let type = 'tables'
+    functions = functions.concat()
+
+    arc.tables.map(table=> {
+      let name = Object.keys(table)[0]
+      var hasInsert = table[name].hasOwnProperty('insert')
+      var hasUpdate = table[name].hasOwnProperty('update')
+      var hasDestroy = table[name].hasOwnProperty('destroy')
+      var hasTrigger = hasInsert || hasUpdate || hasDestroy
+      if (hasTrigger)
+        code.bind({}, {type, runtime, name})
+    })
+  }*/
+
+  parallel(functions, function done(err) {
+    if (err) callback(err)
+    else callback()
+  })
+
   return promise
 }
