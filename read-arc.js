@@ -21,33 +21,31 @@ module.exports = function readArc(params={}) {
 
   let raw
   let arc
-  try {
-    if (exists(arcDefaultPath)) {
-      raw = read(arcDefaultPath)
-      arc = parse(raw)
-    }
-    else if (exists(appDotArcPath)) {
-      raw = read(appDotArcPath)
-      arc = parse(raw)
-    }
-    else if (exists(arcYamlPath)) {
-      raw = read(arcYamlPath)
-      arc = parse.yaml(raw)
-      // HACK
-      raw = parse.yaml.stringify(raw)
-    }
-    else if (exists(arcJsonPath)) {
-      raw = read(arcJsonPath)
-      arc = parse.json(raw)
-      // HACK
-      raw = parse.json.stringify(raw)
-    }
-    else {
-      throw Error('.arc, app.arc, arc.yaml, or arc.json not found')
-    }
+
+  // if parse fails blow up
+  // if not found throw not_found
+  if (exists(arcDefaultPath)) {
+    raw = read(arcDefaultPath)
+    arc = parse(raw)
   }
-  catch(e) {
-    throw Error('Invalid arcfile in ' + cwd)
+  else if (exists(appDotArcPath)) {
+    raw = read(appDotArcPath)
+    arc = parse(raw)
+  }
+  else if (exists(arcYamlPath)) {
+    raw = read(arcYamlPath)
+    arc = parse.yaml(raw)
+    // HACK
+    raw = parse.yaml.stringify(raw)
+  }
+  else if (exists(arcJsonPath)) {
+    raw = read(arcJsonPath)
+    arc = parse.json(raw)
+    // HACK
+    raw = parse.json.stringify(raw)
+  }
+  else {
+    throw Error('not_found')
   }
 
   return {raw, arc}

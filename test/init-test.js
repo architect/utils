@@ -14,6 +14,7 @@ test('init', t=> {
     if (err) t.fail(err)
     else {
       t.ok(true, 'source inited')
+      process.chdir(path.join(__dirname, 'mock', '..'))
     }
   })
 })
