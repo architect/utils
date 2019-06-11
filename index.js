@@ -1,4 +1,4 @@
-let banner = require('./print-banner')
+let banner = require('./banner')
 let getLambdaName = require('./get-lambda-name')
 let init = require('./init')
 let inventory = require('./inventory')
