@@ -1,5 +1,5 @@
 let test = require('tape')
-let readArc = require('../read-arc')
+let readArc = require('../src/read-arc')
 
 test('readArc', t=> {
   t.plan(1)
