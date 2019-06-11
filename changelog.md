@@ -2,7 +2,12 @@
 
 ---
 
-## [1.0.6] 2019-06-11
+## [1.0.7] 2019-06-11
+
+### Added
+
+- Added shared banner printer
+
 
 ### Changes
 
