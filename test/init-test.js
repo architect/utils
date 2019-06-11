@@ -1,7 +1,7 @@
 let rm = require('rimraf')
 let test = require('tape')
 let path = require('path')
-let init = require('../src/init')
+let init = require('../init')
 
 test('init', t=> {
   t.plan(1)
