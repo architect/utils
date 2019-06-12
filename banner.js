@@ -1,7 +1,7 @@
 let readArcFile = require('./read-arc')
 let chalk = require('chalk')
 
-module.exports = function printBanner() {
+module.exports = function printBanner(params) {
   if (process.env.QUIET) null
   else {
     let arc
@@ -13,7 +13,8 @@ module.exports = function printBanner() {
       if (e.message != 'not_found')
         console.log(e)
     }
-    let version = process.env.ARC_VERSION || '–'
+    let {version} = params
+    version = version || '–'
 
     let name = arc ? arc.app[0] : 'Architect project manifest not found'
     let x = process.platform.startsWith('win') ? '~' : '⌁'

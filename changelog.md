@@ -2,6 +2,14 @@
 
 ---
 
+## [1.0.9] 2019-06-12
+
+### Changed
+
+- Moving towards passing parameters (to things like the banner) instead of using env vars
+
+---
+
 ## [1.0.8] 2019-06-11
 
 ### Added
@@ -9,7 +17,7 @@
 - Added shared banner printer
 
 
-### Changes
+### Changed
 
 - Reverted tidying of subfolder structure in service of making requiring a little nicer
 
