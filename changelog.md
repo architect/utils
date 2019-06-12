@@ -2,6 +2,14 @@
 
 ---
 
+## [1.0.10] 2019-06-12
+
+### Added
+
+- Option to disable banner printing with `banner({disabled:true})`
+
+---
+
 ## [1.0.9] 2019-06-12
 
 ### Changed

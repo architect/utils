@@ -2,7 +2,8 @@ let readArcFile = require('./read-arc')
 let chalk = require('chalk')
 
 module.exports = function printBanner(params) {
-  if (process.env.QUIET) null
+  params = params || {}
+  if (process.env.QUIET || params.disable) null
   else {
     let arc
     try {
@@ -19,8 +20,8 @@ module.exports = function printBanner(params) {
     let name = arc ? arc.app[0] : 'Architect project manifest not found'
     let x = process.platform.startsWith('win') ? '~' : '⌁'
 
-    let region = process.env.AWS_REGION || 'AWS_REGION not found'
-    let profile = process.env.AWS_PROFILE || 'AWS_PROFILE not found'
+    let region = process.env.AWS_REGION || 'AWS_REGION not configured'
+    let profile = process.env.AWS_PROFILE || 'AWS_PROFILE not configured'
 
     console.log(chalk.grey(`      app ${x} ${chalk.cyan.bold(name)}`))
     console.log(chalk.grey(`   region ${x} ${chalk.cyan(region)}`))
