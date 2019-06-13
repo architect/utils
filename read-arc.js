@@ -3,13 +3,14 @@ let fs = require('fs')
 let path = require('path')
 
 /**
- * lookup .arc
- *   fallback to arc.yaml
- *      failing that fallback to arc.json
+ * Look up `.arc`, falling back to:
+ * - `app.arc`
+ * - `arc.yaml`
+ * - `arc.json`
  */
 module.exports = function readArc(params={}) {
 
-  let cwd = params.cwd? params.cwd : process.cwd()
+  let cwd = params.cwd ? params.cwd : process.cwd()
   let read = p=> fs.readFileSync(p).toString()
   let exists = fs.existsSync
   let join = path.join

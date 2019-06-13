@@ -1,32 +1,42 @@
-let readArcFile = require('./read-arc')
+let populateArc = require('./populate-arc')
+let populateAWS = require('./populate-aws')
 let chalk = require('chalk')
 
 module.exports = function printBanner(params) {
   params = params || {}
-  if (process.env.QUIET || params.disable) null
+  if (process.env.QUIET || params.disableBanner) null
   else {
-    let arc
-    try {
-      let parsed = readArcFile()
-      arc = parsed.arc
+    // Boilerplate
+    let x = process.platform.startsWith('win') ? '~' : '⌁'
+    let log = (label, value) => console.log(chalk.grey(`${label.padStart(12)} ${x}`), chalk.cyan(value))
+
+    // Populate config
+    populateArc()
+    populateAWS()
+
+    // App name
+    let name = process.env.ARC_APP_NAME || 'Architect project manifest not found'
+    log('app', name)
+
+    // Region + profile
+    let region = process.env.AWS_REGION || '@aws region / AWS_REGION not configured'
+    let profile = process.env.AWS_PROFILE || '@aws profile / AWS_PROFILE not configured'
+    if (!params.disableRegion) {
+      log('region', region)
     }
-    catch(e) {
-      if (e.message != 'not_found')
-        console.log(e)
+    if (!params.disableProfile) {
+      log('profile', profile)
     }
+
+    // Caller version
     let {version} = params
     version = version || '–'
+    log('version', version)
 
-    let name = arc ? arc.app[0] : 'Architect project manifest not found'
-    let x = process.platform.startsWith('win') ? '~' : '⌁'
+    // cwd
+    log('cwd', process.cwd())
 
-    let region = process.env.AWS_REGION || 'AWS_REGION not configured'
-    let profile = process.env.AWS_PROFILE || 'AWS_PROFILE not configured'
-
-    console.log(chalk.grey(`      app ${x} ${chalk.cyan.bold(name)}`))
-    console.log(chalk.grey(`   region ${x} ${chalk.cyan(region)}`))
-    console.log(chalk.grey(`  profile ${x} ${chalk.cyan(profile)}`))
-    console.log(chalk.grey(`  version ${x} ${chalk.cyan(version)}`))
-    console.log(chalk.grey(`      cwd ${x} ${chalk.cyan(process.cwd())}\n`))
+    // Space
+    console.log()
   }
 }

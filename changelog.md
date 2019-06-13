@@ -2,6 +2,22 @@
 
 ---
 
+## [1.0.11] 2019-06-13
+
+### Added
+
+- Adds `populate-arc` module, which loads basic required Architect project config
+- Adds `populate-aws` module, which fixes missing (optional) AWS env vars in banner
+
+
+### Changed
+
+- Disabling banner is now `disableBanner`
+- Banner AWS region / profile can now be disabled with `disableRegion` and `disableProfile`
+- Common banner logger added in preparation for additional banner customization
+
+---
+
 ## [1.0.10] 2019-06-12
 
 ### Added
