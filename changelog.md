@@ -2,6 +2,14 @@
 
 ---
 
+## [1.0.12] 2019-06-17
+
+### Changed
+
+- Tiny console log copy edit
+
+---
+
 ## [1.0.10-11] 2019-06-13
 
 ### Added

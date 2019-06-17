@@ -22,8 +22,8 @@ module.exports = function populateEnv(callback) {
       env[actual].forEach(tuple=> {
         process.env[tuple[0]] = tuple[1]
       })
-      let local = 'init process.env from .arc-env @testing (ARC_LOCAL override)'
-      let not = 'init process.env from .arc-env @' + process.env.NODE_ENV
+      let local = 'Init process.env from .arc-env @testing (ARC_LOCAL override)'
+      let not = 'Init process.env from .arc-env @' + process.env.NODE_ENV
       let msg = process.env.hasOwnProperty('ARC_LOCAL')? local : not
       console.log(chalk.grey(chalk.green.dim('✓'), msg))
     }
