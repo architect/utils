@@ -59,35 +59,53 @@ module.exports = function init(callback) {
     }))
   }
 
-  /**
-   *
-   * TODO scheduled
   if (arc.scheduled) {
     let type = 'scheduled'
     functions = functions.concat(arc.scheduled.map(tuple=> {
       let name = tuple.shift()
-      let rule = tuple.join(' ').trim()
+      //let rule = tuple.join(' ').trim()
       return code.bind({}, {type, runtime, name})
     }))
   }
 
-   * TODO ws lamddaaaa
-   * TODO generate dynamo streams code
-   * let tables
+  if (arc.ws) {
+    let type = 'ws'
+    functions = functions.concat([
+      code.bind({}, {type, runtime, name:'ws-default'}),
+      code.bind({}, {type, runtime, name:'ws-connect'}),
+      code.bind({}, {type, runtime, name:'ws-disconnect'}),
+    ])
+  }
+
   if (arc.tables) {
     let type = 'tables'
-    functions = functions.concat()
-
+    let results = []
     arc.tables.map(table=> {
+
       let name = Object.keys(table)[0]
+      let suffix = ''
+
       var hasInsert = table[name].hasOwnProperty('insert')
+      if (hasInsert)
+        suffix = 'insert'
+
       var hasUpdate = table[name].hasOwnProperty('update')
+      if (hasUpdate)
+        suffix = 'update'
+
       var hasDestroy = table[name].hasOwnProperty('destroy')
+      if (hasDestroy)
+        suffix = 'destroy'
+
       var hasTrigger = hasInsert || hasUpdate || hasDestroy
-      if (hasTrigger)
-        code.bind({}, {type, runtime, name})
+      if (hasTrigger) {
+        let trigger = `${name}-${suffix}`
+        results.push(code.bind({}, {type, runtime, name:trigger}))
+      }
     })
-  }*/
+    if (results.length > 0)
+      functions = functions.concat(results)
+  }
 
   parallel(functions, function done(err) {
     if (err) callback(err)
