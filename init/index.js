@@ -63,7 +63,6 @@ module.exports = function init(callback) {
     let type = 'scheduled'
     functions = functions.concat(arc.scheduled.map(tuple=> {
       let name = tuple.shift()
-      //let rule = tuple.join(' ').trim()
       return code.bind({}, {type, runtime, name})
     }))
   }
@@ -80,31 +79,26 @@ module.exports = function init(callback) {
   if (arc.tables) {
     let type = 'tables'
     let results = []
-    arc.tables.map(table=> {
 
+    arc.tables.forEach(table=> {
       let name = Object.keys(table)[0]
-      let suffix = ''
 
       var hasInsert = table[name].hasOwnProperty('insert')
-      if (hasInsert)
-        suffix = 'insert'
-
+      if (hasInsert) {
+        results.push(code.bind({}, {type, runtime, name:`${name}-insert`}))
+      }
       var hasUpdate = table[name].hasOwnProperty('update')
-      if (hasUpdate)
-        suffix = 'update'
-
+      if (hasUpdate) {
+        results.push(code.bind({}, {type, runtime, name:`${name}-update`}))
+      }
       var hasDestroy = table[name].hasOwnProperty('destroy')
-      if (hasDestroy)
-        suffix = 'destroy'
-
-      var hasTrigger = hasInsert || hasUpdate || hasDestroy
-      if (hasTrigger) {
-        let trigger = `${name}-${suffix}`
-        results.push(code.bind({}, {type, runtime, name:trigger}))
+      if (hasDestroy) {
+        results.push(code.bind({}, {type, runtime, name:`${name}-destroy`}))
       }
     })
-    if (results.length > 0)
+    if (results.length > 0) {
       functions = functions.concat(results)
+    }
   }
 
   parallel(functions, function done(err) {
