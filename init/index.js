@@ -79,21 +79,11 @@ module.exports = function init(callback) {
   if (arc.tables) {
     let type = 'tables'
     let results = []
-
     arc.tables.forEach(table=> {
       let name = Object.keys(table)[0]
-
-      var hasInsert = table[name].hasOwnProperty('insert')
-      if (hasInsert) {
-        results.push(code.bind({}, {type, runtime, name:`${name}-insert`}))
-      }
-      var hasUpdate = table[name].hasOwnProperty('update')
-      if (hasUpdate) {
-        results.push(code.bind({}, {type, runtime, name:`${name}-update`}))
-      }
-      var hasDestroy = table[name].hasOwnProperty('destroy')
-      if (hasDestroy) {
-        results.push(code.bind({}, {type, runtime, name:`${name}-destroy`}))
+      let hasStream = table[name].hasOwnProperty('stream') && !!(table[name].stream)
+      if (hasStream) {
+        results.push(code.bind({}, {type, runtime, name}))
       }
     })
     if (results.length > 0) {
