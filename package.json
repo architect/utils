@@ -2,6 +2,10 @@
   "name": "@architect/utils",
   "version": "1.0.14",
   "description": "Common utility functions",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/architect/utils.git"
+  },
   "scripts": {
     "test": "tape test/*-test.js | tap-spec",
     "lint": "eslint . --fix"
