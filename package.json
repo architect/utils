@@ -2,6 +2,7 @@
   "name": "@architect/utils",
   "version": "1.0.14",
   "description": "Common utility functions",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/architect/utils.git"
