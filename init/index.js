@@ -70,9 +70,9 @@ module.exports = function init(callback) {
   if (arc.ws) {
     let type = 'ws'
     functions = functions.concat([
-      code.bind({}, {type, runtime, name:'ws-default'}),
-      code.bind({}, {type, runtime, name:'ws-connect'}),
-      code.bind({}, {type, runtime, name:'ws-disconnect'}),
+      code.bind({}, {type, runtime, name:'default'}),
+      code.bind({}, {type, runtime, name:'connect'}),
+      code.bind({}, {type, runtime, name:'disconnect'}),
     ])
   }
 
