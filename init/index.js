@@ -69,11 +69,10 @@ module.exports = function init(callback) {
 
   if (arc.ws) {
     let type = 'ws'
-    functions = functions.concat([
-      code.bind({}, {type, runtime, name:'default'}),
-      code.bind({}, {type, runtime, name:'connect'}),
-      code.bind({}, {type, runtime, name:'disconnect'}),
-    ])
+    let defaults = ['default', 'connect', 'disconnect']
+    functions = functions.concat(Array.from(new Set([...defaults, ...arc.ws])).map(name=> {
+      return code.bind({}, {type, runtime, name})
+    }))
   }
 
   if (arc.tables) {
