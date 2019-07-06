@@ -1,4 +1,4 @@
-let nodejs = `// learn more about http functions here: https://arc.codes/guides/http
+let nodejs = `// learn more about http functions here: https://arc.codes/primitives/http
 exports.handler = async function http(req) {
   return {
     headers: {'content-type': 'text/html; charset=utf8'}, 
@@ -6,12 +6,12 @@ exports.handler = async function http(req) {
   }
 }`
 
-let ruby = `// learn more about http functions here: https://arc.codes/guides/http
+let ruby = `# learn more about http functions here: https://arc.codes/primitives/http
 def handler(req)
   {headers: {'content-type': 'text/html'}, body: '<b>hello world</b> from ruby'}
 end`
 
-let python = `// learn more about http functions here: https://arc.codes/guides/http
+let python = `# learn more about http functions here: https://arc.codes/primitives/http
 def handler(req, context):
   return {'headers': {'content-type': 'text/html'}, 'body': '<b>hello world</b> from python'}`
 
