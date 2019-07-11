@@ -14,10 +14,11 @@ let assets = require('./public-code')
  * - add .arc-config by default
  * -
  *
+ * @param {Array} options - array of options
  * @param {Function} callback - a node style errback
  * @returns {Promise} - (if no callback is supplied)
  */
-module.exports = function init(callback) {
+module.exports = function init(options=[], callback) {
 
   let promise
   if (!callback) {
@@ -29,8 +30,22 @@ module.exports = function init(callback) {
   }
 
   let {arc} = readArcFile()
+
+  let supported = ['node', 'ruby', 'python', 'rb', 'py', 'js']
+  let findo = o=> o === 'runtime' || o === '-r' || o === '--runtime'
+  let override = options && options.some(findo)? options.slice(options.findIndex(findo))[1] : false
+
+  let node = 'nodejs10.x'
+  let ruby = 'ruby2.5'
+  let python = 'python3.7'
+
   let find = setting=> setting[0] === 'runtime'
-  let runtime = arc.aws && arc.aws.some(find)? arc.aws.find(find)[1] : 'nodejs10.x'
+  let runtime = arc.aws && arc.aws.some(find)? arc.aws.find(find)[1] : node
+  if (supported.includes(override)) {
+    let runtimes = {node, ruby, python, rb:ruby, py:python, js:node}
+    runtime = runtimes[override]
+  }
+
   let functions = []
 
   // generate ./public with minimal set of static assets

@@ -14,7 +14,7 @@ test('arc file with static pragma queues up /public generator', t => {
     '../read-arc': readFake,
     './public-code': publicFake
   })
-  init(function(err) {
+  init([], function(err) {
     if (err) t.fail('unexpected error callback')
     else {
       t.ok(publicFake.calledOnce, 'public code generator queued up')
@@ -35,7 +35,7 @@ test('arc file with http pragma queues up lambda generator', t => {
     '../read-arc': readFake,
     './lambda-code': codeFake
   })
-  init(function(err) {
+  init([], function(err) {
     if (err) t.fail('unexpected error callback')
     else {
       t.ok(codeFake.calledWithMatch({type:'http', runtime:'ruby2.5', method:'GET', path: '/wrecked'}), 'lambda code generation invoked properly for http')
@@ -58,7 +58,7 @@ test('arc file with events, queues and scheduled pragmas queue up lambda generat
     '../read-arc': readFake,
     './lambda-code': codeFake
   })
-  init(function(err) {
+  init([], function(err) {
     if (err) t.fail('unexpected error callback')
     else {
       t.ok(codeFake.calledWithMatch({type:'events', runtime:'python3.7', name:'olympics'}), 'lambda code generation invoked properly for events')
@@ -80,7 +80,7 @@ test('arc file with tables pragma with a stream defined property queues up lambd
     '../read-arc': readFake,
     './lambda-code': codeFake
   })
-  init(function(err) {
+  init([], function(err) {
     if (err) t.fail('unexpected error callback')
     else {
       t.ok(codeFake.calledWithMatch({type:'tables', runtime:'nodejs10.x', name:'users'}), 'lambda code generation invoked properly for table with stream properly')
