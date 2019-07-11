@@ -1,4 +1,4 @@
-# `@architect/utils` [![Travis Build Status](https://travis-ci.com/architect/utils.svg?branch=master)](https://travis-ci.com/architect/utils) [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/dooe6ku7k0x83bud/branch/master?svg=true)](https://ci.appveyor.com/project/ArchitectCI/utils/branch/master)
+# `@architect/utils` [![Travis Build Status](https://travis-ci.com/architect/utils.svg?branch=master)](https://travis-ci.com/architect/utils) [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/dooe6ku7k0x83bud/branch/master?svg=true)](https://ci.appveyor.com/project/ArchitectCI/utils/branch/master) [![codecov](https://codecov.io/gh/architect/utils/branch/master/graph/badge.svg)](https://codecov.io/gh/architect/utils)
 
 [@architect/utils][npm] are common utilities for the @architect suite of projects.
 
@@ -23,6 +23,23 @@ this behaviour:
 ## `utils.getLambdaName(fn)`
 
 Returns a valid AWS Lambda function name based on its URL (route).
+
+## `utils.getLayers(arc)`
+
+Returns any layers defined in a project arc file. `arc` is an
+[`@architect/parser`][parser]-parsed arc file object.
+
+## `utils.getRuntime(arc)`
+
+Returns the runtime defined in a project arc file. `arc` is an
+[`@architect/parser`][parser]-parsed arc file object.
+
+## `utils.getRuntime.allowed(runtime)`
+
+Based on the passed-in `runtime` string, will return the same string if it is an
+allowed Architect Function runtime. Otherwise, will return a default runtime
+which Architect will use (at the time of this writing, the default is
+`nodejs10.x`.
 
 ## `utils.init(callback)`
 
@@ -69,6 +86,16 @@ The project file is attempted to be parsed, in order, from `.arc`, `app.arc`,
 ## `utils.toLogicalID(str)`
 
 Converts `str` into PascalCase.
+
+## `utils.validate(arc, raw, callback)`
+
+Validates a parsed arc file. Parameters to this function are:
+
+- `arc`: an [`@architect/parser`][parser]-parsed arc file object
+- `raw`: the raw arc file text
+- `callback`: will be invoked with an error as its first argument if validation
+    fails; otherwise will invoke passing null as the first argument and the
+    parsed arc object as the second argument.
 
 [npm]: https://www.npmjs.com/package/@architect/utils
 [env]: https://github.com/architect/env
