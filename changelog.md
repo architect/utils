@@ -2,13 +2,14 @@
 
 ---
 
-## [1.2.0-1] 2019-07-15
+## [1.2.0-2] 2019-07-15
 
 ### Added
 
 - Static asset fingerprint util (and related tests)
   - Responsible for managing `public/static.json`
-  - Also returns the static asset manifest when called
+  - Returns static asset manifest when called
+  - Also has `fingerprint.config()` API available for returning `@static fingerprint` and `@static ignore` config
 
 ---
 

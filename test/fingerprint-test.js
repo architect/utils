@@ -8,21 +8,15 @@ let test = require('tape')
 
 let globStub = sinon.stub().callsFake((path, options, callback) => callback(null, []))
 let readArcStub = sinon.stub().callsFake(() => {
-  let mockArc = {
-    arc: {}
-    // static: [
-    //   [ 'fingerprint', true]
-    // ]
-  }
-  // TODO ↓ remove me! ↓
-  console.log(`called stub`, mockArc)
+  let mockArc = {arc: {}}
   return mockArc
 })
 let shaStub = sinon.stub(sha, 'get').callsFake((file, callback) => callback(null, 'df330f3f12')) // Fake hash
 let fingerprint = proxyquire('../fingerprint', {
   'glob': globStub,
-  './read-arc': readArcStub
+  '../read-arc': readArcStub
 })
+let fingerprintConfig = require('../fingerprint').config
 
 let params = {
   fingerprint: true,
@@ -106,4 +100,34 @@ test('fingerprint cancels early if disabled', t=> {
     // Reset env for next test
     shaStub.resetHistory()
   })
+})
+
+test('fingerprint config subutil', t => {
+  t.plan(7)
+  let arc1 = {}
+  let result1 = fingerprintConfig(arc1)
+  t.equals(result1.fingerprint, false, 'Fingerprinting disabled')
+  t.equals(result1.ignore.length, 0, 'Ignore array empty')
+
+  let arc2 = {static:['fingerprint', 'yas']} // Invalid config
+  let result2 = fingerprintConfig(arc2)
+  t.equals(result2.fingerprint, false, 'Fingerprinting still disabled')
+
+  /**
+   * Emulates:
+   * @static
+   * fingerprint true
+   * ignore
+   *   foo
+   *   bar
+   */
+  let arc3 = {static: [
+    ['fingerprint', true],
+    {ignore: {foo:false, bar:false}}
+  ]}
+  let result3 = fingerprintConfig(arc3)
+  t.ok(result3.fingerprint, 'Fingerprinting enabled')
+  t.equals(result3.ignore.length, 2, 'Ignore array returned')
+  t.equals(result3.ignore[0], 'foo', 'Ignore array[0] matches')
+  t.equals(result3.ignore[1], 'bar', 'Ignore array[1] matches')
 })

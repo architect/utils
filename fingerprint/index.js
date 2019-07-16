@@ -1,11 +1,12 @@
 let chalk = require('chalk')
+let config = require('./config')
 let exec = require('child_process').exec
 let fs = require('fs')
 let glob = require('glob')
 let mkdir = require('mkdirp').sync
 let path = require('path')
 let pathExists = fs.existsSync
-let readArc = require('./read-arc')
+let readArc = require('../read-arc')
 let series = require('run-series')
 let sha = require('sha')
 let sort = require('path-sort')
@@ -18,24 +19,16 @@ function normalizePath(path) {
 }
 
 module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) {
-  let {static} = readArc().arc
+  let {arc} = readArc()
+  let {static} = arc
   let publicDir = normalizePath(path.join(process.cwd(), 'public'))
 
   /**
    * Double check fingerprint status
    */
   if (!fingerprint && static) {
-    // Maybe enable fingerprint
-    if (static.some(s => {
-      if (!s[0]) return false
-      if (s.includes('fingerprint') && (s.includes(true) || s.includes('enabled') || s.includes('on'))) return true
-      return false
-    })) {fingerprint = true}
-
-    // Collect any strings to match against for ignore
-    let ignore = static.find(s => s['ignore'])
-    if (ignore) {ignore = Object.getOwnPropertyNames(ignore.ignore)}
-    else {ignore = []}
+    fingerprint = config(arc).fingerprint
+    ignore = config(arc).ignore
 
     // If @static is defined, create `public/` if it doesn't exist
     if (!pathExists(publicDir)) {mkdir(publicDir)}
@@ -144,3 +137,5 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
     else callback(null, staticManifest)
   })
 }
+
+module.exports.config = config
