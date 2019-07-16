@@ -7,9 +7,21 @@ let sinon = require('sinon')
 let test = require('tape')
 
 let globStub = sinon.stub().callsFake((path, options, callback) => callback(null, []))
+let readArcStub = sinon.stub().callsFake(() => {
+  let mockArc = {
+    arc: {}
+    // static: [
+    //   [ 'fingerprint', true]
+    // ]
+  }
+  // TODO ↓ remove me! ↓
+  console.log(`called stub`, mockArc)
+  return mockArc
+})
 let shaStub = sinon.stub(sha, 'get').callsFake((file, callback) => callback(null, 'df330f3f12')) // Fake hash
-let publish = proxyquire('../fingerprint', {
-  'glob': globStub
+let fingerprint = proxyquire('../fingerprint', {
+  'glob': globStub,
+  './read-arc': readArcStub
 })
 
 let params = {
@@ -32,7 +44,7 @@ test('fingerprint generates static.json manifest', t=> {
     manifest = data
     callback()
   })
-  publish(params, (err, result) => {
+  fingerprint(params, (err, result) => {
     if (err) t.fail(err)
     manifest = JSON.parse(manifest)
     console.log('Generated manifest:')
@@ -65,7 +77,7 @@ test('fingerprint ignores specified static assets', t=> {
     manifest = data
     callback()
   })
-  publish(params, (err, result) => {
+  fingerprint(params, (err, result) => {
     if (err) t.fail(err)
     manifest = JSON.parse(manifest)
     console.log('Generated manifest:')
@@ -85,11 +97,11 @@ test('fingerprint ignores specified static assets', t=> {
 test('fingerprint cancels early if disabled', t=> {
   t.plan(2)
   params.fingerprint = false
-  publish(params, (err, result) => {
+  fingerprint(params, (err, result) => {
     if (err) t.fail(err)
 
     t.ok(shaStub.notCalled, 'Correct number of files hashed (none)')
-    t.notOk(Object.getOwnPropertyNames(result).length, 'Returned empty result')
+    t.notOk(result, 'Returned no result')
 
     // Reset env for next test
     shaStub.resetHistory()
