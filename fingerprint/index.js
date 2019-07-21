@@ -103,11 +103,14 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
             if (err) callback(err)
             else {
               hash = hash.substr(0,10)
-              let filename = file.split('.')
-              // This will do weird stuff on multi-ext files (*.tar.gz) ¯\_(ツ)_/¯
-              filename[filename.length - 2] = `${filename[filename.length - 2]}-${hash}`
+              let extName = path.extname(file)
+              let baseName = path.basename(file)
+              let hashedName = baseName.replace(extName, '') + `-${hash}${extName}`
+              let dirName = path.dirname(file).replace(publicDir, '').substr(1)
+              let staticKey = `${dirName ? `${dirName}/` : ''}${baseName}`
+              let staticValue = `${dirName ? `${dirName}/` : ''}${hashedName}`
               // Target shape: {'foo/bar.jpg': 'foo/bar-6bf1794b4c.jpg'}
-              staticManifest[file.replace(publicDir, '').substr(1)] = filename.join('.').replace(publicDir, '').substr(1)
+              staticManifest[staticKey] = staticValue
               callback()
             }
           })
