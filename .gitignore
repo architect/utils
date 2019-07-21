@@ -1,3 +1,5 @@
 node_modules/
 test/mock/src
 test/mock/public
+coverage/
+.nyc_output/

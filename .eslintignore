@@ -1,1 +1,3 @@
 test/mock/src
+coverage/
+.nyc_output/

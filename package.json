@@ -8,9 +8,9 @@
     "url": "git+https://github.com/architect/utils.git"
   },
   "scripts": {
-    "test": "npm run lint && npm run test:unit",
+    "test": "npm run lint && npm run coverage",
     "test:unit": "tape test/*-test.js | tap-spec",
-    "coverage": "istanbul cover tape test/*-test.js",
+    "coverage": "nyc --reporter=lcov --reporter=text-summary npm run test:unit",
     "lint": "eslint ."
   },
   "author": "Brian LeRoux <b@brian.io>",
@@ -28,8 +28,9 @@
     "sha": "^3.0.0"
   },
   "devDependencies": {
+    "codecov": "^3.5.0",
     "eslint": "^5.16.0",
-    "istanbul": "^0.4.5",
+    "nyc": "^14.1.1",
     "proxyquire": "^2.1.0",
     "sinon": "^7.3.2",
     "tap-spec": "^5.0.0",
