@@ -23,14 +23,18 @@ let params = {
   ignore: [],
 }
 
+// glob returns paths always delimited with '/', which messes us up on windows
+// so use this function when stubbing e.g. glob
+function normalizePath(path) { return path.replace(/\\/g, '/') }
+
 test('fingerprint generates static.json manifest', t=> {
-  t.plan(4)
+  t.plan(6)
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake((filepath, options, callback) => callback(null, [
-    path.join(process.cwd(), 'public', 'index.html'),
-    path.join(process.cwd(), 'public', 'readme.md'),
-    path.join(process.cwd(), 'public', 'styles.css'),
+    normalizePath(path.join(process.cwd(), 'public', 'index.html')),
+    normalizePath(path.join(process.cwd(), 'public', 'readme.md')), // this should get ignored
+    normalizePath(path.join(process.cwd(), 'public', 'css', 'styles.css')),
   ]))
   // Static manifest
   let manifest
@@ -45,8 +49,10 @@ test('fingerprint generates static.json manifest', t=> {
     console.log(manifest)
 
     t.ok(shaStub.calledTwice, 'Correct number of files hashed')
-    t.equals(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly')
-    t.equals(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly')
+    t.equals(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
+    t.equals(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
+    t.equals(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
+    t.equals(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
     t.ok(fsStub.called, 'static.json manifest written')
 
     // Reset env for next test
@@ -61,9 +67,9 @@ test('fingerprint ignores specified static assets', t=> {
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake((filepath, options, callback) => callback(null, [
-    path.join(process.cwd(), 'public', 'index.html'),
-    path.join(process.cwd(), 'public', 'readme.md'),
-    path.join(process.cwd(), 'public', 'styles.css'),
+    normalizePath(path.join(process.cwd(), 'public', 'index.html')),
+    normalizePath(path.join(process.cwd(), 'public', 'readme.md')),
+    normalizePath(path.join(process.cwd(), 'public', 'styles.css')),
   ]))
   // Static manifest
   let manifest
