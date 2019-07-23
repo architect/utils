@@ -1,14 +1,14 @@
 let populateArc = require('./populate-arc')
 let populateAWS = require('./populate-aws')
 let chalk = require('chalk')
+let chars = require('./chars')
 
 module.exports = function printBanner(params) {
   params = params || {}
   if (process.env.QUIET || params.disableBanner) null
   else {
     // Boilerplate
-    let x = process.platform.startsWith('win') ? '~' : '⌁'
-    let log = (label, value) => console.log(chalk.grey(`${label.padStart(12)} ${x}`), chalk.cyan(value))
+    let log = (label, value) => console.log(chalk.grey(`${label.padStart(12)} ${chars.buzz}`), chalk.cyan(value))
 
     // Populate config
     populateArc()

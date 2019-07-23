@@ -1,4 +1,5 @@
 let banner = require('./banner')
+let chars = require('./chars')
 let fingerprint = require('./fingerprint')
 let getLambdaName = require('./get-lambda-name')
 let getLayers = require('./get-layers')
@@ -13,6 +14,7 @@ let validate = require('./validate')
 
 module.exports = {
   banner,         // Prints banner and loads basic env vars and AWS creds
+  chars,          // Returns platform appropriate characters for CLI UI printing
   fingerprint,    // Generates public/static.json for @static fingerprint true
   getLambdaName,  // Get Lambda name from Arc path
   getLayers,      // Get layer config from Arc file or config

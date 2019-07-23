@@ -2,6 +2,14 @@
 
 ---
 
+## [1.2.3] 2019-07-23
+
+### Added
+
+- Adds lib of Windows-compatible special chars set to de-munge printing on Windows machines
+
+---
+
 ## [1.2.0-2] 2019-07-15
 
 ### Added

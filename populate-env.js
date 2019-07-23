@@ -1,5 +1,6 @@
 let parse = require('@architect/parser')
 let chalk = require('chalk')
+let chars = require('./chars')
 let path = require('path')
 let fs = require('fs')
 
@@ -25,7 +26,7 @@ module.exports = function populateEnv(callback) {
       let local = 'Init process.env from .arc-env @testing (ARC_LOCAL override)'
       let not = 'Init process.env from .arc-env @' + process.env.NODE_ENV
       let msg = process.env.hasOwnProperty('ARC_LOCAL')? local : not
-      console.log(chalk.grey(chalk.green.dim('✓'), msg))
+      console.log(chalk.grey(chars.done, msg))
     }
     catch(e) {
       console.log(chalk.bold.red(`Parse Error`), chalk.bold.white('invalid '+envPath))
