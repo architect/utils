@@ -2,6 +2,15 @@
 
 ---
 
+## [1.2.4] 2019-08-10
+
+### Added
+
+- Adds util to normalize local file paths in Windows
+- Adds issue / PR templates
+
+---
+
 ## [1.2.3] 2019-07-23
 
 ### Added
