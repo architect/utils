@@ -10,7 +10,7 @@ To maintain a high standard of quality in our releases, before submitting every 
   - [ ] Added unit tests (if appropriate)
   - [ ] Added integration tests (if appropriate)
 - [ ] Updated relevant documentation:
-  - [ ] Internal to this repo (e.g. `readme.md`, inline docs & comments, etc.)
+  - [ ] Internal to this repo (e.g. `readme.md`, help docs, inline docs & comments, etc.)
   - [ ] [Architect docs (arc.codes)](https://github.com/architect/arc.codes)
 - [ ] Summarized your changes in the `changelog.md`
 
