@@ -6,6 +6,7 @@ let getLayers = require('./get-layers')
 let getRuntime = require('./get-runtime')
 let init = require('./init')
 let inventory = require('./inventory')
+let pathToUnix = require('./path-to-unix')
 let populateEnv = require('./populate-env')
 let portInUse = require('./port-in-use')
 let readArc = require('./read-arc')
@@ -21,6 +22,7 @@ module.exports = {
   getRuntime,     // Get runtime config from Arc file or config
   init,           // Boilerplate code generator for Arc projects
   inventory,      // Get inventory of current AWS resources from Arc file
+  pathToUnix,     // Use / seperated paths everywhere
   populateEnv,    // Populate env vars from .arc-env config
   portInUse,      // Checks to see if a port is in use
   readArc,        // Reads Arc file and returns raw + parsed versions

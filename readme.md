@@ -59,6 +59,11 @@ Returns an object containing:
 The returned object is based on the provided `arc` argument, which should be a
 parsed `.arc` file (or will attempt to parse one if none is passed).
 
+## `utils.pathToUnix(pathString)`
+
+Comverts any path to a Unix style path, with '/' as the seperator. This works
+around Windows issues where '/' is assumed across other parts of Architect.
+
 ## `utils.populateEnv(callback)`
 
 Populates the runtime environment with variables from a `.arc-env` if present.
