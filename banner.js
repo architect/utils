@@ -5,7 +5,7 @@ let chars = require('./chars')
 
 module.exports = function printBanner(params) {
   params = params || {}
-  if (process.env.QUIET || params.disableBanner) null
+  if (params.disableBanner) null
   else {
     // Boilerplate
     let log = (label, value) => console.log(chalk.grey(`${label.padStart(12)} ${chars.buzz}`), chalk.cyan(value))

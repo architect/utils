@@ -2,6 +2,14 @@
 
 ---
 
+## [1.2.5] 2019-08-12
+
+### Changed
+
+- Remove `QUIET` env var as predicate for disabling banner
+
+---
+
 ## [1.2.4] 2019-08-10
 
 ### Added
