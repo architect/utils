@@ -2,6 +2,14 @@
 
 ---
 
+## [1.2.6] 2019-08-12
+
+### Added
+
+- Adds `glob` to satisfy previously inferred dependency
+
+---
+
 ## [1.2.5] 2019-08-12
 
 ### Changed
