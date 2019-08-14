@@ -2,6 +2,20 @@
 
 ---
 
+## [1.2.7] 2019-08-13
+
+### Added
+
+- Added ability to directly access Arc and AWS initializer utils (`initArc()`, `initAWS()`)
+- Added AWS credential loader to AWS initializer
+
+
+### Changed
+
+- `populate-*` utils are now now `init-*`
+
+---
+
 ## [1.2.6] 2019-08-12
 
 ### Added
