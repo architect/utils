@@ -1,5 +1,5 @@
-let populateArc = require('./populate-arc')
-let populateAWS = require('./populate-aws')
+let initArc = require('./init-arc')
+let initAWS = require('./init-aws')
 let chalk = require('chalk')
 let chars = require('./chars')
 
@@ -10,9 +10,9 @@ module.exports = function printBanner(params) {
     // Boilerplate
     let log = (label, value) => console.log(chalk.grey(`${label.padStart(12)} ${chars.buzz}`), chalk.cyan(value))
 
-    // Populate config
-    populateArc()
-    populateAWS()
+    // Initialize config
+    initArc()
+    initAWS()
 
     // App name
     let name = process.env.ARC_APP_NAME || 'Architect project manifest not found'

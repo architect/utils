@@ -5,7 +5,7 @@ let path = require('path')
 let fs = require('fs')
 
 /**
- * populate process.env with .arc-env
+ * Initialize process.env with .arc-env
  * if NODE_ENV=staging the process.env is populated by @staging (etc)
  * if ARC_LOCAL is present process.env is populated by @testing (so you can access remote dynamo locally)
  */

@@ -44,6 +44,21 @@ Takes a `runtime` string and returns the same string if it' iss' a runtime allow
 Initializes an Architect project directory structure based on contents read from an Architect project manifest.
 
 
+## `utils.initArc(callback)`
+
+Populates the runtime environment with Architect-specific environment variables.
+
+
+## `utils.initArc(callback)`
+
+Populates the runtime environment with AWS-specific environment variables, and loads credentials from the local filesystem.
+
+
+## `utils.initEnv(callback)`
+
+Populates the runtime environment with variables from a `.arc-env` if present. Details about this functionality can be found in the [@architect/env][env] project (pending resolution of architect/env#2).
+
+
 ## `utils.inventory(arc)`
 
 Returns an object containing:
@@ -60,11 +75,6 @@ The returned object is based on the provided `arc`, which is an object returned 
 ## `utils.pathToUnix(pathString)`
 
 Converts any path to a Unix style path, with `/` as the seperator. This works around Windows issues where `/` is assumed across other parts of Architect.
-
-
-## `utils.populateEnv(callback)`
-
-Populates the runtime environment with variables from a `.arc-env` if present. Details about this functionality can be found in the [@architect/env][env] project (pending resolution of architect/env#2).
 
 
 ## `utils.portInUse(port, callback)`

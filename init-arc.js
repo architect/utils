@@ -1,9 +1,9 @@
 let readArcFile = require('./read-arc')
 
 /**
- * Try to populate basic Architect project configuration
+ * Try to initialize basic Architect project configuration
  */
-module.exports = function populateAWS () {
+module.exports = function initAWS () {
   let arc
   try {
     let parsed = readArcFile()

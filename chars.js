@@ -16,8 +16,13 @@ let done = notWin
   ? chalk.green.dim('✓')
   : chalk.green.dim('√')
 
+let err = notWin
+  ? chalk.red('×')
+  : chalk.red('x')
+
 module.exports = {
   buzz,
   start,
-  done
+  done,
+  err
 }
