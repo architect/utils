@@ -9,6 +9,10 @@
 - Adds `updater()`: an Arc-standardized console status updater and animated progress indicator
 - Adds credential initialization fallback routine to `initAWS()`
 
+### Changed
+
+- Massively prettifies the boilerplate static site created by `init()`
+
 ---
 
 ## [1.2.7] 2019-08-13
