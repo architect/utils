@@ -2,6 +2,15 @@
 
 ---
 
+## [1.3.0] 2019-08-15
+
+### Added
+
+- Adds `updater()`: an Arc-standardized console status updater and animated progress indicator
+- Adds credential initialization fallback routine to `initAWS()`
+
+---
+
 ## [1.2.7] 2019-08-13
 
 ### Added

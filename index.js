@@ -13,6 +13,7 @@ let pathToUnix = require('./path-to-unix')
 let portInUse = require('./port-in-use')
 let readArc = require('./read-arc')
 let toLogicalID = require('./to-logical-id')
+let updater = require('./updater')
 let validate = require('./validate')
 
 module.exports = {
@@ -30,6 +31,7 @@ module.exports = {
   pathToUnix,     // Use `/` seperated paths everywhere
   portInUse,      // Checks to see if a port is in use
   readArc,        // Reads Arc file and returns raw + parsed versions
-  toLogicalID,    // Converts dash casing into Pascal casing for
+  toLogicalID,    // Converts dash casing into Pascal casing for CloudFormation
+  updater,        // Standard Arc status updater and progress indicator
   validate,       // Validates an Arc file
 }

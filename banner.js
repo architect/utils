@@ -16,22 +16,22 @@ module.exports = function printBanner(params) {
 
     // App name
     let name = process.env.ARC_APP_NAME || 'Architect project manifest not found'
-    log('app', name)
+    log('App', name)
 
     // Region + profile
     let region = process.env.AWS_REGION || '@aws region / AWS_REGION not configured'
     let profile = process.env.AWS_PROFILE || '@aws profile / AWS_PROFILE not configured'
     if (!params.disableRegion) {
-      log('region', region)
+      log('Region', region)
     }
     if (!params.disableProfile) {
-      log('profile', profile)
+      log('Profile', profile)
     }
 
     // Caller version
     let {version} = params
     version = version || '–'
-    log('version', version)
+    log('Version', version)
 
     // cwd
     log('cwd', process.cwd())

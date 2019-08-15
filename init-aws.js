@@ -31,9 +31,13 @@ module.exports = function initAWS () {
         aws.config.credentials = new aws.SharedIniFileCredentials({
           profile: process.env.AWS_PROFILE
         })
-        if (!aws.config.credentials.accessKeyId) {
-          console.log(chars.err, 'Warning: missing or invalid AWS credentials file')
-        }
+      }
+      else {
+        // jic fallback to default creds (if specified)
+        aws.config.credentials = new aws.SharedIniFileCredentials()
+      }
+      if (!aws.config.credentials.accessKeyId) {
+        console.log(chars.err, 'Warning: missing or invalid AWS credentials file')
       }
     }
   }

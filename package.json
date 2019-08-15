@@ -23,6 +23,7 @@
     "is-domain-name": "^1.0.1",
     "mkdirp": "^0.5.1",
     "path-sort": "^0.1.0",
+    "restore-cursor": "^3.1.0",
     "run-parallel": "^1.1.9",
     "run-series": "^1.1.8",
     "run-waterfall": "^1.1.6",
