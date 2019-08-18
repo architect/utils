@@ -185,6 +185,10 @@ module.exports = function inventory(arc) {
     if (production) report.s3buckets.push(production[1])
   }
 
+  if (arc.views && arc.views.length > 0) {
+    report.views = arc.views.map(getSystemName)
+  }
+
   // pass off the data
   return report
 }
