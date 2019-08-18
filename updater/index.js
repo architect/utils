@@ -35,7 +35,6 @@ module.exports = function updater(name) {
     if (!running && !process.env.CI) {
       running = setInterval(function() {
         write(`${chalk.cyan(frames[i = ++i % frames.length])} ${n} ${m}`)
-        // write('\n')
         reset()
       }, timing)
     }
@@ -59,15 +58,20 @@ module.exports = function updater(name) {
     progressIndicator()
   }
 
-  function done(newMsg) {
-    if (newMsg) m = chalk.cyan(newMsg)
+  function done(newName, msg) {
+    if (!msg) {
+      msg = newName
+      newName = ''
+    }
+    if (newName) newName = chalk.grey(newName)
+    if (msg) m = chalk.cyan(msg)
     if (running) {
       clearInterval(running)
       reset()
       clear()
       running = false // Prevent accidental second done print
     }
-    write(`${chars.done} ${n} ${m}`)
+    write(`${chars.done} ${newName ? newName : n} ${m}`)
     write(`\n${restoreCursor}`)
   }
 
