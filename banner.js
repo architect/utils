@@ -32,6 +32,8 @@ module.exports = function printBanner(params) {
     let {version} = params
     version = version || '–'
     log('Version', version)
+    if (version.startsWith('Architect 5'))
+      process.env.DEPRECATED = true
 
     // cwd
     log('cwd', process.cwd())
