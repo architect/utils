@@ -2,6 +2,16 @@
 
 ---
 
+## [1.3.1] 2019-08-17
+
+### Added
+
+- Added `@views` pragma to inventory
+- Added optional `updater.done()` confirmation message
+- Calling banner in Arc 5 sets `deprecated` env var
+
+---
+
 ## [1.3.0] 2019-08-15
 
 ### Added
