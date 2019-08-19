@@ -2,6 +2,14 @@
 
 ---
 
+## [1.3.2] 2019-08-18
+
+### Changed
+
+- Internal change to `update.done()`
+
+---
+
 ## [1.3.1] 2019-08-17
 
 ### Added

@@ -6,7 +6,6 @@ let {
   reset,
   write,
   hideCursor,
-  restoreCursor,
   spinner
 } = require('./lib')
 
@@ -71,8 +70,7 @@ module.exports = function updater(name) {
       clear()
       running = false // Prevent accidental second done print
     }
-    write(`${chars.done} ${newName ? newName : n} ${m}`)
-    write(`\n${restoreCursor}`)
+    console.log(`${chars.done} ${newName ? newName : n} ${m}`)
   }
 
   function cancel() {
