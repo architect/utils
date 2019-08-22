@@ -9,7 +9,7 @@ let html = `
 <head>
   <meta charset="UTF-8">
   <title>Architect</title>
-  <link rel=stylesheet type=text/css href="index.css">
+  <link rel=stylesheet type=text/css href="/index.css">
 </head>
 <body class="padding-32">
   <div class="max-width-320">
