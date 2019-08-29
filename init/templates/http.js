@@ -1,3 +1,5 @@
+let learn = 'learn more about HTTP functions here: https://arc.codes/primitives/http'
+
 function html (lang) {
   return `
 <!DOCTYPE html>
@@ -68,7 +70,7 @@ function html (lang) {
 `
 }
 
-let nodejs = `// learn more about http functions here: https://arc.codes/primitives/http
+let nodejs = `// ${learn}
 exports.handler = async function http(req) {
   return {
     headers: {'content-type': 'text/html; charset=utf8'},
@@ -76,7 +78,7 @@ exports.handler = async function http(req) {
   }
 }`
 
-let ruby = `# learn more about http functions here: https://arc.codes/primitives/http
+let ruby = `# ${learn}
 def handler(req)
   {
     headers: {'content-type': 'text/html'},
@@ -84,7 +86,7 @@ def handler(req)
   }
 end`
 
-let python = `# learn more about http functions here: https://arc.codes/primitives/http
+let python = `# ${learn}
 def handler(req, context):
   return {
     'headers': {'content-type': 'text/html'},
