@@ -72,7 +72,7 @@ let nodejs = `// learn more about http functions here: https://arc.codes/primiti
 exports.handler = async function http(req) {
   return {
     headers: {'content-type': 'text/html; charset=utf8'},
-    body: ${html('nodejs')}
+    body: ${html('Node.js')}
   }
 }`
 
@@ -80,7 +80,7 @@ let ruby = `# learn more about http functions here: https://arc.codes/primitives
 def handler(req)
   {
     headers: {'content-type': 'text/html'},
-    body: ${html('ruby')}
+    body: ${html('Ruby')}
   }
 end`
 
@@ -88,7 +88,7 @@ let python = `# learn more about http functions here: https://arc.codes/primitiv
 def handler(req, context):
   return {
     'headers': {'content-type': 'text/html'},
-    'body': ${html('python')}
+    'body': ${html('Python')}
   }`
 
 module.exports = {nodejs, ruby, python}
