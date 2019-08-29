@@ -1,7 +1,7 @@
 let learn = 'learn more about HTTP functions here: https://arc.codes/primitives/http'
 
-function html (lang) {
-  return `
+function html (lang, ext) {
+  return `\`
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -46,13 +46,13 @@ function html (lang) {
     <div class="margin-left-8">
       <div class="margin-bottom-16">
         <h1 class="margin-bottom-16">
-          Hello from ${lang}
+          Hello from ${lang}!
         </h1>
         <p class="margin-bottom-8">
           Get started by editing this file at:
         </p>
         <code>
-          /public/index.html
+          src/http/{your function}/index.${ext}
         </code>
       </div>
       <div>
@@ -67,14 +67,14 @@ function html (lang) {
   </div>
 </body>
 </html>
-`
+\``
 }
 
 let nodejs = `// ${learn}
 exports.handler = async function http(req) {
   return {
     headers: {'content-type': 'text/html; charset=utf8'},
-    body: ${html('Node.js')}
+    body: ${html('Node.js', 'js')}
   }
 }`
 
@@ -82,7 +82,7 @@ let ruby = `# ${learn}
 def handler(req)
   {
     headers: {'content-type': 'text/html'},
-    body: ${html('Ruby')}
+    body: ${html('Ruby', 'py')}
   }
 end`
 
@@ -90,7 +90,7 @@ let python = `# ${learn}
 def handler(req, context):
   return {
     'headers': {'content-type': 'text/html'},
-    'body': ${html('Python')}
+    'body': ${html('Python', 'rb')}
   }`
 
 module.exports = {nodejs, ruby, python}
