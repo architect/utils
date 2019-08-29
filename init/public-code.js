@@ -2,6 +2,7 @@ let parallel = require('run-parallel')
 let fs = require('fs')
 let mkdir = require('mkdirp')
 let {join} = require('path')
+let updater = require('../updater')
 
 let html = `
 <!DOCTYPE html>
@@ -24,7 +25,7 @@ let html = `
           Get started by editing this file at:
         </p>
         <code>
-          /public/index.html
+          public/index.html
         </code>
       </div>
       <div>
@@ -73,7 +74,7 @@ body {
 }
 `
 
-let mjs = 'console.log("hello world from clientside js")'
+let mjs = 'console.log("Hello world from client-side js!")'
 
 /**
  * generates
@@ -92,6 +93,13 @@ module.exports = function assets(callback) {
       fs.writeFile.bind({}, join('public', 'index.html'), html),
       fs.writeFile.bind({}, join('public', 'index.css'), css),
       fs.writeFile.bind({}, join('public', 'index.js'), mjs),
-    ], callback)
+    ], function done(err) {
+      if (err) callback(err)
+      else {
+        let update = updater('Init')
+        update.done('Initialized new project files in public/')
+        callback()
+      }
+    })
   }
 }

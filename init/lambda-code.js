@@ -2,6 +2,7 @@ let fs = require('fs')
 let mkdir = require('mkdirp')
 let {join} = require('path')
 let parallel = require('run-parallel')
+let updater = require('../updater')
 
 let getExtension = require('./get-extension')
 let getLambdaName = require('../get-lambda-name')
@@ -44,6 +45,13 @@ module.exports = function code({type, runtime, method, path, name}, callback) {
           fullPath,
         }, callback)
       }
-    }, callback)
+    }, function done(err) {
+      if (err) callback(err)
+      else {
+        let update = updater('Init')
+        update.done('Initialized new project files in src/')
+        callback()
+      }
+    })
   }
 }

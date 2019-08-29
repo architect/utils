@@ -1,7 +1,7 @@
 let learn = 'learn more about HTTP functions here: https://arc.codes/primitives/http'
 
 function html (lang, ext) {
-  return `\`
+  return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,14 +67,14 @@ function html (lang, ext) {
   </div>
 </body>
 </html>
-\``
+`
 }
 
 let nodejs = `// ${learn}
 exports.handler = async function http(req) {
   return {
     headers: {'content-type': 'text/html; charset=utf8'},
-    body: ${html('Node.js', 'js')}
+    body: \`${html('Node.js', 'js')}\`
   }
 }`
 
@@ -82,7 +82,7 @@ let ruby = `# ${learn}
 def handler(req)
   {
     headers: {'content-type': 'text/html'},
-    body: ${html('Ruby', 'py')}
+    body: %q(${html('Ruby', 'rb')})
   }
 end`
 
@@ -90,7 +90,7 @@ let python = `# ${learn}
 def handler(req, context):
   return {
     'headers': {'content-type': 'text/html'},
-    'body': ${html('Python', 'rb')}
+    'body': """${html('Python', 'py')}"""
   }`
 
 module.exports = {nodejs, ruby, python}
