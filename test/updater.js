@@ -24,6 +24,8 @@ test('Set up env', t => {
   t.ok(lib, 'Updater lib loaded')
   t.ok(chars, 'Chars loaded')
   let isCI = process.env.CI || !process.stdout.isTTY
+  if (process.env.APPVEYOR && process.stdout.isTTY)
+    process.env.CI = false
   if (isCI)
     t.fail('Cannot run tests: process.env.CI || !process.stdout.isTTY')
   else
