@@ -8,8 +8,9 @@
     "url": "git+https://github.com/architect/utils.git"
   },
   "scripts": {
-    "test": "npm run lint && npm run test:unit",
+    "test": "npm run lint && npm run test:unit:updater && npm run test:unit",
     "test:unit": "tape test/*-test.js | tap-spec",
+    "test:unit:updater": "tape test/updater.js",
     "coverage": "istanbul cover tape test/*-test.js",
     "lint": "npx eslint ."
   },
