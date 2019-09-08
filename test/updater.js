@@ -14,7 +14,7 @@ process.stdout.write = (write => {
   }
 })(process.stdout.write)
 
-let isCI = process.env.APPVEYOR || process.env.TRAVIS || !process.env.isTTY
+let isBuildCI = process.env.APPVEYOR || process.env.TRAVIS
 let timer = 275 // Should animate only twice on both *nix + Win
 let tidy = i => i.replace(/\n$/,'') // Remove trailing newline
 let reset = () => output = ''
@@ -68,7 +68,7 @@ test('Status update test', t => {
 })
 
 test('Start + cancel test', t => {
-  let count = isCI ? 1 : 3
+  let count = isBuildCI ? 1 : 3
   t.plan(count)
   reset()
   let name = 'Progress indicator + cancel test'
@@ -82,7 +82,7 @@ test('Start + cancel test', t => {
     out = out.split(name)
     reset()
     t.ok(result.includes(name), 'Returned correct name')
-    if (!isCI) {
+    if (!isBuildCI) {
       t.equal(out.length, 3, 'Printed correct name, animated twice')
       t.pass(`Cancel ended indicator, or this test wouldn't have run`)
     }
@@ -91,7 +91,7 @@ test('Start + cancel test', t => {
 })
 
 test('Start + done test', t => {
-  let count = isCI ? 3 : 5
+  let count = isBuildCI ? 3 : 5
   t.plan(count)
   reset()
   let name = 'Progress indicator + done test'
@@ -107,7 +107,7 @@ test('Start + done test', t => {
     reset()
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(result.includes(msg), 'Returned correct msg')
-    if (!isCI) {
+    if (!isBuildCI) {
       t.equal(out.length, 4, 'Printed correct name, animated twice')
       t.pass(`Done ended indicator, or this test wouldn't have run`)
     }
@@ -118,7 +118,7 @@ test('Start + done test', t => {
 })
 
 test('Start + done with updated name test', t => {
-  let count = isCI ? 4 : 7
+  let count = isBuildCI ? 4 : 7
   t.plan(count)
   reset()
   let name = 'Progress indicator + done with updated name test'
@@ -137,7 +137,7 @@ test('Start + done with updated name test', t => {
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(done.includes(newName), 'Returned correct updated name')
     t.ok(result.includes(msg), 'Returned correct msg')
-    if (!isCI) {
+    if (!isBuildCI) {
       t.ok(done.includes(newMsg), 'Returned correct updated msg')
       t.equal(out.length, 3, 'Printed correct updated name, animated twice')
       t.pass(`Done ended indicator, or this test wouldn't have run`)
