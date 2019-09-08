@@ -2,6 +2,29 @@
 
 ---
 
+## [1.3.4] 2019-09-08
+
+### Added
+
+- `updater` methods now returns whatever they're printing (should you need to capture status)
+- Added tests for `updater`
+
+
+### Changed
+
+- `updater` now always hides the cursor during updating
+- Internal changes to `updater` printer API
+
+---
+
+## [1.3.3] 2019-08-28
+
+### Changed
+
+- Updates boilerplate init templates for functions and static assets
+
+---
+
 ## [1.3.2] 2019-08-18
 
 ### Changed
