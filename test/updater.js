@@ -40,7 +40,7 @@ test('Status update test', t => {
   let result = update.status()
   let out = output
   reset()
-  t.equal(tidy(out), result, 'Output and return are equal')
+  t.ok(tidy(out).includes(result), 'Output and return are equal (except cursor restore escape chars)')
   t.ok(result.includes(name), 'Returned / printed correct name')
   console.log(`Result: ${result}\nOutput: ${out}`)
   reset()
@@ -179,7 +179,7 @@ test('Error test', t => {
   let result = update.error(e)
   let out = output
   reset()
-  t.equal(tidy(out), result, 'Output and return are equal')
+  t.ok(tidy(out).includes(result), 'Output and return are equal (except cursor restore escape chars)')
   t.ok(result.includes(chars.err) && result.includes('Error:'), 'Returned / printed error name')
   t.notOk(result.includes(name), 'Did not return / print updater name')
   t.ok(result.includes(e), 'Returned / printed correct error')

@@ -1,13 +1,6 @@
 let chalk = require('chalk')
 let chars = require('../chars')
-let restore = require('restore-cursor')
-let {
-  clear,
-  reset,
-  write,
-  hideCursor,
-  spinner
-} = require('./lib')
+let {printer, spinner} = require('./lib')
 
 /**
  * Updater
@@ -24,20 +17,20 @@ let {
  * Each method should also return a value to enable capture of progress data
  */
 module.exports = function updater(name) {
-  restore() // Restores cursor on unexpected exit
+  printer.restoreCursor() // Restore cursor on exit
+  printer.hideCursor() // Disable cursor while updating
   name = name ? chalk.grey(name) : 'Info'
   let isCI = process.env.CI || !process.stdout.isTTY
   let running = false
   let {frames, timing} = spinner
 
   function progressIndicator(info) {
-    write(hideCursor)
     // End-user progress mode
     if (!running && !isCI) {
       let i = 0
       running = setInterval(function() {
-        write(`${chalk.cyan(frames[i = ++i % frames.length])} ${info}`)
-        reset()
+        printer.write(`${chalk.cyan(frames[i = ++i % frames.length])} ${info}`)
+        printer.reset()
       }, timing)
     }
     // CI mode: updates console with status messages but not animations
@@ -83,8 +76,8 @@ module.exports = function updater(name) {
   function cancel() {
     if (running) {
       clearInterval(running)
-      reset()
-      clear()
+      printer.reset()
+      printer.clear()
       running = false // Prevent accidental second done print
     }
   }
