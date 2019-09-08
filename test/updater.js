@@ -103,15 +103,15 @@ test('Start + done test', t => {
   setTimeout(() => {
     update.done()
     let out = output
-    out = out.split(name)
     reset()
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(result.includes(msg), 'Returned correct msg')
+    t.ok(out.includes(chars.done), 'Done updated line with done status')
+    out = out.split(name)
     if (!isBuildCI) {
       t.equal(out.length, 4, 'Printed correct name, animated twice')
       t.pass(`Done ended indicator, or this test wouldn't have run`)
     }
-    t.ok(out.join('').includes(chars.done), 'Done updated line with done status')
     console.log(`Result: ${result}`)
     reset()
   }, timer)
@@ -132,18 +132,18 @@ test('Start + done with updated name test', t => {
   setTimeout(() => {
     let done = update.done(newName, newMsg)
     let out = output
-    out = out.split(name)
+
     reset()
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(done.includes(newName), 'Returned correct updated name')
     t.ok(result.includes(msg), 'Returned correct msg')
+    t.ok(out.includes(chars.done) && out.includes(newName) && out.includes(newMsg), 'Done updated line with update done status (both name and message)')
+    out = out.split(name)
     if (!isBuildCI) {
       t.ok(done.includes(newMsg), 'Returned correct updated msg')
       t.equal(out.length, 3, 'Printed correct updated name, animated twice')
       t.pass(`Done ended indicator, or this test wouldn't have run`)
     }
-    out = out.join('')
-    t.ok(out.includes(chars.done) && out.includes(newName) && out.includes(newMsg), 'Done updated line with update done status (both name and message)')
     console.log(`Result: ${result}`)
     t.end()
   }, timer)
@@ -205,7 +205,8 @@ test('Error test', t => {
 })
 
 test('Start + error test', t => {
-  t.plan(7)
+  let count = isBuildCI ? 5 : 7
+  t.plan(count)
   reset()
   let name = 'Progress indicator + error'
   let update = updater(name)
@@ -221,11 +222,13 @@ test('Start + error test', t => {
     reset()
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(result.includes(msg), 'Returned correct msg')
-    t.equal(out.length, 3, 'Printed correct name, animated twice')
     t.ok(err.includes(chars.err) && err.includes('Error:'), 'Returned / printed error name')
     t.notOk(err.includes(name), 'Did not return / print updater name')
     t.ok(err.includes(e), 'Returned / printed correct error message')
-    t.pass(`Error ended indicator, or this test wouldn't have run`)
+    if (!isBuildCI) {
+      t.equal(out.length, 3, 'Printed correct name, animated twice')
+      t.pass(`Error ended indicator, or this test wouldn't have run`)
+    }
     console.log(`Result: ${result}\nOutput: ${out}`)
   }, timer)
 })
