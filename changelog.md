@@ -2,6 +2,14 @@
 
 ---
 
+## [On branch] 2019-09-10
+
+### Added
+
+- `updater` now accepts params object, including `{quiet: true}`, which completely disables console printing
+
+---
+
 ## [1.3.4] 2019-09-08
 
 ### Added

@@ -16,9 +16,10 @@ let {printer, spinner} = require('./lib')
  *
  * Each method should also return a value to enable capture of progress data
  */
-module.exports = function updater(name) {
+module.exports = function updater(name, params={quiet:false}) {
+  let {quiet} = params
+  if (!quiet) printer.hideCursor() // Disable cursor while updating
   printer.restoreCursor() // Restore cursor on exit
-  printer.hideCursor() // Disable cursor while updating
   name = name ? chalk.grey(name) : 'Info'
   let isCI = process.env.CI || !process.stdout.isTTY
   let running = false
@@ -26,7 +27,7 @@ module.exports = function updater(name) {
 
   function progressIndicator(info) {
     // End-user progress mode
-    if (!running && !isCI) {
+    if (!running && !isCI && !quiet) {
       let i = 0
       running = setInterval(function() {
         printer.write(`${chalk.cyan(frames[i = ++i % frames.length])} ${info}`)
@@ -34,7 +35,7 @@ module.exports = function updater(name) {
       }, timing)
     }
     // CI mode: updates console with status messages but not animations
-    else if (!running && isCI && info.length > 0) {
+    else if (!running && isCI && !quiet) {
       console.log(`${chars.start} ${info}`)
     }
   }
@@ -42,14 +43,15 @@ module.exports = function updater(name) {
   function status(msg, ...more) {
     msg = msg ? chalk.cyan(msg) : ''
     let info = `${chars.start} ${name} ${msg}`.trim()
-    console.log(info)
+    if (!quiet) console.log(info)
     if (more) {
       more.forEach(i => {
         let add = chalk.dim(`  | ${i}`)
-        console.log(add)
+        if (!quiet) console.log(add)
         info += `\n${add}`
       })
     }
+
     return info
   }
 
@@ -69,7 +71,8 @@ module.exports = function updater(name) {
     if (msg) msg = chalk.cyan(msg)
     cancel() // Maybe clear running status and reset
     let info = `${chars.done} ${newName ? newName : name} ${msg ? msg : ''}`.trim()
-    console.log(info)
+
+    if (!quiet) console.log(info)
     return info
   }
 
@@ -86,7 +89,8 @@ module.exports = function updater(name) {
     if (running) cancel()
     if (error instanceof Error) error = error.message
     let info = `${chars.err} ${chalk.red('Error:')} ${error}`.trim()
-    console.log(info)
+
+    if (!quiet) console.log(info)
     return info
   }
 
