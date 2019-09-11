@@ -1,10 +1,17 @@
 let restore = require('restore-cursor')
+let isCI = process.env.CI || !process.stdout.isTTY
 let out = process.stdout
 let printer = {
   // Clears the line so we can overwrite it
-  clear: () => out.clearLine(),
+  clear: () => {
+    if (!isCI)
+      out.clearLine()
+  },
   // Resets cursor position
-  reset: x => out.cursorTo(x ? x : 0),
+  reset: x => {
+    if (!isCI)
+      out.cursorTo(x ? x : 0)
+  },
   // Write to console, add single extra line to buffer while running
   restoreCursor: () => restore(),
   write: t => out.write(t + '\n' + '\033[1A')

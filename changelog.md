@@ -2,11 +2,22 @@
 
 ---
 
-## [1.3.5] 2019-09-10
+## [1.3.5 - 1.3.6] 2019-09-11
 
 ### Added
 
 - `updater` now accepts params object, including `{quiet: true}`, which completely disables console printing
+- `updater.status` can now be passed a null first param, which only outputs a multi-line supporting status update
+
+
+## Fixed
+
+- Better isolation of `updater` methods that require TTY, so as to prevent potential boogs
+
+
+### Changed
+
+- `updater.status` cancels progress
 
 ---
 

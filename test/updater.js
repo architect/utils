@@ -16,7 +16,7 @@ process.stdout.write = (write => {
 
 let isBuildCI = process.env.APPVEYOR || process.env.TRAVIS
 let timer = 275 // Should animate only twice on both *nix + Win
-let tidy = i => i.replace(/\n$/,'') // Remove trailing newline
+let tidy = i => i.replace(/(^\n|\n$)/g,'') // Remove trailing newline
 let reset = () => output = ''
 
 test('Set up env', t => {
@@ -27,7 +27,7 @@ test('Set up env', t => {
 })
 
 test('Status update test', t => {
-  t.plan(10)
+  t.plan(13)
   reset()
   let name = 'Status test' // Should be different from test name
   let update = updater(name)
@@ -36,8 +36,7 @@ test('Status update test', t => {
   let result = update.status()
   let out = output
   reset()
-  t.ok(tidy(out).includes(result), 'Output and return are equal (except cursor restore escape chars)')
-  t.ok(result.includes(name), 'Returned / printed correct name')
+  t.notOk(tidy(out).includes(name) && result.includes(name), 'Did not return / print anything')
   console.log(`Returned: ${result}`)
   reset()
 
@@ -52,7 +51,7 @@ test('Status update test', t => {
   console.log(`Returned: ${result}`)
   reset()
 
-  // Multiple messages
+  // Message + multi-line update
   msg = 'multi liner'
   let line2 = 'this is line two'
   let line3 = 'and this is line three'
@@ -65,10 +64,24 @@ test('Status update test', t => {
   t.ok(result.includes(line2), 'Returned / printed line2')
   t.ok(result.includes(line3), 'Returned / printed line3')
   console.log(`Returned: ${result}`)
+  reset()
+
+  // No message + multi-line update
+  msg = ''
+  line2 = 'this is line two'
+  line3 = 'and this is line three'
+  result = update.status(msg, line2, line3)
+  out = output
+  reset()
+  t.equal(tidy(out), tidy(result), 'Output and return are equal (except newline placement)')
+  t.notOk(result.includes(name), 'Did not return / print name')
+  t.ok(result.includes(line2), 'Returned / printed line2')
+  t.ok(result.includes(line3), 'Returned / printed line3')
+  console.log(`Returned: ${result}`)
 })
 
 test('Status update test (quiet)', t => {
-  t.plan(10)
+  t.plan(13)
   reset()
   let name = 'Status test' // Should be different from test name
   let update = updater(name, {quiet:true})
@@ -77,8 +90,7 @@ test('Status update test (quiet)', t => {
   let result = update.status()
   let out = output
   reset()
-  t.notOk(tidy(out).includes(result), 'Output did not include return (except cursor restore escape chars)')
-  t.ok(result.includes(name), 'Returned correct name')
+  t.notOk(tidy(out).includes(name) && result.includes(name), 'Did not return / print anything')
   console.log(`Returned: ${result}`)
   reset()
 
@@ -93,7 +105,7 @@ test('Status update test (quiet)', t => {
   console.log(`Returned: ${result}`)
   reset()
 
-  // Multiple messages
+  // Message + multi-line update
   msg = 'multi liner'
   let line2 = 'this is line two'
   let line3 = 'and this is line three'
@@ -105,6 +117,20 @@ test('Status update test (quiet)', t => {
   t.ok(result.includes(msg), 'Returned correct msg')
   t.ok(result.includes(line2), 'Returned line2')
   t.ok(result.includes(line3), 'Returned line3')
+  console.log(`Returned: ${result}`)
+  reset()
+
+  // No message + multi-line update
+  msg = ''
+  line2 = 'this is line two'
+  line3 = 'and this is line three'
+  result = update.status(msg, line2, line3)
+  out = output
+  reset()
+  t.notOk(out, 'Did not print')
+  t.notOk(result.includes(name), 'Did not return name')
+  t.ok(result.includes(line2), 'Returned / printed line2')
+  t.ok(result.includes(line3), 'Returned / printed line3')
   console.log(`Returned: ${result}`)
 })
 

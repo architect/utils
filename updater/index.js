@@ -18,8 +18,10 @@ let {printer, spinner} = require('./lib')
  */
 module.exports = function updater(name, params={quiet:false}) {
   let {quiet} = params
-  if (!quiet) printer.hideCursor() // Disable cursor while updating
-  printer.restoreCursor() // Restore cursor on exit
+  if (!quiet) {
+    printer.hideCursor() // Disable cursor while updating
+    printer.restoreCursor() // Restore cursor on exit
+  }
   name = name ? chalk.grey(name) : 'Info'
   let isCI = process.env.CI || !process.stdout.isTTY
   let running = false
@@ -40,11 +42,13 @@ module.exports = function updater(name, params={quiet:false}) {
     }
   }
 
+  // Optionally pass a message and/or post a multi-line supporting status update
   function status(msg, ...more) {
     msg = msg ? chalk.cyan(msg) : ''
-    let info = `${chars.start} ${name} ${msg}`.trim()
-    if (!quiet) console.log(info)
-    if (more) {
+    let info = msg ? `${chars.start} ${name} ${msg}`.trim() : ''
+    if (running) cancel()
+    if (!quiet && info) console.log(info) // Check for msg so as not to print an empty line
+    if (more.length) {
       more.forEach(i => {
         let add = chalk.dim(`  | ${i}`)
         if (!quiet) console.log(add)
@@ -58,6 +62,7 @@ module.exports = function updater(name, params={quiet:false}) {
   function start(msg) {
     msg = msg ? chalk.cyan(msg) : ''
     let info = `${name} ${msg}`.trim()
+    if (running) cancel()
     progressIndicator(info)
     return `${chars.start} ${info}`
   }
