@@ -2,6 +2,19 @@
 
 ---
 
+## [1.3.7] 2019-09-22
+
+### Added
+
+- Added support for `@static folder` to `fingerprint`
+
+
+### Changed
+
+- Updated dependencies
+
+---
+
 ## [1.3.5 - 1.3.6] 2019-09-11
 
 ### Added
