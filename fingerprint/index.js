@@ -21,7 +21,9 @@ function normalizePath(path) {
 module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) {
   let {arc} = readArc()
   let {static} = arc
-  let publicDir = normalizePath(path.join(process.cwd(), 'public'))
+  let folderSetting = tuple => tuple[0] === 'folder'
+  let staticFolder = static && static.some(folderSetting) ? static.find(folderSetting)[1] : 'public'
+  let folder = normalizePath(path.join(process.cwd(), staticFolder))
 
   /**
    * Double check fingerprint status
@@ -29,12 +31,13 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
   if (!fingerprint && static) {
     fingerprint = config(arc).fingerprint
     ignore = config(arc).ignore
-
     // If @static is defined, create `public/` if it doesn't exist
-    if (!pathExists(publicDir)) {mkdir(publicDir)}
+    if (!pathExists(folder)) {
+      mkdir(folder)
+    }
   }
 
-  let staticAssets = path.join(publicDir, '/**/*')
+  let staticAssets = path.join(folder, '/**/*')
   let files
   let staticManifest = {}
   waterfall([
@@ -44,11 +47,11 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
     function bail(callback) {
       if (fingerprint) callback()
       else {
-        if (pathExists(path.join(publicDir, 'static.json'))) {
+        if (pathExists(path.join(folder, 'static.json'))) {
           let warn = chalk.yellow('Warning')
-          let msg = chalk.white(`Found ${publicDir + path.sep}static.json file with fingerprinting disabled, deleting file`)
+          let msg = chalk.white(`Found ${folder + path.sep}static.json file with fingerprinting disabled, deleting file`)
           console.log(`${warn} ${msg}`)
-          exec('rm static.json', {cwd: publicDir}, (err, stdout, stderr) => {
+          exec('rm static.json', {cwd: folder}, (err, stdout, stderr) => {
             if (err) callback(err)
             else {
               if (stderr) {
@@ -85,7 +88,6 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
       // Find non-ignored files and sort for readability
       files = filesFound.filter(file => !ignore.some(i => file.includes(i)))
       files = sort(files)
-
       if (!files.length) {
         callback(Error('no_files_found'))
       }
@@ -106,7 +108,7 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
               let extName = path.extname(file)
               let baseName = path.basename(file)
               let hashedName = baseName.replace(extName, '') + `-${hash}${extName}`
-              let dirName = path.dirname(file).replace(publicDir, '').substr(1)
+              let dirName = path.dirname(file).replace(folder, '').substr(1)
               let staticKey = `${dirName ? `${dirName}/` : ''}${baseName}`
               let staticValue = `${dirName ? `${dirName}/` : ''}${hashedName}`
               // Target shape: {'foo/bar.jpg': 'foo/bar-6bf1794b4c.jpg'}
@@ -119,8 +121,8 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
       series(hashFiles, function done(err) {
         if (err) callback(err)
         else {
-          // Write out public/static.json
-          fs.writeFile(path.join(publicDir, 'static.json'), JSON.stringify(staticManifest, null, 2), callback)
+          // Write out folder/static.json
+          fs.writeFile(path.join(folder, 'static.json'), JSON.stringify(staticManifest, null, 2), callback)
         }
       })
     },

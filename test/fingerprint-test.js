@@ -7,8 +7,9 @@ let sinon = require('sinon')
 let test = require('tape')
 
 let globStub = sinon.stub().callsFake((path, options, callback) => callback(null, []))
+let arcObject = {}
 let readArcStub = sinon.stub().callsFake(() => {
-  let mockArc = {arc: {}}
+  let mockArc = {arc: arcObject}
   return mockArc
 })
 let shaStub = sinon.stub(sha, 'get').callsFake((file, callback) => callback(null, 'df330f3f12')) // Fake hash
@@ -26,6 +27,45 @@ let params = {
 // glob returns paths always delimited with '/', which messes us up on windows
 // so use this function when stubbing e.g. glob
 function normalizePath(path) { return path.replace(/\\/g, '/') }
+
+test('fingerprint respects folder setting', t=> {
+  // t.plan(6)
+  // Globbing
+  globStub.resetBehavior()
+  globStub.callsFake((filepath, options, callback) => callback(null, [
+    normalizePath(path.join(process.cwd(), 'foo', 'index.html')),
+    normalizePath(path.join(process.cwd(), 'foo', 'readme.md')), // this should get ignored
+    normalizePath(path.join(process.cwd(), 'foo', 'css', 'styles.css')),
+  ]))
+  // Static manifest
+  let manifest
+  let fsStub = sinon.stub(fs, 'writeFile').callsFake((dest, data, callback) => {
+    manifest = data
+    callback()
+  })
+  arcObject = {
+    static: [['folder', 'foo']]
+  }
+  fingerprint(params, (err, result) => {
+    if (err) t.fail(err)
+    manifest = JSON.parse(manifest)
+    console.log('Generated manifest:')
+    console.log(manifest)
+
+    t.ok(shaStub.calledTwice, 'Correct number of files hashed')
+    t.equals(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
+    t.equals(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
+    t.equals(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
+    t.equals(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
+    t.ok(fsStub.called, 'static.json manifest written')
+
+    // Reset env for next test
+    fs.writeFile.restore()
+    shaStub.resetHistory()
+    arcObject = {}
+    t.end()
+  })
+})
 
 test('fingerprint generates static.json manifest', t=> {
   t.plan(6)
