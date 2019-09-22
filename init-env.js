@@ -17,7 +17,7 @@ module.exports = function populateEnv(callback) {
     let raw = fs.readFileSync(envPath).toString()
     try {
       let env = parse(raw)
-      let actual = process.env.hasOwnProperty('ARC_LOCAL')
+      let actual = process.env.ARC_LOCAL
         ? 'testing'
         : process.env.NODE_ENV
       env[actual].forEach(tuple=> {
@@ -25,7 +25,7 @@ module.exports = function populateEnv(callback) {
       })
       let local = 'Init process.env from .arc-env @testing (ARC_LOCAL override)'
       let not = 'Init process.env from .arc-env @' + process.env.NODE_ENV
-      let msg = process.env.hasOwnProperty('ARC_LOCAL')? local : not
+      let msg = process.env.ARC_LOCAL ? local : not
       console.log(chalk.grey(chars.done, msg))
     }
     catch(e) {

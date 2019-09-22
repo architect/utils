@@ -95,7 +95,7 @@ module.exports = function init(options=[], callback) {
     let results = []
     arc.tables.forEach(table=> {
       let name = Object.keys(table)[0]
-      let hasStream = table[name].hasOwnProperty('stream') && !!(table[name].stream)
+      let hasStream = Object.prototype.hasOwnProperty.call(table[name], 'stream') && !!(table[name].stream)
       if (hasStream) {
         results.push(code.bind({}, {type, runtime, name}))
       }
