@@ -119,9 +119,9 @@ module.exports = function inventory(arc) {
       'ws-disconnect',
     ]
     report.localPaths = report.localPaths.concat([
-      path.join('src', 'ws', 'ws-default'),
-      path.join('src', 'ws', 'ws-connect'),
-      path.join('src', 'ws', 'ws-disconnect'),
+      path.join('src', 'ws', 'default'),
+      path.join('src', 'ws', 'connect'),
+      path.join('src', 'ws', 'disconnect'),
     ])
   }
 
