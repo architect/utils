@@ -2,6 +2,14 @@
 
 ---
 
+## [1.3.8] 2019-09-29
+
+### Fixed
+
+- Fixes correct inventory paths for `src/ws/*`, which should in turn fix WebSocket function hydration
+
+---
+
 ## [1.3.7] 2019-09-22
 
 ### Added
