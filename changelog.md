@@ -2,6 +2,13 @@
 
 ---
 
+### Changed
+
+- `init` is now its own standalone project! It can be found at [`@architect/create`](https://github.com/architect/create)
+- As such, init is now retired and removed from `utils`
+
+---
+
 ## [1.3.8] 2019-09-29
 
 ### Fixed

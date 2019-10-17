@@ -39,11 +39,6 @@ Returns the Lambda runtime defined in an Architect project manifest. `arc` is an
 Takes a `runtime` string and returns the same string if it' iss' a runtime allowed in Architect. Otherwise, returns a default runtime which Architect will use (currently `nodejs10.x`).
 
 
-## `utils.init(callback)`
-
-Initializes an Architect project directory structure based on contents read from an Architect project manifest.
-
-
 ## `utils.initArc(callback)`
 
 Populates the runtime environment with Architect-specific environment variables.
