@@ -1,4 +1,5 @@
-# `@architect/utils` [![Travis Build Status](https://travis-ci.com/architect/utils.svg?branch=master)](https://travis-ci.com/architect/utils) [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/dooe6ku7k0x83bud/branch/master?svg=true)](https://ci.appveyor.com/project/ArchitectCI/utils/branch/master) [![codecov](https://codecov.io/gh/architect/utils/branch/master/graph/badge.svg)](https://codecov.io/gh/architect/utils)
+# `@architect/utils` [![GitHub CI status](https://github.com/architect/utils/workflows/Node%20CI/badge.svg)](https://github.com/architect/utils/actions?query=workflow%3A%22Node+CI%22)
+<!-- [![codecov](https://codecov.io/gh/architect/utils/branch/master/graph/badge.svg)](https://codecov.io/gh/architect/utils) -->
 
 [@architect/utils][npm] are common utilities for the [@architect][arc] suite of projects.
 
