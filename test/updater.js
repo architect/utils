@@ -14,7 +14,7 @@ process.stdout.write = (write => {
   }
 })(process.stdout.write)
 
-let isBuildCI = process.env.APPVEYOR || process.env.TRAVIS
+let isBuildCI = process.env.CI
 let timer = 275 // Should animate only twice on both *nix + Win
 let tidy = i => i.replace(/(^\n|\n$)/g,'') // Remove trailing newline
 let reset = () => output = ''
