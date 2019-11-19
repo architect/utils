@@ -3,4 +3,5 @@
 .git/
 .github/
 codecov.yaml
+coverage/
 test/

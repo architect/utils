@@ -1,3 +1,4 @@
+coverage/
 node_modules/
-test/mock/src
 test/mock/public
+test/mock/src
