@@ -1,7 +1,7 @@
 .eslintignore
 .eslintrc.js
-.github
-.travis.yml
-appveyor.yml
+.git/
+.github/
 codecov.yaml
+coverage/
 test/

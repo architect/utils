@@ -7,12 +7,14 @@ let chalk = require('chalk')
  */
 let allowed = [
   `nodejs10.x`, // index 0 == default runtime
-  `nodejs8.10`,
+  `nodejs12.x`,
+  `python3.8`,
   `python3.7`,
   `python3.6`,
   `go1.x`,
   `ruby2.5`,
   `dotnetcore2.1`,
+  `java11`,
   `java8`,
 ]
 

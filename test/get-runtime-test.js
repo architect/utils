@@ -10,7 +10,7 @@ test('get-runtime returns default runtime for unsupported runtime', t => {
   let arc = { aws: [['runtime', 'pascal']] }
   t.deepEquals(runtime(arc), 'nodejs10.x', 'default runtime returned')
 })
-test('get-runtime returns default runtime for unsupported runtime', t => {
+test('get-runtime returns correct runtime for supported runtime', t => {
   t.plan(1)
   let arc = { aws: [['runtime', 'ruby2.5']] }
   t.deepEquals(runtime(arc), 'ruby2.5', 'ruby runtime returned')
