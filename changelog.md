@@ -2,10 +2,23 @@
 
 ---
 
+## [1.3.9] 2019-11-19
+
+### Added
+
+- Added support for new Lambda runtimes! `nodejs12.x`, `python3.8`, and `java11`
+
+
 ### Changed
 
 - `init` is now its own standalone project! It can be found at [`@architect/create`](https://github.com/architect/create)
 - As such, init is now retired and removed from `utils`
+- Updated dependencies
+
+
+### Fixed
+
+- Fixed printing of unnecessary ANSI escape characters in CI environments (`CI` env, or not TTY output)
 
 ---
 
