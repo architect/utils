@@ -19,7 +19,7 @@ let {printer, spinner} = require('./lib')
 module.exports = function updater(name, params={quiet:false}) {
   let {quiet} = params
   name = name ? chalk.grey(name) : 'Info'
-  let isCI = process.env.CI || !process.stdout.isTTY
+  let isCI = process.env.CI || process.stdout.isTTY === false
   if (!quiet && !isCI) {
     printer.hideCursor() // Disable cursor while updating
     printer.restoreCursor() // Restore cursor on exit
