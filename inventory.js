@@ -101,28 +101,31 @@ module.exports = function inventory(arc) {
   }
 
   if (arc.ws) {
+    // Handle 5 vs 6 WS naming changes
+    let wsName = name => process.env.DEPRECATED ? `ws-${name}` : name
+    let dir = name => path.join('src', 'ws', wsName(name))
+
     report.websocketapis = [
-      `${arc.app}-ws-staging`,
-      `${arc.app}-ws-production`,
+      `${app}-ws-staging`,
+      `${app}-ws-production`,
     ]
     report.lambdas = report.lambdas.concat([
-      `${arc.app}-staging-ws-default`,
-      `${arc.app}-staging-ws-connect`,
-      `${arc.app}-staging-ws-disconnect`,
-      `${arc.app}-production-ws-default`,
-      `${arc.app}-production-ws-connect`,
-      `${arc.app}-production-ws-disconnect`,
+      `${app}-staging-ws-default`,
+      `${app}-staging-ws-connect`,
+      `${app}-staging-ws-disconnect`,
+      `${app}-production-ws-default`,
+      `${app}-production-ws-connect`,
+      `${app}-production-ws-disconnect`,
     ])
     report.types.ws = [
-      'default',
-      'connect',
-      'disconnect',
+      wsName('default'),
+      wsName('connect'),
+      wsName('disconnect'),
     ]
-    let cwd = name => path.join('src', 'ws', process.env.DEPRECATED ? `ws-${name}` : name)
     report.localPaths = report.localPaths.concat([
-      cwd('default'),
-      cwd('connect'),
-      cwd('disconnect'),
+      dir('default'),
+      dir('connect'),
+      dir('disconnect'),
     ])
   }
 
