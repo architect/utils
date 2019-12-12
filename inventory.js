@@ -114,14 +114,15 @@ module.exports = function inventory(arc) {
       `${arc.app}-production-ws-disconnect`,
     ])
     report.types.ws = [
-      'ws-default',
-      'ws-connect',
-      'ws-disconnect',
+      'default',
+      'connect',
+      'disconnect',
     ]
+    let cwd = name => path.join('src', 'ws', process.env.DEPRECATED ? `ws-${name}` : name)
     report.localPaths = report.localPaths.concat([
-      path.join('src', 'ws', 'default'),
-      path.join('src', 'ws', 'connect'),
-      path.join('src', 'ws', 'disconnect'),
+      cwd('default'),
+      cwd('connect'),
+      cwd('disconnect'),
     ])
   }
 
