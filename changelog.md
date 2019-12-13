@@ -2,6 +2,14 @@
 
 ---
 
+## [1.3.10] 2019-12-12
+
+### Changed
+
+- Adds better backwards compatibility support in `inventory` for legacy `src/ws/ws-*` paths
+
+---
+
 ## [1.3.9] 2019-11-19
 
 ### Added
