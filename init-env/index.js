@@ -1,8 +1,8 @@
 let parse = require('@architect/parser')
 let chalk = require('chalk')
-let chars = require('./chars')
 let path = require('path')
 let fs = require('fs')
+let updater = require('../updater')
 
 /**
  * Initialize process.env with .arc-env
@@ -14,6 +14,7 @@ module.exports = function populateEnv(callback) {
   let join = path.join
   let envPath = join(process.cwd(), '.arc-env')
   if (exists(envPath)) {
+    let update = updater('Startup')
     let raw = fs.readFileSync(envPath).toString()
     try {
       let env = parse(raw)
@@ -23,13 +24,13 @@ module.exports = function populateEnv(callback) {
       env[actual].forEach(tuple=> {
         process.env[tuple[0]] = tuple[1]
       })
-      let local = 'Init process.env from .arc-env @testing (ARC_LOCAL override)'
-      let not = 'Init process.env from .arc-env @' + process.env.NODE_ENV
+      let local = 'Populating process.env with .arc-env @testing (ARC_LOCAL override)'
+      let not = 'Populating process.env with .arc-env @' + process.env.NODE_ENV
       let msg = process.env.ARC_LOCAL ? local : not
-      console.log(chalk.grey(chars.done, msg))
+      update.done(msg)
     }
     catch(e) {
-      console.log(chalk.bold.red(`Parse Error`), chalk.bold.white('invalid '+envPath))
+      update.err('.arc-env parse error')
       console.log(chalk.dim(e.stack))
       process.exit(1)
     }

@@ -1,4 +1,4 @@
-let readArcFile = require('./read-arc')
+let readArcFile = require('../read-arc')
 
 /**
  * Try to initialize basic Architect project configuration

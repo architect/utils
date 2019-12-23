@@ -1,7 +1,7 @@
-let initArc = require('./init-arc')
-let initAWS = require('./init-aws')
+let initArc = require('../init-arc')
+let initAWS = require('../init-aws')
 let chalk = require('chalk')
-let chars = require('./chars')
+let chars = require('../chars')
 
 module.exports = function printBanner(params) {
   params = params || {}
@@ -20,7 +20,9 @@ module.exports = function printBanner(params) {
 
     // Region + profile
     let region = process.env.AWS_REGION || '@aws region / AWS_REGION not configured'
-    let profile = process.env.AWS_PROFILE || '@aws profile / AWS_PROFILE not configured'
+    let profile = process.env.ARC_AWS_CREDS
+      ? 'Loaded via environment'
+      : process.env.AWS_PROFILE || '@aws profile / AWS_PROFILE not configured'
     if (!params.disableRegion) {
       log('Region', region)
     }
