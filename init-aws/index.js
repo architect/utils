@@ -21,14 +21,14 @@ module.exports = function initAWS () {
     arc.aws = arc.aws || []
     let region = arc.aws.find(e=> e[0] === 'region')
     process.env.AWS_REGION = region && region[1] ||
-                             process.env.AWS_REGION ||
-                             'us-west-2'
+                             process.env.AWS_REGION
 
     // Always ensure we end with cred validation
     if (hasCredsFile) {
       let profile = arc.aws.find(e=> e[0] === 'profile')
       process.env.AWS_PROFILE = profile && profile[1] ||
-                                process.env.AWS_PROFILE
+                                process.env.AWS_PROFILE ||
+                                'default'
       aws.config.credentials = new aws.SharedIniFileCredentials({
         profile: process.env.AWS_PROFILE
       })
@@ -38,7 +38,7 @@ module.exports = function initAWS () {
       let hasEnvVars = process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
       if (hasEnvVars) {
         process.env.ARC_AWS_CREDS = 'env'
-        aws.config.credentials = aws.Credentials({
+        aws.config.credentials = new aws.Credentials({
           accessKeyId: process.env.AWS_ACCESS_KEY_ID,
           secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
         })
@@ -49,6 +49,7 @@ module.exports = function initAWS () {
     function validateCreds() {
       let creds = aws.config.credentials
       if (!creds || creds && !creds.accessKeyId) {
+        delete process.env.AWS_PROFILE
         // Backfill creds with dummy if anything is amiss
         update.warn('Missing or invalid AWS credentials or credentials file, using dummy credentials')
         aws.config.credentials = aws.Credentials({
