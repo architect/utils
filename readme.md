@@ -40,16 +40,6 @@ Returns the Lambda runtime defined in an Architect project manifest. `arc` is an
 Takes a `runtime` string and returns the same string if it' iss' a runtime allowed in Architect. Otherwise, returns a default runtime which Architect will use (currently `nodejs10.x`).
 
 
-## `utils.initArc(callback)`
-
-Populates the runtime environment with Architect-specific environment variables.
-
-
-## `utils.initArc(callback)`
-
-Populates the runtime environment with AWS-specific environment variables, and loads credentials from the local filesystem.
-
-
 ## `utils.initEnv(callback)`
 
 Populates the runtime environment with variables from a `.arc-env` if present. Details about this functionality can be found in the [@architect/env][env] project (pending resolution of architect/env#2).

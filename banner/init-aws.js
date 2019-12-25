@@ -55,7 +55,7 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
       }
       else if (noCreds && !needsValidCreds) {
         process.env.ARC_AWS_CREDS = 'dummy'
-        aws.config.credentials = aws.Credentials({
+        aws.config.credentials = new aws.Credentials({
           accessKeyId: 'xxx',
           secretAccessKey: 'xxx'
         })
