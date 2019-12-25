@@ -16,13 +16,13 @@ let validate = require('./validate')
 module.exports = {
   banner,         // Prints banner and loads basic env vars and AWS creds
   chars,          // Returns platform appropriate characters for CLI UI printing
-  fingerprint,    // Generates public/static.json for @static fingerprint true
+  fingerprint,    // Generates public/static.json for `@static fingerprint true`
   getLambdaName,  // Get Lambda name from Arc path
   getLayers,      // Get layer config from Arc file or config
   getRuntime,     // Get runtime config from Arc file or config
   initEnv,        // Initialize env vars from .arc-env config
   inventory,      // Get inventory of current AWS resources from Arc file
-  pathToUnix,     // Use `/` seperated paths everywhere
+  pathToUnix,     // Normalize to `/` seperated paths for Windows-specific calls
   portInUse,      // Checks to see if a port is in use
   readArc,        // Reads Arc file and returns raw + parsed versions
   toLogicalID,    // Converts dash casing into Pascal casing for CloudFormation
