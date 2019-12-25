@@ -1,19 +1,20 @@
 let readArcFile = require('../read-arc')
+let updater = require('../updater')
 
 /**
- * Try to initialize basic Architect project configuration
+ * Initialize basic Architect project configuration
  */
-module.exports = function initAWS () {
-  let arc
+module.exports = function initArc () {
   try {
-    let parsed = readArcFile()
-    arc = parsed.arc
+    let {arc} = readArcFile()
     process.env.ARC_APP_NAME = arc.app[0]
+    return arc
   }
   catch(e) {
     if (e.message != 'not_found') {
       // Don't exit process here even if .arc isn't found; caller should be responsible (via ./read-arc)
-      console.log(e)
+      let update = updater('Startup')
+      update.err(e)
     }
   }
 }

@@ -4,8 +4,6 @@ let fingerprint = require('./fingerprint')
 let getLambdaName = require('./get-lambda-name')
 let getLayers = require('./get-layers')
 let getRuntime = require('./get-runtime')
-let initArc = require('./init-arc')
-let initAWS = require('./init-aws')
 let initEnv = require('./init-env')
 let inventory = require('./inventory')
 let pathToUnix = require('./path-to-unix')
@@ -22,8 +20,6 @@ module.exports = {
   getLambdaName,  // Get Lambda name from Arc path
   getLayers,      // Get layer config from Arc file or config
   getRuntime,     // Get runtime config from Arc file or config
-  initArc,        // Initialize basic project configuration
-  initAWS,        // Initialize AWS env vars and credentials
   initEnv,        // Initialize env vars from .arc-env config
   inventory,      // Get inventory of current AWS resources from Arc file
   pathToUnix,     // Use `/` seperated paths everywhere
