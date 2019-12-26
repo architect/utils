@@ -28,9 +28,13 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
       process.env.AWS_PROFILE = profile && profile[1] ||
                                 process.env.AWS_PROFILE ||
                                 'default'
-      aws.config.credentials = new aws.SharedIniFileCredentials({
+      let params = {
         profile: process.env.AWS_PROFILE
-      })
+      }
+      if (process.env.AWS_SESSION_TOKEN) {
+        params.sessionToken = process.env.AWS_SESSION_TOKEN
+      }
+      aws.config.credentials = new aws.SharedIniFileCredentials(params)
       credentialCheck()
     }
     else {
@@ -38,10 +42,14 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
                        process.env.AWS_SECRET_ACCESS_KEY
       if (hasEnvVars) {
         process.env.ARC_AWS_CREDS = 'env'
-        aws.config.credentials = new aws.Credentials({
+        let params = {
           accessKeyId: process.env.AWS_ACCESS_KEY_ID,
           secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-        })
+        }
+        if (process.env.AWS_SESSION_TOKEN) {
+          params.sessionToken = process.env.AWS_SESSION_TOKEN
+        }
+        aws.config.credentials = new aws.Credentials(params)
       }
       credentialCheck()
     }

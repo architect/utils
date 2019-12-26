@@ -8,6 +8,8 @@
 
 - AWS credentials can now be loaded via env vars (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`)
   - Thus, Architect no longer requires a `~/.aws/credentials` file to run
+  - Also added AWS session token support via setting `AWS_SESSION_TOKEN` env var
+  - Fixes #26; thanks @ryan-roemer!
 
 
 ### Fixed
