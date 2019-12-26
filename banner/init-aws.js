@@ -28,13 +28,9 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
       process.env.AWS_PROFILE = profile && profile[1] ||
                                 process.env.AWS_PROFILE ||
                                 'default'
-      let params = {
+      aws.config.credentials = new aws.SharedIniFileCredentials({
         profile: process.env.AWS_PROFILE
-      }
-      if (process.env.AWS_SESSION_TOKEN) {
-        params.sessionToken = process.env.AWS_SESSION_TOKEN
-      }
-      aws.config.credentials = new aws.SharedIniFileCredentials(params)
+      })
       credentialCheck()
     }
     else {
