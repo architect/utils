@@ -2,6 +2,20 @@
 
 ---
 
+## [1.4.0] 2019-12-23
+
+### Added
+
+- AWS credentials can now be loaded via env vars (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`)
+  - Thus, Architect no longer requires a `~/.aws/credentials` file to run
+
+
+### Fixed
+
+- Credentials are now properly backfilled with dummy values for banner callers setting `needsValidCreds`, ensuring that certain Architect operations (such as local Sandbox usage) won't crash without a valid `~/aws.credentials` file present
+
+---
+
 ## [1.3.10] 2019-12-12
 
 ### Changed

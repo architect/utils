@@ -99,6 +99,15 @@ module.exports = function updater(name, params={quiet:false}) {
     return info
   }
 
+  function warn(warning) {
+    if (running) cancel()
+    if (warning instanceof Error) warning = warning.message
+    let info = `${chars.err} ${chalk.yellow('Warning:')} ${warning}`.trim()
+
+    if (!quiet) console.log(info)
+    return info
+  }
+
   return {
     start,
     update: start,
@@ -108,6 +117,8 @@ module.exports = function updater(name, params={quiet:false}) {
     cancel,
     err,
     error: err,
-    fail: err
+    fail: err,
+    warn,
+    warning: warn
   }
 }

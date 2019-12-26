@@ -1,39 +1,49 @@
 let initArc = require('./init-arc')
 let initAWS = require('./init-aws')
 let chalk = require('chalk')
-let chars = require('./chars')
+let chars = require('../chars')
 
-module.exports = function printBanner(params) {
-  params = params || {}
-  if (params.disableBanner) null
+module.exports = function printBanner(params={}) {
+  let {
+    disableBanner,
+    disableRegion,
+    disableProfile,
+    needsValidCreds,
+    version='–'
+  } = params
+
+  if (disableBanner) return
   else {
     // Boilerplate
     let log = (label, value) => console.log(chalk.grey(`${label.padStart(12)} ${chars.buzz}`), chalk.cyan(value))
 
     // Initialize config
-    initArc()
-    initAWS()
+    let arc = initArc()
+    initAWS({arc, needsValidCreds})
 
     // App name
     let name = process.env.ARC_APP_NAME || 'Architect project manifest not found'
     log('App', name)
 
-    // Region + profile
+    // Region
     let region = process.env.AWS_REGION || '@aws region / AWS_REGION not configured'
-    let profile = process.env.AWS_PROFILE || '@aws profile / AWS_PROFILE not configured'
-    if (!params.disableRegion) {
+    if (!disableRegion) {
       log('Region', region)
     }
-    if (!params.disableProfile) {
+
+    // Profile
+    let profile = process.env.ARC_AWS_CREDS === 'env'
+      ? 'Set via environment'
+      : process.env.AWS_PROFILE || '@aws profile / AWS_PROFILE not configured'
+    if (!disableProfile) {
       log('Profile', profile)
     }
 
     // Caller version
-    let {version} = params
-    version = version || '–'
     log('Version', version)
-    if (version.startsWith('Architect 5'))
+    if (version.startsWith('Architect 5')) {
       process.env.DEPRECATED = true
+    }
 
     // cwd
     log('cwd', process.cwd())
