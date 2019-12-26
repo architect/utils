@@ -46,6 +46,11 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
       credentialCheck()
     }
 
+    /**
+     * Final credential check to ensure we meet the cred needs of Arc various packages
+     * - Packages that **need** valid creds should be made aware that none are available (ARC_AWS_CREDS = 'missing')
+     * - Others that **do not need** valid creds should work fine when supplied with dummy creds (or none at all, but we'll backfill dummy creds jic)
+     */
     function credentialCheck() {
       let creds = aws.config.credentials
       let noCreds = !creds || creds && !creds.accessKeyId
@@ -54,13 +59,14 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
         process.env.ARC_AWS_CREDS = 'missing'
       }
       else if (noCreds && !needsValidCreds) {
+        // Any creds will do (e.g. Sandbox DynamoDB)
         process.env.ARC_AWS_CREDS = 'dummy'
         aws.config.credentials = new aws.Credentials({
           accessKeyId: 'xxx',
           secretAccessKey: 'xxx'
         })
       }
-      // Always unset profile to prevent misleading claims about loaded creds
+      // If no creds, always unset profile to prevent misleading claims about profile state
       if (noCreds) {
         delete process.env.AWS_PROFILE
       }
