@@ -102,7 +102,7 @@ module.exports = function updater(name, params={quiet:false}) {
   function warn(warning) {
     if (running) cancel()
     if (warning instanceof Error) warning = warning.message
-    let info = `${chars.err} ${chalk.red('Warning:')} ${warning}`.trim()
+    let info = `${chars.err} ${chalk.yellow('Warning:')} ${warning}`.trim()
 
     if (!quiet) console.log(info)
     return info
