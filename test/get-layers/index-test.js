@@ -1,5 +1,5 @@
 let test = require('tape')
-let layers = require('../get-layers')
+let layers = require('../../get-layers')
 
 test('get-layers returns undefined if arc or arc.aws is falsy', t => {
   t.plan(1)

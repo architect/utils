@@ -21,8 +21,12 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
     process.env.AWS_REGION = region && region[1] ||
                              process.env.AWS_REGION
 
-    // Always ensure we end with cred a final credential check
-    if (hasCredsFile) {
+    /**
+     * Always ensure we end with cred a final credential check
+     */
+    // Allow local cred file to be overriden by env vars
+    let envOverride = process.env.ARC_AWS_CREDS === 'env'
+    if (hasCredsFile && !envOverride) {
       let profile = arc.aws.find(e=> e[0] === 'profile')
       process.env.ARC_AWS_CREDS = 'profile'
       process.env.AWS_PROFILE = profile && profile[1] ||

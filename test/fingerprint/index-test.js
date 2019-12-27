@@ -13,11 +13,11 @@ let readArcStub = sinon.stub().callsFake(() => {
   return mockArc
 })
 let shaStub = sinon.stub(sha, 'get').callsFake((file, callback) => callback(null, 'df330f3f12')) // Fake hash
-let fingerprint = proxyquire('../fingerprint', {
+let fingerprint = proxyquire('../../fingerprint', {
   'glob': globStub,
   '../read-arc': readArcStub
 })
-let fingerprintConfig = require('../fingerprint').config
+let fingerprintConfig = require('../../fingerprint').config
 
 let params = {
   fingerprint: true,

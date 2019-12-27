@@ -2,7 +2,15 @@
 
 ---
 
-## [1.4.0] 2019-12-23
+## [1.4.2] 2019-12-26
+
+### Added
+
+- Allow local cred file to be overriden by env vars by specifying `ARC_AWS_CREDS=env`
+
+---
+
+## [1.4.0 - 1.4.1] 2019-12-23
 
 ### Added
 
