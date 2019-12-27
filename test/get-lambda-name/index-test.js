@@ -1,5 +1,5 @@
 let test = require('tape')
-let name = require('../get-lambda-name')
+let name = require('../../get-lambda-name')
 
 test('get-lambda-name converts routes to acceptable names', t => {
   t.plan(6)

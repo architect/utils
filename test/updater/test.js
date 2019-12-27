@@ -1,6 +1,6 @@
-let updater = require('../updater')
-let lib = require('../updater/lib')
-let chars = require('../chars')
+let updater = require('../../updater')
+let lib = require('../../updater/lib')
+let chars = require('../../chars')
 let test = require('tape')
 
 /**

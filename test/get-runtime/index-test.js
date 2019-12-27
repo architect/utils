@@ -1,5 +1,5 @@
 let test = require('tape')
-let runtime = require('../get-runtime')
+let runtime = require('../../get-runtime')
 
 test('get-runtime returns default runtime if arc or arc.aws is falsy', t => {
   t.plan(1)

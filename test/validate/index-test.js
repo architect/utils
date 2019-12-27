@@ -1,8 +1,8 @@
 let test = require('tape')
-let validate = require('../validate')
+let validate = require('../../validate')
 let fs = require('fs')
 let path = require('path')
-let raw = fs.readFileSync(path.join(__dirname, 'mock', '.arc')).toString()
+let raw = fs.readFileSync(path.join(__dirname, '..', 'mock', '.arc')).toString()
 let parser = require('@architect/parser')
 let arc = parser(raw)
 

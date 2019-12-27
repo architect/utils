@@ -1,5 +1,5 @@
 let test = require('tape')
-let pathToUnix = require('../path-to-unix')
+let pathToUnix = require('../../path-to-unix')
 
 test('path-to-unix returns / seperated paths on Windows', t => {
   t.plan(1)
