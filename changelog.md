@@ -1,5 +1,11 @@
 # Architect Utils changelog
+---
 
+## [1.4.3] 2020-01-03
+
+### Fixed
+
+- Handle credentials in the canonical way while still allowing `profile` and `region` overrides in arc config.
 ---
 
 ## [1.4.2] 2019-12-26
