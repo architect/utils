@@ -25,7 +25,7 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
       process.env.AWS_REGION = region[1]
     }
     /**
-     * Always ensure we end with cred a final credential check
+     * Always ensure we end with a final sanity check on loaded credentials
      */
     // Allow local cred file to be overriden by env vars
     let envOverride = process.env.ARC_AWS_CREDS === 'env'
@@ -60,7 +60,7 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
     }
     else {
       let hasEnvVars = process.env.AWS_ACCESS_KEY_ID &&
-        process.env.AWS_SECRET_ACCESS_KEY
+                       process.env.AWS_SECRET_ACCESS_KEY
       if (hasEnvVars) {
         process.env.ARC_AWS_CREDS = 'env'
         let params = {

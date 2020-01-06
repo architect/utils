@@ -5,7 +5,8 @@
 
 ### Fixed
 
-- Handle credentials in the canonical way while still allowing `profile` and `region` overrides in arc config.
+- Handle credentials in the canonical way while still allowing `profile` and `region` overrides in arc config; thanks @defionscode!
+-
 ---
 
 ## [1.4.2] 2019-12-26
