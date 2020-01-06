@@ -1,6 +1,6 @@
 {
   "name": "@architect/utils",
-  "version": "1.4.3-RC.0",
+  "version": "1.4.3",
   "description": "Common utility functions",
   "main": "index.js",
   "repository": {
