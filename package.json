@@ -18,7 +18,7 @@
   "author": "Brian LeRoux <b@brian.io>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@architect/parser": "2.0.1",
+    "@architect/parser": "1.2.2",
     "@smallwins/validate": "^4.3.0",
     "chalk": "^3.0.0",
     "glob": "^7.1.6",
