@@ -3,12 +3,12 @@ let runtime = require('../../get-runtime')
 
 test('get-runtime returns default runtime if arc or arc.aws is falsy', t => {
   t.plan(1)
-  t.equals(runtime(), 'nodejs10.x', 'nodejs10.x returned for falsy arc')
+  t.equals(runtime(), 'nodejs12.x', 'nodejs12.x returned for falsy arc')
 })
 test('get-runtime returns default runtime for unsupported runtime', t => {
   t.plan(1)
   let arc = { aws: [['runtime', 'pascal']] }
-  t.deepEquals(runtime(arc), 'nodejs10.x', 'default runtime returned')
+  t.deepEquals(runtime(arc), 'nodejs12.x', 'default runtime returned')
 })
 test('get-runtime returns correct runtime for supported runtime', t => {
   t.plan(1)
