@@ -1,6 +1,14 @@
 # Architect Utils changelog
 ---
 
+## [On master]
+
+### Changed
+
+- Updated `getRuntime` default runtime to `nodejs12.x` (however, this code path is likely inactive)
+
+---
+
 ## [1.4.3 - 1.4.4] 2020-01-03
 
 ### Fixed
