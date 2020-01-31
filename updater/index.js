@@ -17,7 +17,8 @@ let {printer, spinner} = require('./lib')
  * Each method should also return a value to enable capture of progress data
  */
 module.exports = function updater(name, params={quiet:false}) {
-  let {quiet} = params
+  let {quiet=false} = params
+  quiet = process.env.ARC_QUIET || process.env.QUIET || quiet
   name = name ? chalk.grey(name) : 'Info'
   let isCI = process.env.CI || process.stdout.isTTY === false
   if (!quiet && !isCI) {

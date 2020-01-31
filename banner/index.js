@@ -12,10 +12,16 @@ module.exports = function printBanner(params={}) {
     version='–'
   } = params
 
+  let quiet = process.env.ARC_QUIET || process.env.QUIET
+
   if (disableBanner) return
   else {
     // Boilerplate
-    let log = (label, value) => console.log(chalk.grey(`${label.padStart(12)} ${chars.buzz}`), chalk.cyan(value))
+    let log = (label, value) => {
+      if (!quiet) {
+        console.log(chalk.grey(`${label.padStart(12)} ${chars.buzz}`), chalk.cyan(value))
+      }
+    }
 
     // Initialize config
     let arc = initArc()
@@ -40,6 +46,7 @@ module.exports = function printBanner(params={}) {
     }
 
     // Caller version
+    // Also: set deprecation status for legacy Arc installs
     log('Version', version)
     if (version.startsWith('Architect 5')) {
       process.env.DEPRECATED = true
@@ -49,6 +56,8 @@ module.exports = function printBanner(params={}) {
     log('cwd', process.cwd())
 
     // Space
-    console.log()
+    if (!quiet) {
+      console.log()
+    }
   }
 }
