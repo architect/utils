@@ -1,7 +1,12 @@
 # Architect Utils changelog
 ---
 
-## [On master]
+## [1.4.5] 2020-01-31
+
+### Added
+
+- Adds better support for quiet mode in `banner` + `updater` with `ARC_QUIET` and legacy `QUIET` env vars
+
 
 ### Changed
 
