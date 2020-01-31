@@ -36,11 +36,14 @@ module.exports = function getRuntime(arc) {
  * Check runtime validity
  */
 module.exports.allowed = function allowedRuntimes(runtime) {
+  let quiet = process.env.ARC_QUIET || process.env.QUIET
   if (allowed.includes(runtime)) {
     return runtime
   }
   else {
-    console.log(chalk.bold.yellow(`Warning:`), chalk.bold.white(`Invalid runtime specified, defaulting to ${defaultRuntime}`))
+    if (!quiet) {
+      console.log(chalk.bold.yellow(`Warning:`), chalk.bold.white(`Invalid runtime specified, defaulting to ${defaultRuntime}`))
+    }
     return defaultRuntime
   }
 }

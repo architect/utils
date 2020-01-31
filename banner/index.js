@@ -11,7 +11,6 @@ module.exports = function printBanner(params={}) {
     needsValidCreds,
     version='–'
   } = params
-
   let quiet = process.env.ARC_QUIET || process.env.QUIET
 
   if (disableBanner) return

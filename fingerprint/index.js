@@ -20,15 +20,15 @@ function normalizePath(path) {
 
 module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) {
   let {arc} = readArc()
-  let {static} = arc
+  let quiet = process.env.ARC_QUIET || process.env.QUIET
   let folderSetting = tuple => tuple[0] === 'folder'
-  let staticFolder = static && static.some(folderSetting) ? static.find(folderSetting)[1] : 'public'
+  let staticFolder = arc.static && arc.static.some(folderSetting) ? arc.static.find(folderSetting)[1] : 'public'
   let folder = normalizePath(path.join(process.cwd(), staticFolder))
 
   /**
    * Double check fingerprint status
    */
-  if (!fingerprint && static) {
+  if (!fingerprint && arc.static) {
     fingerprint = config(arc).fingerprint
     ignore = config(arc).ignore
     // If @static is defined, create `public/` if it doesn't exist
@@ -49,8 +49,10 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
       else {
         if (pathExists(path.join(folder, 'static.json'))) {
           let warn = chalk.yellow('Warning')
-          let msg = chalk.white(`Found ${folder + path.sep}static.json file with fingerprinting disabled, deleting file`)
-          console.log(`${warn} ${msg}`)
+          if (!quiet) {
+            let msg = chalk.white(`Found ${folder + path.sep}static.json file with fingerprinting disabled, deleting file`)
+            console.log(`${warn} ${msg}`)
+          }
           exec('rm static.json', {cwd: folder}, (err, stdout, stderr) => {
             if (err) callback(err)
             else {
@@ -129,8 +131,10 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
   ],
   function done(err) {
     if (err && err.message === 'no_files_found') {
-      let msg = chalk.gray('No static assets found to fingerprint from public' + path.sep)
-      console.log(msg)
+      if (!quiet) {
+        let msg = chalk.gray('No static assets found to fingerprint from public' + path.sep)
+        console.log(msg)
+      }
       callback()
     }
     if (err && err.message === 'cancel') {
