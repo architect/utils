@@ -7,6 +7,11 @@
 
 - Added support for `deno` in `getRuntime` method
 
+
+### Changed
+
+- Updated dependencies
+
 ---
 
 ## [1.4.5] 2020-01-31
