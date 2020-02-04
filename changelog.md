@@ -1,6 +1,14 @@
 # Architect Utils changelog
 ---
 
+## [1.4.6] 2020-02-04
+
+### Added
+
+- Added support for `deno` in `getRuntime` method
+
+---
+
 ## [1.4.5] 2020-01-31
 
 ### Added

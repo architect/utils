@@ -8,6 +8,7 @@ let chalk = require('chalk')
 let allowed = [
   `nodejs12.x`, // index 0 == default runtime
   `nodejs10.x`,
+  `deno`,
   `python3.8`,
   `python3.7`,
   `python3.6`,
