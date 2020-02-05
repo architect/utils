@@ -87,8 +87,14 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
         process.env.ARC_AWS_CREDS = 'missing'
       }
       else if (noCreds && !needsValidCreds) {
-        // Any creds will do (e.g. Sandbox DynamoDB)
+        /**
+         * Any creds will do! (e.g. Sandbox DynamoDB)
+         * - Be sure we backfill Lambda's prepopulated env vars
+         * - sessionToken / AWS_SESSION_TOKEN is optional, skip so as not to introduce unintended side-effects
+         */
         process.env.ARC_AWS_CREDS = 'dummy'
+        process.env.AWS_ACCESS_KEY_ID = 'xxx'
+        process.env.AWS_SECRET_ACCESS_KEY = 'xxx'
         aws.config.credentials = new aws.Credentials({
           accessKeyId: 'xxx',
           secretAccessKey: 'xxx'
