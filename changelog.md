@@ -1,6 +1,14 @@
 # Architect Utils changelog
 ---
 
+## [1.4.7] 2020-02-05
+
+### Fixed
+
+- Fixed AWS credential instantiation to ensure that `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` env vars are backfilled with dummy values in scenarios where valid credentials are not required
+
+---
+
 ## [1.4.6] 2020-02-04
 
 ### Added

@@ -138,7 +138,7 @@ test('Credentials supplied by env vars', t => {
 })
 
 test('Final credential check', async t => {
-  t.plan(7)
+  t.plan(9)
   process.env.HIDE_HOME = true
   let arc = {
     aws: [
@@ -156,6 +156,8 @@ test('Final credential check', async t => {
   process.env.AWS_SHARED_CREDENTIALS_FILE = await tmpFile('')
   initAWS({arc, needsValidCreds: false})
   t.equal(process.env.ARC_AWS_CREDS, 'dummy', `ARC_AWS_CREDS set to 'dummy'`)
+  t.equal(process.env.AWS_ACCESS_KEY_ID, 'xxx', `AWS_ACCESS_KEY_ID backfilled`)
+  t.equal(process.env.AWS_SECRET_ACCESS_KEY, 'xxx', `AWS_SECRET_ACCESS_KEY backfilled`)
   t.notOk(process.env.AWS_PROFILE, `AWS_PROFILE deleted`)
   t.equal(aws.config.credentials.accessKeyId, 'xxx', `AWS config.credentials.accessKeyId backfilled to 'xxx'`)
   t.equal(aws.config.credentials.secretAccessKey, 'xxx', `AWS config.credentials.secretAccessKey backfilled to 'xxx'`)
