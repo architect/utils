@@ -1,6 +1,6 @@
 let getLambdaName = require('../get-lambda-name')
 let path = require('path')
-let readArc = require('../read-arc')
+let {readArc} = require('@architect/parser')
 
 module.exports = function inventory(arc) {
 

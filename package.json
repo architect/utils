@@ -11,7 +11,6 @@
     "test": "npm run lint && npm run test:unit:updater && npm run test:unit",
     "test:unit": "tape test/*-test.js test/**/*-test.js | tap-spec",
     "test:unit:updater": "tape test/updater/test.js",
-    "test:version": "tape test/dep-ver-test.js | tap-spec",
     "coverage": "istanbul cover tape test/*-test.js",
     "lint": "npx eslint .",
     "rc": "npm version prerelease --preid RC"
@@ -45,7 +44,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-push": "npm run test:version"
+      "pre-push": "npm run lint"
     }
   }
 }

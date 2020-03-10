@@ -8,14 +8,16 @@ let test = require('tape')
 
 let globStub = sinon.stub().callsFake((path, options, callback) => callback(null, []))
 let arcObject = {}
-let readArcStub = sinon.stub().callsFake(() => {
-  let mockArc = {arc: arcObject}
-  return mockArc
-})
+let readArcStub = {
+  readArc: sinon.stub().callsFake(() => {
+    let mockArc = {arc: arcObject}
+    return mockArc
+  })
+}
 let shaStub = sinon.stub(sha, 'get').callsFake((file, callback) => callback(null, 'df330f3f12')) // Fake hash
 let fingerprint = proxyquire('../../fingerprint', {
   'glob': globStub,
-  '../read-arc': readArcStub
+  '@architect/parser': readArcStub
 })
 let fingerprintConfig = require('../../fingerprint').config
 
