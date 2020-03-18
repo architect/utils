@@ -1,7 +1,7 @@
-let initArc = require('./init-arc')
-let initAWS = require('./init-aws')
 let chalk = require('chalk')
 let chars = require('../chars')
+let initAWS = require('./init-aws')
+let {readArc} = require('@architect/parser')
 
 module.exports = function printBanner(params={}) {
   let {
@@ -23,7 +23,8 @@ module.exports = function printBanner(params={}) {
     }
 
     // Initialize config
-    let arc = initArc()
+    let {arc} = readArc()
+    process.env.ARC_APP_NAME = arc.app[0]
     initAWS({arc, needsValidCreds})
 
     // App name

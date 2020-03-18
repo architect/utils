@@ -51,7 +51,7 @@ jobs:
         url: ${{ secrets.SLACK_WEBHOOK }}
         commit: true
         token: ${{ secrets.GITHUB_TOKEN }}
-        
+
 
   # ----- Only git tag testing + package publishing beyond this point ----- #
 
@@ -74,7 +74,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - name: Install
-        run: npm ci
+        run: npm i
 
       # Publish to npm
       - name: Publish @RC to npm

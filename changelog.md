@@ -1,6 +1,14 @@
 # Architect Utils changelog
 ---
 
+## [1.5.0] 2020-03-10
+
+### Changed
+
+- Replaced `readArc` method with `@architect/parser.readArc`, returns a default Architect project if one is not found in the root of the working directory
+
+---
+
 ## [1.4.7] 2020-02-05
 
 ### Fixed
