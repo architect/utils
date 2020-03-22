@@ -1,4 +1,13 @@
 # Architect Utils changelog
+
+---
+
+## [1.5.1] 2020-03-22
+
+### Changed
+
+- Updated dependencies
+
 ---
 
 ## [1.5.0] 2020-03-10
