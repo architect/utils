@@ -19,7 +19,7 @@
   "dependencies": {
     "@architect/parser": "~2.1.1",
     "@smallwins/validate": "~4.3.0",
-    "chalk": "~3.0.0",
+    "chalk": "~4.0.0",
     "glob": "~7.1.6",
     "is-domain-name": "~1.0.1",
     "mkdirp": "~1.0.3",
