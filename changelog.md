@@ -2,6 +2,14 @@
 
 ---
 
+## [1.5.2] 2020-04-07
+
+### Fixed
+
+- Should now restore cursor more reliably when a user quits any workflow that's using `updater`
+
+---
+
 ## [1.5.1 - 1.5.2] 2020-03-22
 
 ### Changed

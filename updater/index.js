@@ -123,3 +123,10 @@ module.exports = function updater(name, params={quiet:false}) {
     warning: warn
   }
 }
+
+// For whatever reason signal-exit doesn't catch SIGINT, so do this
+process.on('SIGINT', () => {
+  printer.restoreCursor()
+  console.log('')
+  process.exit()
+})
