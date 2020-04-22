@@ -2,6 +2,14 @@
 
 ---
 
+## [1.5.3] 2020-04-22
+
+### Fixed
+
+- Inventory correctly reports custom websocket routes
+
+---
+
 ## [1.5.2] 2020-04-07
 
 ### Fixed

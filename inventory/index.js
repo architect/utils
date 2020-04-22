@@ -105,28 +105,19 @@ module.exports = function inventory(arc) {
     let wsName = name => process.env.DEPRECATED ? `ws-${name}` : name
     let dir = name => path.join('src', 'ws', wsName(name))
 
-    report.websocketapis = [
-      `${app}-ws-staging`,
-      `${app}-ws-production`,
-    ]
-    report.lambdas = report.lambdas.concat([
-      `${app}-staging-ws-default`,
-      `${app}-staging-ws-connect`,
-      `${app}-staging-ws-disconnect`,
-      `${app}-production-ws-default`,
-      `${app}-production-ws-connect`,
-      `${app}-production-ws-disconnect`,
-    ])
-    report.types.ws = [
-      wsName('default'),
-      wsName('connect'),
-      wsName('disconnect'),
-    ]
-    report.localPaths = report.localPaths.concat([
-      dir('default'),
-      dir('connect'),
-      dir('disconnect'),
-    ])
+    const infras = ['staging', 'production']
+    const routes = ['default', 'connect', 'disconnect'].concat(arc.ws)
+
+    report.types.ws = routes.map(wsName)
+
+    report.localPaths = report.localPaths.concat(routes.map(dir))
+
+    report.websocketapis = infras.map(infra => `${app}-ws-${infra}`)
+
+    infras.forEach(infra => {
+      const lambdas = routes.map(route => `${app}-${infra}-ws-${route}`)
+      report.lambdas = report.lambdas.concat(lambdas)
+    })
   }
 
   if (arc.events && arc.events.length > 0) {
