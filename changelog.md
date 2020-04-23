@@ -6,7 +6,7 @@
 
 ### Fixed
 
-- Inventory correctly reports custom websocket routes
+- Inventory correctly reports custom websocket routes, thanks @mawdesley!
 
 ---
 
