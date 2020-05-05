@@ -2,19 +2,27 @@
 
 ---
 
-## [1.5.3] 2020-04-22
+## [1.5.5] 2020-05-04
 
-### Fixed
+### Added
 
-- Inventory correctly reports custom websocket routes, thanks @mawdesley!
+- Adds `ruby2.7` support for Lambda, fixes #794
 
 ---
 
-## [1.5.2] 2020-04-07
+## [1.5.4] 2020-04-22
 
 ### Fixed
 
 - Should now restore cursor more reliably when a user quits any workflow that's using `updater`
+
+---
+
+## [1.5.3] 2020-04-07
+
+### Fixed
+
+- Inventory correctly reports custom websocket routes, thanks @mawdesley!
 
 ---
 
