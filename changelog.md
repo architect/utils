@@ -2,6 +2,15 @@
 
 ---
 
+## [1.5.6 - 1.5.7] 2020-05-17
+
+### Added
+
+- Adds `dotnetcore3.1` support for Lambda, fixes #794
+- Instead of the scary red x, `updater.warn` now uses a warning character
+
+---
+
 ## [1.5.5] 2020-05-04
 
 ### Added
