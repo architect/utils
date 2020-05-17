@@ -16,6 +16,10 @@ let done = notWin
   ? chalk.green.dim('✓')
   : chalk.green.dim('√')
 
+let warn = notWin
+  ? chalk.yellow('⚠️')
+  : chalk.yellow('!')
+
 let err = notWin
   ? chalk.red('×')
   : chalk.red('x')
@@ -24,5 +28,6 @@ module.exports = {
   buzz,
   start,
   done,
+  warn,
   err
 }
