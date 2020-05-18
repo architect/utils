@@ -15,7 +15,7 @@
     "rc": "npm version prerelease --preid RC"
   },
   "engines": {
-    "node" : ">=10"
+    "node": ">=10"
   },
   "author": "Brian LeRoux <b@brian.io>",
   "license": "Apache-2.0",
