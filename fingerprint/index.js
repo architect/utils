@@ -36,6 +36,8 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
       mkdir(folder)
     }
   }
+  // Allow apps and frameworks to handle their own fingerprinting
+  let externalFingerprint = fingerprint === 'external'
 
   let staticAssets = path.join(folder, '/**/*')
   let files
@@ -45,12 +47,12 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
      * Early exit if disabled, clean up if necessary
      */
     function bail(callback) {
-      if (fingerprint) callback()
+      if (fingerprint && !externalFingerprint) callback()
       else {
         if (pathExists(path.join(folder, 'static.json'))) {
           let warn = chalk.yellow('Warning')
           if (!quiet) {
-            let msg = chalk.white(`Found ${folder + path.sep}static.json file with fingerprinting disabled, deleting file`)
+            let msg = chalk.white(`Found ${folder + path.sep}static.json file with fingerprinting ${externalFingerprint ? 'set to external' : 'disabled'}, deleting file`)
             console.log(`${warn} ${msg}`)
           }
           exec('rm static.json', {cwd: folder}, (err, stdout, stderr) => {

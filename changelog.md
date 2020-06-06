@@ -2,6 +2,14 @@
 
 ---
 
+## [1.5.8] 2020-06-04
+
+### Added
+
+- Adds support for `@static fingerprint external`
+
+---
+
 ## [1.5.6 - 1.5.7] 2020-05-17
 
 ### Added

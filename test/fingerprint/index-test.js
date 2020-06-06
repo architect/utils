@@ -55,10 +55,10 @@ test('fingerprint respects folder setting', t=> {
     console.log(manifest)
 
     t.ok(shaStub.calledTwice, 'Correct number of files hashed')
-    t.equals(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
-    t.equals(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
-    t.equals(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
-    t.equals(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
+    t.equal(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
+    t.equal(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
+    t.equal(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
+    t.equal(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
     t.ok(fsStub.called, 'static.json manifest written')
 
     // Reset env for next test
@@ -91,11 +91,34 @@ test('fingerprint generates static.json manifest', t=> {
     console.log(manifest)
 
     t.ok(shaStub.calledTwice, 'Correct number of files hashed')
-    t.equals(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
-    t.equals(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
-    t.equals(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
-    t.equals(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
+    t.equal(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
+    t.equal(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
+    t.equal(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
+    t.equal(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
     t.ok(fsStub.called, 'static.json manifest written')
+
+    // Reset env for next test
+    fs.writeFile.restore()
+    shaStub.resetHistory()
+  })
+})
+
+test('fingerprint does does not generate static.json when set to external', t=> {
+  t.plan(3)
+  // Globbing
+  globStub.resetBehavior()
+  globStub.callsFake((filepath, options, callback) => callback(null, [
+    normalizePath(path.join(process.cwd(), 'public', 'index.html'))
+  ]))
+  // Static manifest
+  let fsStub = sinon.stub(fs, 'writeFile').callsFake((dest, data, callback) => {
+    callback()
+  })
+  fingerprint({ fingerprint: 'external' }, (err, result) => {
+    if (err) t.fail(err)
+    t.notOk(result, 'Did not pass back manifest')
+    t.ok(shaStub.notCalled, 'No files hashed')
+    t.ok(fsStub.notCalled, 'static.json manifest not written')
 
     // Reset env for next test
     fs.writeFile.restore()
@@ -126,8 +149,8 @@ test('fingerprint ignores specified static assets', t=> {
     console.log(manifest)
 
     t.ok(shaStub.calledOnce, 'Correct number of files hashed')
-    t.equals(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly')
-    t.equals(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly')
+    t.equal(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly')
+    t.equal(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly')
     t.ok(fsStub.called, 'static.json manifest written')
 
     // Reset env for next test
@@ -151,15 +174,17 @@ test('fingerprint cancels early if disabled', t=> {
 })
 
 test('fingerprint config subutil', t => {
-  t.plan(7)
+  t.plan(9)
+  // Defaults
   let arc1 = {}
   let result1 = fingerprintConfig(arc1)
-  t.equals(result1.fingerprint, false, 'Fingerprinting disabled')
-  t.equals(result1.ignore.length, 0, 'Ignore array empty')
+  t.equal(result1.fingerprint, false, 'Fingerprinting disabled')
+  t.equal(result1.ignore.length, 0, 'Ignore array empty')
 
-  let arc2 = {static:['fingerprint', 'yas']} // Invalid config
+  // Invalid config
+  let arc2 = {static:['fingerprint', 'yas']}
   let result2 = fingerprintConfig(arc2)
-  t.equals(result2.fingerprint, false, 'Fingerprinting still disabled')
+  t.equal(result2.fingerprint, false, 'Fingerprinting still disabled')
 
   /**
    * Emulates:
@@ -175,7 +200,15 @@ test('fingerprint config subutil', t => {
   ]}
   let result3 = fingerprintConfig(arc3)
   t.ok(result3.fingerprint, 'Fingerprinting enabled')
-  t.equals(result3.ignore.length, 2, 'Ignore array returned')
-  t.equals(result3.ignore[0], 'foo', 'Ignore array[0] matches')
-  t.equals(result3.ignore[1], 'bar', 'Ignore array[1] matches')
+  t.equal(result3.ignore.length, 2, 'Ignore array returned')
+  t.equal(result3.ignore[0], 'foo', 'Ignore array[0] matches')
+  t.equal(result3.ignore[1], 'bar', 'Ignore array[1] matches')
+
+  // fingerprint external
+  let arc4 = {static: [
+    ['fingerprint', 'external'],
+  ]}
+  let result4 = fingerprintConfig(arc4)
+  t.ok(result4.fingerprint, 'Fingerprinting enabled')
+  t.equal(result4.fingerprint, 'external', 'Fingerprint set to external')
 })
