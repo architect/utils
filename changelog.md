@@ -8,6 +8,11 @@
 
 - Adds support for `@static fingerprint external`
 
+
+### Fixed
+
+- Fixes `@static fingerprint ignore` with more recent versions of Architect Parser
+
 ---
 
 ## [1.5.6 - 1.5.7] 2020-05-17

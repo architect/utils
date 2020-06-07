@@ -1,4 +1,3 @@
-// let aws = require('aws-sdk')
 let fs = require('fs')
 let path = require('path')
 let proxyquire = require('proxyquire')
@@ -19,7 +18,6 @@ let fingerprint = proxyquire('../../fingerprint', {
   'glob': globStub,
   '@architect/parser': readArcStub
 })
-let fingerprintConfig = require('../../fingerprint').config
 
 let params = {
   fingerprint: true,
@@ -30,8 +28,14 @@ let params = {
 // so use this function when stubbing e.g. glob
 function normalizePath(path) { return path.replace(/\\/g, '/') }
 
+test('Module is present', t => {
+  t.plan(2)
+  t.ok(fingerprint, 'Fingerprint module is present')
+  t.ok(fingerprint.config, 'Fingerprint module exports config')
+})
+
 test('fingerprint respects folder setting', t=> {
-  // t.plan(6)
+  t.plan(6)
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake((filepath, options, callback) => callback(null, [
@@ -65,7 +69,6 @@ test('fingerprint respects folder setting', t=> {
     fs.writeFile.restore()
     shaStub.resetHistory()
     arcObject = {}
-    t.end()
   })
 })
 
@@ -171,44 +174,4 @@ test('fingerprint cancels early if disabled', t=> {
     // Reset env for next test
     shaStub.resetHistory()
   })
-})
-
-test('fingerprint config subutil', t => {
-  t.plan(9)
-  // Defaults
-  let arc1 = {}
-  let result1 = fingerprintConfig(arc1)
-  t.equal(result1.fingerprint, false, 'Fingerprinting disabled')
-  t.equal(result1.ignore.length, 0, 'Ignore array empty')
-
-  // Invalid config
-  let arc2 = {static:['fingerprint', 'yas']}
-  let result2 = fingerprintConfig(arc2)
-  t.equal(result2.fingerprint, false, 'Fingerprinting still disabled')
-
-  /**
-   * Emulates:
-   * @static
-   * fingerprint true
-   * ignore
-   *   foo
-   *   bar
-   */
-  let arc3 = {static: [
-    ['fingerprint', true],
-    {ignore: {foo:false, bar:false}}
-  ]}
-  let result3 = fingerprintConfig(arc3)
-  t.ok(result3.fingerprint, 'Fingerprinting enabled')
-  t.equal(result3.ignore.length, 2, 'Ignore array returned')
-  t.equal(result3.ignore[0], 'foo', 'Ignore array[0] matches')
-  t.equal(result3.ignore[1], 'bar', 'Ignore array[1] matches')
-
-  // fingerprint external
-  let arc4 = {static: [
-    ['fingerprint', 'external'],
-  ]}
-  let result4 = fingerprintConfig(arc4)
-  t.ok(result4.fingerprint, 'Fingerprinting enabled')
-  t.equal(result4.fingerprint, 'external', 'Fingerprint set to external')
 })
