@@ -2,6 +2,24 @@
 
 ---
 
+## [1.5.8] 2020-06-04
+
+### Added
+
+- Adds support for `@static fingerprint external`
+
+
+### Changed
+
+- Removed `mkdirp` in favor of Node.js >= 10.x `mkdir` recursive
+
+
+### Fixed
+
+- Fixes `@static fingerprint ignore` with more recent versions of Architect Parser
+
+---
+
 ## [1.5.6 - 1.5.7] 2020-05-17
 
 ### Added

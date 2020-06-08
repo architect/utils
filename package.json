@@ -1,6 +1,6 @@
 {
   "name": "@architect/utils",
-  "version": "1.5.7",
+  "version": "1.5.8-RC.3",
   "description": "Common utility functions",
   "main": "index.js",
   "repository": {
@@ -25,7 +25,6 @@
     "chalk": "~4.0.0",
     "glob": "~7.1.6",
     "is-domain-name": "~1.0.1",
-    "mkdirp": "~1.0.4",
     "path-sort": "~0.1.0",
     "restore-cursor": "~3.1.0",
     "run-parallel": "~1.1.9",
