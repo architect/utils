@@ -7,6 +7,12 @@
 ### Added
 
 - Adds support for `@static fingerprint external`
+- Adds fingerprinting support for `@static prefix`
+
+
+### Changed
+
+- Removed `mkdirp` in favor of Node.js >= 10.x `mkdir` recursive
 
 
 ### Fixed

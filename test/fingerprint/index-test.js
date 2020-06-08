@@ -4,6 +4,7 @@ let proxyquire = require('proxyquire')
 let sha = require('sha')
 let sinon = require('sinon')
 let test = require('tape')
+let normalizePath = require('../../path-to-unix')
 
 let globStub = sinon.stub().callsFake((path, options, callback) => callback(null, []))
 let arcObject = {}
@@ -23,10 +24,6 @@ let params = {
   fingerprint: true,
   ignore: [],
 }
-
-// glob returns paths always delimited with '/', which messes us up on windows
-// so use this function when stubbing e.g. glob
-function normalizePath(path) { return path.replace(/\\/g, '/') }
 
 test('Module is present', t => {
   t.plan(2)
@@ -63,6 +60,44 @@ test('fingerprint respects folder setting', t=> {
     t.equal(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
     t.equal(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
     t.equal(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
+    t.ok(fsStub.called, 'static.json manifest written')
+
+    // Reset env for next test
+    fs.writeFile.restore()
+    shaStub.resetHistory()
+    arcObject = {}
+  })
+})
+
+test('fingerprint respects prefix setting', t=> {
+  t.plan(6)
+  // Globbing
+  globStub.resetBehavior()
+  globStub.callsFake((filepath, options, callback) => callback(null, [
+    normalizePath(path.join(process.cwd(), 'public', 'index.html')),
+    normalizePath(path.join(process.cwd(), 'public', 'readme.md')), // this should get ignored
+    normalizePath(path.join(process.cwd(), 'public', 'css', 'styles.css')),
+  ]))
+  // Static manifest
+  let manifest
+  let fsStub = sinon.stub(fs, 'writeFile').callsFake((dest, data, callback) => {
+    manifest = data
+    callback()
+  })
+  arcObject = {
+    static: [['prefix', 'a-prefix']]
+  }
+  fingerprint(params, (err, result) => {
+    if (err) t.fail(err)
+    manifest = JSON.parse(manifest)
+    console.log('Generated manifest:')
+    console.log(manifest)
+
+    t.ok(shaStub.calledTwice, 'Correct number of files hashed')
+    t.equal(manifest['a-prefix/index.html'], 'a-prefix/index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
+    t.equal(result['a-prefix/index.html'], 'a-prefix/index-df330f3f12.html', 'Manifest data returned correctly for index.html')
+    t.equal(manifest['a-prefix/css/styles.css'], 'a-prefix/css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
+    t.equal(result['a-prefix/css/styles.css'], 'a-prefix/css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
     t.ok(fsStub.called, 'static.json manifest written')
 
     // Reset env for next test

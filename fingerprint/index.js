@@ -3,27 +3,22 @@ let config = require('./config')
 let exec = require('child_process').exec
 let fs = require('fs')
 let glob = require('glob')
-let mkdir = require('mkdirp').sync
 let path = require('path')
-let pathExists = fs.existsSync
-let {readArc} = require('@architect/parser')
+let { readArc } = require('@architect/parser')
 let series = require('run-series')
 let sha = require('sha')
 let sort = require('path-sort')
 let waterfall = require('run-waterfall')
+let normalizePath = require('../path-to-unix')
 
-function normalizePath(path) {
-  // process.cwd() and path.join uses '\\' as a path delimiter on Windows
-  // glob uses '/'
-  return path.replace(/\\/g, '/')
-}
-
-module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) {
-  let {arc} = readArc()
+module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback) {
+  let { arc } = readArc()
   let quiet = process.env.ARC_QUIET || process.env.QUIET
   let folderSetting = tuple => tuple[0] === 'folder'
   let staticFolder = arc.static && arc.static.some(folderSetting) ? arc.static.find(folderSetting)[1] : 'public'
   let folder = normalizePath(path.join(process.cwd(), staticFolder))
+  let prefixSetting = tuple => tuple[0] === 'prefix'
+  let prefix = arc.static  && arc.static.some(prefixSetting) && arc.static.find(prefixSetting)[1]
 
   /**
    * Double check fingerprint status
@@ -32,8 +27,8 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
     fingerprint = config(arc).fingerprint
     ignore = config(arc).ignore
     // If @static is defined, create `public/` if it doesn't exist
-    if (!pathExists(folder)) {
-      mkdir(folder)
+    if (!fs.existsSync(folder)) {
+      fs.mkdirSync(folder, { recursive: true })
     }
   }
   // Allow apps and frameworks to handle their own fingerprinting
@@ -49,7 +44,7 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
     function bail(callback) {
       if (fingerprint && !externalFingerprint) callback()
       else {
-        if (pathExists(path.join(folder, 'static.json'))) {
+        if (fs.existsSync(path.join(folder, 'static.json'))) {
           let warn = chalk.yellow('Warning')
           if (!quiet) {
             let msg = chalk.white(`Found ${folder + path.sep}static.json file with fingerprinting ${externalFingerprint ? 'set to external' : 'disabled'}, deleting file`)
@@ -111,10 +106,13 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
               hash = hash.substr(0,10)
               let extName = path.extname(file)
               let baseName = path.basename(file)
-              let hashedName = baseName.replace(extName, '') + `-${hash}${extName}`
+              let hashedName = baseName.replace(extName, `-${hash}${extName}`)
+              // Handle prefix and any nested dirs
               let dirName = path.dirname(file).replace(folder, '').substr(1)
-              let staticKey = `${dirName ? `${dirName}/` : ''}${baseName}`
-              let staticValue = `${dirName ? `${dirName}/` : ''}${hashedName}`
+              let prepend = `${prefix ? prefix + '/' : ''}${dirName ? dirName + '/': ''}`
+              // Final key + value
+              let staticKey = `${prepend ? prepend : ''}${baseName}`
+              let staticValue = `${prepend ? prepend : ''}${hashedName}`
               // Target shape: {'foo/bar.jpg': 'foo/bar-6bf1794b4c.jpg'}
               staticManifest[staticKey] = staticValue
               callback()
@@ -126,7 +124,9 @@ module.exports = function fingerprint({fingerprint=false, ignore=[]}, callback) 
         if (err) callback(err)
         else {
           // Write out folder/static.json
-          fs.writeFile(path.join(folder, 'static.json'), JSON.stringify(staticManifest, null, 2), callback)
+          let file = path.join(folder, 'static.json')
+          let data = JSON.stringify(staticManifest, null, 2)
+          fs.writeFile(file, data, callback)
         }
       })
     },
