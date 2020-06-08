@@ -104,7 +104,7 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
               hash = hash.substr(0,10)
               let extName = path.extname(file)
               let baseName = path.basename(file)
-              let hashedName = baseName.replace(extName, `-${hash}${extName}`)
+              let hashedName = baseName.replace(extName, '') + `-${hash}${extName}`
               // Handle any nested dirs
               let dirName = path.dirname(file).replace(folder, '').substr(1)
               let dir = `${dirName ? dirName + '/': ''}`
