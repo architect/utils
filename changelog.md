@@ -7,7 +7,6 @@
 ### Added
 
 - Adds support for `@static fingerprint external`
-- Adds fingerprinting support for `@static prefix`
 
 
 ### Changed

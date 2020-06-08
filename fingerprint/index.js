@@ -17,8 +17,6 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
   let folderSetting = tuple => tuple[0] === 'folder'
   let staticFolder = arc.static && arc.static.some(folderSetting) ? arc.static.find(folderSetting)[1] : 'public'
   let folder = normalizePath(path.join(process.cwd(), staticFolder))
-  let prefixSetting = tuple => tuple[0] === 'prefix'
-  let prefix = arc.static  && arc.static.some(prefixSetting) && arc.static.find(prefixSetting)[1]
 
   /**
    * Double check fingerprint status
@@ -107,12 +105,12 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
               let extName = path.extname(file)
               let baseName = path.basename(file)
               let hashedName = baseName.replace(extName, `-${hash}${extName}`)
-              // Handle prefix and any nested dirs
+              // Handle any nested dirs
               let dirName = path.dirname(file).replace(folder, '').substr(1)
-              let prepend = `${prefix ? prefix + '/' : ''}${dirName ? dirName + '/': ''}`
+              let dir = `${dirName ? dirName + '/': ''}`
               // Final key + value
-              let staticKey = `${prepend ? prepend : ''}${baseName}`
-              let staticValue = `${prepend ? prepend : ''}${hashedName}`
+              let staticKey = `${dir ? dir : ''}${baseName}`
+              let staticValue = `${dir ? dir : ''}${hashedName}`
               // Target shape: {'foo/bar.jpg': 'foo/bar-6bf1794b4c.jpg'}
               staticManifest[staticKey] = staticValue
               callback()

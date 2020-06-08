@@ -69,7 +69,8 @@ test('fingerprint respects folder setting', t=> {
   })
 })
 
-test('fingerprint respects prefix setting', t=> {
+test('fingerprint respects prefix setting (by doing nothing)', t=> {
+  // This test effectively does nothing, but it's here to ensure the presence of prefix does not influence how the static manifest is generated
   t.plan(6)
   // Globbing
   globStub.resetBehavior()
@@ -94,10 +95,10 @@ test('fingerprint respects prefix setting', t=> {
     console.log(manifest)
 
     t.ok(shaStub.calledTwice, 'Correct number of files hashed')
-    t.equal(manifest['a-prefix/index.html'], 'a-prefix/index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
-    t.equal(result['a-prefix/index.html'], 'a-prefix/index-df330f3f12.html', 'Manifest data returned correctly for index.html')
-    t.equal(manifest['a-prefix/css/styles.css'], 'a-prefix/css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
-    t.equal(result['a-prefix/css/styles.css'], 'a-prefix/css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
+    t.equal(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
+    t.equal(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
+    t.equal(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
+    t.equal(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
     t.ok(fsStub.called, 'static.json manifest written')
 
     // Reset env for next test
