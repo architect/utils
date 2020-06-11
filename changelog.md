@@ -2,6 +2,14 @@
 
 ---
 
+## [1.5.9] 2020-06-10
+
+### Fixed
+
+- Fix exit condition of fingerprinter when no files are found
+
+---
+
 ## [1.5.8] 2020-06-04
 
 ### Added

@@ -137,7 +137,7 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
       }
       callback()
     }
-    if (err && err.message === 'cancel') {
+    else if (err && err.message === 'cancel') {
       callback()
     }
     else if (err) {
