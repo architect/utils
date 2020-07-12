@@ -2,6 +2,15 @@
 
 ---
 
+## [1.5.10] 2020-07-12
+
+### Added
+
+- Experimental: added various function name helper methods to `inventory`
+- Added reasonably comprehensive test suite to `inventory` (finally)
+
+---
+
 ## [1.5.9] 2020-06-10
 
 ### Fixed
