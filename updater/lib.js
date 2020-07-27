@@ -14,7 +14,7 @@ let printer = {
   },
   // Write to console, add single extra line to buffer while running
   restoreCursor: () => restore(),
-  write: t => out.write(t + '\n' + '\033[1A')
+  write: t => out.write(t + '\033[1A' + '\n')
 }
 printer.hideCursor = () => printer.write('\u001B[?25l')
 
