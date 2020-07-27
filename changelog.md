@@ -2,6 +2,14 @@
 
 ---
 
+## [1.5.10] 2020-07-26
+
+### Fixed
+
+- Fixed issue where `updater` might occasionally interfere with certain test reporter outputs
+
+---
+
 ## [1.5.9] 2020-06-10
 
 ### Fixed
