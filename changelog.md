@@ -2,6 +2,14 @@
 
 ---
 
+## [1.5.11] 2020-08-06
+
+### Fixed
+
+- Fixed issue where `updater` might not get the latest state of `ARC_QUIET` during a long-lived process
+
+---
+
 ## [1.5.10] 2020-07-26
 
 ### Fixed
