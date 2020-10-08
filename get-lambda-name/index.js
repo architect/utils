@@ -23,4 +23,5 @@ module.exports = function getLambdaName(fn) {
         .replace(/_/g,  '_')
         .replace(/\//g, '-')
         .replace(/:/g,  '000')
+        .replace(/\*/,  'catchall')
 }

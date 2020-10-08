@@ -2,6 +2,14 @@
 
 ---
 
+## [1.5.12] 2020-09-30
+
+### Added
+
+- Add `@http` `*` catchall syntax support to `getLambdaName`
+
+---
+
 ## [1.5.11] 2020-08-06
 
 ### Fixed
