@@ -1,9 +1,10 @@
 let chalk = require('chalk')
 let config = require('./config')
-let exec = require('child_process').exec
-let fs = require('fs')
+let { exec } = require('child_process')
+let { existsSync, mkdirSync } = require('fs')
+let fs = require('fs') // Broken out for testing writeFile calls
 let glob = require('glob')
-let path = require('path')
+let { basename, dirname, extname, join, sep } = require('path')
 let { readArc } = require('@architect/parser')
 let series = require('run-series')
 let sha = require('sha')
@@ -11,12 +12,16 @@ let sort = require('path-sort')
 let waterfall = require('run-waterfall')
 let normalizePath = require('../path-to-unix')
 
+/**
+ * Static asset fingerprinter
+ * - Note: everything uses and assumes *nix-styile file paths, even when running on Windows
+ */
 module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback) {
   let { arc } = readArc()
   let quiet = process.env.ARC_QUIET || process.env.QUIET
   let folderSetting = tuple => tuple[0] === 'folder'
   let staticFolder = arc.static && arc.static.some(folderSetting) ? arc.static.find(folderSetting)[1] : 'public'
-  let folder = normalizePath(path.join(process.cwd(), staticFolder))
+  let folder = normalizePath(join(process.cwd(), staticFolder))
 
   /**
    * Double check fingerprint status
@@ -25,14 +30,14 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
     fingerprint = config(arc).fingerprint
     ignore = config(arc).ignore
     // If @static is defined, create `public/` if it doesn't exist
-    if (!fs.existsSync(folder)) {
-      fs.mkdirSync(folder, { recursive: true })
+    if (!existsSync(folder)) {
+      mkdirSync(folder, { recursive: true })
     }
   }
   // Allow apps and frameworks to handle their own fingerprinting
   let externalFingerprint = fingerprint === 'external'
 
-  let staticAssets = path.join(folder, '/**/*')
+  let staticAssets = folder + '/**/*'
   let files
   let staticManifest = {}
   waterfall([
@@ -42,10 +47,10 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
     function bail(callback) {
       if (fingerprint && !externalFingerprint) callback()
       else {
-        if (fs.existsSync(path.join(folder, 'static.json'))) {
+        if (existsSync(join(folder, 'static.json'))) {
           let warn = chalk.yellow('Warning')
           if (!quiet) {
-            let msg = chalk.white(`Found ${folder + path.sep}static.json file with fingerprinting ${externalFingerprint ? 'set to external' : 'disabled'}, deleting file`)
+            let msg = chalk.white(`Found ${folder + sep}static.json file with fingerprinting ${externalFingerprint ? 'set to external' : 'disabled'}, deleting file`)
             console.log(`${warn} ${msg}`)
           }
           exec('rm static.json', {cwd: folder}, (err, stdout, stderr) => {
@@ -102,15 +107,15 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
             if (err) callback(err)
             else {
               hash = hash.substr(0,10)
-              let extName = path.extname(file)
-              let baseName = path.basename(file)
-              let hashedName = baseName.replace(extName, '') + `-${hash}${extName}`
+              let ext = extname(file)
+              let base = basename(file)
+              let hashed = base.replace(ext, '') + `-${hash}${ext}`
               // Handle any nested dirs
-              let dirName = path.dirname(file).replace(folder, '').substr(1)
-              let dir = `${dirName ? dirName + '/': ''}`
+              let dir = dirname(file).replace(folder, '').substr(1)
+              dir = `${dir ? dir + '/': ''}`
               // Final key + value
-              let staticKey = `${dir ? dir : ''}${baseName}`
-              let staticValue = `${dir ? dir : ''}${hashedName}`
+              let staticKey = `${dir ? dir : ''}${base}`
+              let staticValue = `${dir ? dir : ''}${hashed}`
               // Target shape: {'foo/bar.jpg': 'foo/bar-6bf1794b4c.jpg'}
               staticManifest[staticKey] = staticValue
               callback()
@@ -122,7 +127,7 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
         if (err) callback(err)
         else {
           // Write out folder/static.json
-          let file = path.join(folder, 'static.json')
+          let file = join(folder, 'static.json')
           let data = JSON.stringify(staticManifest, null, 2)
           fs.writeFile(file, data, callback)
         }
@@ -132,7 +137,7 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
   function done(err) {
     if (err && err.message === 'no_files_found') {
       if (!quiet) {
-        let msg = chalk.gray('No static assets found to fingerprint from public' + path.sep)
+        let msg = chalk.gray('No static assets found to fingerprint from public' + sep)
         console.log(msg)
       }
       callback()
