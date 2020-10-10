@@ -18,16 +18,16 @@ let Err = require('../_error-factory')
  * - lowercase alphanumeric plus hyphens (no underscores; for symmetry with other lambda names)
  *
  */
-module.exports = function events(arc, raw) {
+module.exports = function events (arc, raw) {
   var errors = []
   if (arc.events) {
-    var isNotString = v=> typeof v != 'string'
+    var isNotString = v => typeof v != 'string'
     var typesOk = Array.isArray(arc.events) && arc.events.filter(isNotString).length === 0
     if (!typesOk) {
       errors.push(Error(`@event invalid`))
     }
     else {
-      arc.events.forEach(event=> {
+      arc.events.forEach(event => {
         if (event.length > 50) {
           errors.push(Err({
             message: `@events ${event} > 50 characters`,
@@ -52,7 +52,7 @@ module.exports = function events(arc, raw) {
   return errors
 }
 
-function findLineNumber(search, raw) {
+function findLineNumber (search, raw) {
   var lines = raw.split('\n')
   for (var i = 0; i <= lines.length; i++) {
     if (lines[i] && lines[i].startsWith(search)) {

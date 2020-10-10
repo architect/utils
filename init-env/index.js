@@ -9,7 +9,7 @@ let updater = require('../updater')
  * if NODE_ENV=staging the process.env is populated by @staging (etc)
  * if ARC_LOCAL is present process.env is populated by @testing (so you can access remote dynamo locally)
  */
-module.exports = function populateEnv(callback) {
+module.exports = function populateEnv (callback) {
   let exists = fs.existsSync
   let join = path.join
   let envPath = join(process.cwd(), '.arc-env')
@@ -21,7 +21,7 @@ module.exports = function populateEnv(callback) {
       let actual = process.env.ARC_LOCAL
         ? 'testing'
         : process.env.NODE_ENV
-      env[actual].forEach(tuple=> {
+      env[actual].forEach(tuple => {
         process.env[tuple[0]] = tuple[1]
       })
       let local = 'Populating process.env with .arc-env @testing (ARC_LOCAL override)'
@@ -29,7 +29,7 @@ module.exports = function populateEnv(callback) {
       let msg = process.env.ARC_LOCAL ? local : not
       update.done(msg)
     }
-    catch(e) {
+    catch (e) {
       update.err('.arc-env parse error')
       console.log(chalk.dim(e.stack))
       process.exit(1)

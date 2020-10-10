@@ -1,6 +1,6 @@
 let exists = require('fs').existsSync
 let homeDir = require('os').homedir()
-let {join} = require('path')
+let { join } = require('path')
 let updater = require('../updater')
 
 /**
@@ -9,7 +9,7 @@ let updater = require('../updater')
  * - Environment variables
  * - Dummy creds (if absolutely necessary)
  */
-module.exports = function initAWS ({arc, needsValidCreds=true}) {
+module.exports = function initAWS ({ arc, needsValidCreds = true }) {
   // AWS SDK intentionally not added to package deps; assume caller already has it
   // eslint-disable-next-line
   let aws = require('aws-sdk')
@@ -20,7 +20,7 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
     let credsPath = envCredsPath || defaultCredsPath
     let credsExists = exists(envCredsPath) || exists(defaultCredsPath)
     arc.aws = arc.aws || []
-    let region = arc.aws.find(e=> e[0] === 'region')
+    let region = arc.aws.find(e => e[0] === 'region')
     if (region && region[1]) {
       process.env.AWS_REGION = region[1]
     }
@@ -54,7 +54,8 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
           ...opts,
           profile: process.env.AWS_PROFILE
         })
-      } else {
+      }
+      else {
         delete process.env.AWS_PROFILE
       }
     }
@@ -79,7 +80,7 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
      * - Packages that **need** valid creds should be made aware that none are available (ARC_AWS_CREDS = 'missing')
      * - Others that **do not need** valid creds should work fine when supplied with dummy creds (or none at all, but we'll backfill dummy creds jic)
      */
-    function credentialCheck() {
+    function credentialCheck () {
       let creds = aws.config.credentials
       let noCreds = !creds || process.env.ARC_AWS_CREDS == 'missing'
       if (noCreds && needsValidCreds) {
@@ -106,7 +107,7 @@ module.exports = function initAWS ({arc, needsValidCreds=true}) {
       }
     }
   }
-  catch(e) {
+  catch (e) {
     // Don't exit process here; caller should be responsible
     let update = updater('Startup')
     update.err(e)

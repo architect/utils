@@ -1,6 +1,6 @@
 let chalk = require('chalk')
 let chars = require('../chars')
-let {printer, spinner} = require('./lib')
+let { printer, spinner } = require('./lib')
 
 /**
  * Updater
@@ -16,7 +16,7 @@ let {printer, spinner} = require('./lib')
  *
  * Each method should also return a value to enable capture of progress data
  */
-module.exports = function updater(name, params={}) {
+module.exports = function updater (name, params = {}) {
   params.quiet = params.quiet || false
   let quiet = () => process.env.ARC_QUIET || process.env.QUIET || params.quiet
   name = name ? chalk.grey(name) : 'Info'
@@ -26,13 +26,13 @@ module.exports = function updater(name, params={}) {
     printer.restoreCursor() // Restore cursor on exit
   }
   let running = false
-  let {frames, timing} = spinner
+  let { frames, timing } = spinner
 
-  function progressIndicator(info) {
+  function progressIndicator (info) {
     // End-user progress mode
     if (!running && !isCI && !quiet()) {
       let i = 0
-      running = setInterval(function() {
+      running = setInterval(function () {
         printer.write(`${chalk.cyan(frames[i = ++i % frames.length])} ${info}`)
         printer.reset()
       }, timing)
@@ -44,7 +44,7 @@ module.exports = function updater(name, params={}) {
   }
 
   // Optionally pass a message and/or post a multi-line supporting status update
-  function status(msg, ...more) {
+  function status (msg, ...more) {
     msg = msg ? chalk.cyan(msg) : ''
     let info = msg ? `${chars.start} ${name} ${msg}`.trim() : ''
     if (running) cancel()
@@ -60,7 +60,7 @@ module.exports = function updater(name, params={}) {
     return info
   }
 
-  function start(msg) {
+  function start (msg) {
     msg = msg ? chalk.cyan(msg) : ''
     let info = `${name} ${msg}`.trim()
     if (running) cancel()
@@ -68,7 +68,7 @@ module.exports = function updater(name, params={}) {
     return `${chars.start} ${info}`
   }
 
-  function done(newName, msg) {
+  function done (newName, msg) {
     if (!msg) {
       msg = newName
       newName = ''
@@ -82,7 +82,7 @@ module.exports = function updater(name, params={}) {
     return info
   }
 
-  function cancel() {
+  function cancel () {
     if (running) {
       clearInterval(running)
       printer.reset()
@@ -91,7 +91,7 @@ module.exports = function updater(name, params={}) {
     }
   }
 
-  function err(error) {
+  function err (error) {
     if (running) cancel()
     if (error instanceof Error) error = error.message
     let info = `${chars.err} ${chalk.red('Error:')} ${error}`.trim()
@@ -100,7 +100,7 @@ module.exports = function updater(name, params={}) {
     return info
   }
 
-  function warn(warning) {
+  function warn (warning) {
     if (running) cancel()
     if (warning instanceof Error) warning = warning.message
     let info = `${chars.warn} ${chalk.yellow('Warning:')} ${warning}`.trim()

@@ -8,7 +8,7 @@ let assert = require('@smallwins/validate/assert')
  * - message
  * - detail
  */
-module.exports = function errorFactory(params) {
+module.exports = function errorFactory (params) {
   assert(params, {
     linenumber: Number,
     raw: String,

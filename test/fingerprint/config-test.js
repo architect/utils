@@ -25,15 +25,15 @@ test('Invalid config', t => {
 
 test('Fingerprint is configured', t => {
   t.plan(3)
-  let arc = {static: [
-    ['fingerprint', true],
-  ]}
+  let arc = { static: [
+    [ 'fingerprint', true ],
+  ] }
   let result = fingerprintConfig(arc)
   t.ok(result.fingerprint, 'Fingerprinting is enabled')
 
-  arc = {static: [
-    ['fingerprint', 'external'],
-  ]}
+  arc = { static: [
+    [ 'fingerprint', 'external' ],
+  ] }
   result = fingerprintConfig(arc)
   t.ok(result.fingerprint, 'Fingerprinting is enabled')
   t.equal(result.fingerprint, 'external', 'Fingerprint set to external')
@@ -48,9 +48,9 @@ test('Fingerprint is configured', t => {
  */
 test('Ignore is configured', t => {
   t.plan(3)
-  let arc = {static: [
+  let arc = { static: [
     { ignore: [ 'foo', 'bar' ] }
-  ]}
+  ] }
   let result = fingerprintConfig(arc)
   t.equal(result.ignore.length, 2, 'Ignore array returned')
   t.equal(result.ignore[0], 'foo', `Ignore item is correct: ${result.ignore[0]}`)
@@ -60,9 +60,9 @@ test('Ignore is configured', t => {
 test('Ignore is configured (deprecated mode)', t => {
   t.plan(3)
   process.env.DEPRECATED = 'true'
-  let arc = {static: [
+  let arc = { static: [
     { ignore: { foo: false, bar: false } }
-  ]}
+  ] }
   let result = fingerprintConfig(arc)
   t.equal(result.ignore.length, 2, 'Ignore array returned (deprecated)')
   t.equal(result.ignore[0], 'foo', `Ignore item is correct (deprecated): ${result.ignore[0]}`)

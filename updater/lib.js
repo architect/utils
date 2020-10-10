@@ -27,7 +27,7 @@ let frames = isWin
 let timing = isWin
   ? 125
   : 100
-let spinner = {frames, timing}
+let spinner = { frames, timing }
 
 module.exports = {
   printer,

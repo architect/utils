@@ -11,7 +11,7 @@ let getLayers = require('../../get-layers')
  * - assert @aws layer is a valid layer
  * - assert @aws runtime is a valid runtime
  */
-module.exports = function app(arc, raw) {
+module.exports = function app (arc, raw) {
   var errors = []
 
   if (!arc.aws) return errors
@@ -61,7 +61,7 @@ module.exports = function app(arc, raw) {
   return errors
 }
 
-function findLineNumber(search, raw) {
+function findLineNumber (search, raw) {
   var lines = raw.split('\n')
   for (var i = 0; i <= lines.length; i++) {
     if (lines[i] && lines[i].includes(search)) {

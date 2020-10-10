@@ -10,7 +10,7 @@ let globStub = sinon.stub().callsFake((path, options, callback) => callback(null
 let arcObject = {}
 let readArcStub = {
   readArc: sinon.stub().callsFake(() => {
-    let mockArc = {arc: arcObject}
+    let mockArc = { arc: arcObject }
     return mockArc
   })
 }
@@ -31,7 +31,7 @@ test('Module is present', t => {
   t.ok(fingerprint.config, 'Fingerprint module exports config')
 })
 
-test('fingerprint respects folder setting', t=> {
+test('fingerprint respects folder setting', t => {
   t.plan(6)
   // Globbing
   globStub.resetBehavior()
@@ -47,7 +47,7 @@ test('fingerprint respects folder setting', t=> {
     callback()
   })
   arcObject = {
-    static: [['folder', 'foo']]
+    static: [ [ 'folder', 'foo' ] ]
   }
   fingerprint(params, (err, result) => {
     if (err) t.fail(err)
@@ -69,7 +69,7 @@ test('fingerprint respects folder setting', t=> {
   })
 })
 
-test('fingerprint respects prefix setting (by doing nothing)', t=> {
+test('fingerprint respects prefix setting (by doing nothing)', t => {
   // This test effectively does nothing, but it's here to ensure the presence of prefix does not influence how the static manifest is generated
   t.plan(6)
   // Globbing
@@ -86,7 +86,7 @@ test('fingerprint respects prefix setting (by doing nothing)', t=> {
     callback()
   })
   arcObject = {
-    static: [['prefix', 'a-prefix']]
+    static: [ [ 'prefix', 'a-prefix' ] ]
   }
   fingerprint(params, (err, result) => {
     if (err) t.fail(err)
@@ -108,7 +108,7 @@ test('fingerprint respects prefix setting (by doing nothing)', t=> {
   })
 })
 
-test('fingerprint generates static.json manifest', t=> {
+test('fingerprint generates static.json manifest', t => {
   t.plan(6)
   // Globbing
   globStub.resetBehavior()
@@ -142,7 +142,7 @@ test('fingerprint generates static.json manifest', t=> {
   })
 })
 
-test('fingerprint does does not generate static.json when set to external', t=> {
+test('fingerprint does does not generate static.json when set to external', t => {
   t.plan(3)
   // Globbing
   globStub.resetBehavior()
@@ -165,7 +165,7 @@ test('fingerprint does does not generate static.json when set to external', t=> 
   })
 })
 
-test('fingerprint ignores specified static assets', t=> {
+test('fingerprint ignores specified static assets', t => {
   t.plan(4)
   params.ignore.push('styles.css')
   // Globbing
@@ -198,7 +198,7 @@ test('fingerprint ignores specified static assets', t=> {
   })
 })
 
-test('fingerprint cancels early if disabled', t=> {
+test('fingerprint cancels early if disabled', t => {
   t.plan(2)
   params.fingerprint = false
   fingerprint(params, (err, result) => {

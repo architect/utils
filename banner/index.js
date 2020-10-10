@@ -1,15 +1,15 @@
 let chalk = require('chalk')
 let chars = require('../chars')
 let initAWS = require('./init-aws')
-let {readArc} = require('@architect/parser')
+let { readArc } = require('@architect/parser')
 
-module.exports = function printBanner(params={}) {
+module.exports = function printBanner (params = {}) {
   let {
     disableBanner,
     disableRegion,
     disableProfile,
     needsValidCreds,
-    version='–'
+    version = '–'
   } = params
   let quiet = process.env.ARC_QUIET || process.env.QUIET
 
@@ -23,9 +23,9 @@ module.exports = function printBanner(params={}) {
     }
 
     // Initialize config
-    let {arc} = readArc()
+    let { arc } = readArc()
     process.env.ARC_APP_NAME = arc.app[0]
-    initAWS({arc, needsValidCreds})
+    initAWS({ arc, needsValidCreds })
 
     // App name
     let name = process.env.ARC_APP_NAME || 'Architect project manifest not found'

@@ -1,7 +1,7 @@
 /**
  * convert .arc typical dash-case-stuff into PascalCaseStuff
  */
-module.exports = function toLogicalID(str) {
+module.exports = function toLogicalID (str) {
   str = str.replace(/([A-Z])/g, ' $1')
   if (str.length === 1)
     return str.toUpperCase()

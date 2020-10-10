@@ -2,11 +2,11 @@ let regexp = require('../_regexp')
 let Err = require('../_error-factory')
 
 // must consult charts
-module.exports = function scheduled(arc, raw) {
+module.exports = function scheduled (arc, raw) {
   var errors = []
   if (arc.scheduled) {
     // TODO validate all scheduled expression names are unique
-    arc.scheduled.forEach(expression=> {
+    arc.scheduled.forEach(expression => {
       if (Array.isArray(expression)) {
         var copy = expression.slice(0)
         var copy2 = expression.slice(0)
@@ -65,15 +65,15 @@ module.exports = function scheduled(arc, raw) {
           }
           var validExpression = regexp.rateExp.test(guts)
           if (!validExpression) {
-            //var msg = `@scheduled rate expression: ${guts} is invalid. See: ${url}`
-            //errors.push(Error(msg))
-              errors.push(Err({
-                message: `@scheduled expression invalid`,
-                linenumber: findLineNumber(copy.join(' '), raw),
-                raw,
-                arc,
-                detail: `Scheduled function reference: ${url}`,
-              }))
+            // var msg = `@scheduled rate expression: ${guts} is invalid. See: ${url}`
+            // errors.push(Error(msg))
+            errors.push(Err({
+              message: `@scheduled expression invalid`,
+              linenumber: findLineNumber(copy.join(' '), raw),
+              raw,
+              arc,
+              detail: `Scheduled function reference: ${url}`,
+            }))
           }
         }
         if (isCron) {
@@ -106,7 +106,7 @@ module.exports = function scheduled(arc, raw) {
   return errors
 }
 
-function findLineNumber(search, raw) {
+function findLineNumber (search, raw) {
   var lines = raw.split('\n')
   for (var i = 0; i <= lines.length; i++) {
     if (lines[i] && lines[i].startsWith(search)) {

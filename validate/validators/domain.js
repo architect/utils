@@ -7,7 +7,7 @@ let Err = require('../_error-factory')
  *
  * - uses is-domain-name
  */
-module.exports = function domain(arc, raw) {
+module.exports = function domain (arc, raw) {
   var errors = []
   if (arc.domain && !isDomain(arc.domain[0])) {
     errors.push(Err({
@@ -21,7 +21,7 @@ module.exports = function domain(arc, raw) {
   return errors
 }
 
-function findLineNumber(search, raw) {
+function findLineNumber (search, raw) {
   var lines = raw.split('\n')
   for (var i = 0; i <= lines.length; i++) {
     if (lines[i] && lines[i].startsWith(search)) {
