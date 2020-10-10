@@ -2,6 +2,14 @@
 
 ---
 
+## [1.5.13] 2020-10-10
+
+### Fixed
+
+- Updated `fingerprint` glob path to be *nix normalized
+
+---
+
 ## [1.5.12] 2020-09-30
 
 ### Added
