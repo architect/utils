@@ -1,12 +1,12 @@
 let regexp = require('../_regexp')
 let Err = require('../_error-factory')
 
-module.exports = function tables(arc, raw) {
+module.exports = function tables (arc, raw) {
   // optimism
   var errors = []
   // loop thru the .arc tables
   if (arc.tables) {
-    arc.tables.forEach(table=> {
+    arc.tables.forEach(table => {
 
       // grabs the current tables name
       var tablename = Object.keys(table)[0]
@@ -50,7 +50,7 @@ module.exports = function tables(arc, raw) {
   return errors
 }
 
-function findLineNumber(search, raw) {
+function findLineNumber (search, raw) {
   var lines = raw.split('\n')
   for (var i = 0; i <= lines.length; i++) {
     if (lines[i] && lines[i].startsWith(search)) {
@@ -62,9 +62,9 @@ function findLineNumber(search, raw) {
 
 // tables must have one partition key of either *String or *Number
 // expects {someKey:'*String', someOtherKey:'**String', insert: 'Lambda'}
-function checkPartition(obj) {
+function checkPartition (obj) {
   var count = 0
-  Object.keys(obj).forEach(key=> {
+  Object.keys(obj).forEach(key => {
     if (obj[key] === '*String') count += 1
     if (obj[key] === '*Number') count += 1
   })
@@ -72,9 +72,9 @@ function checkPartition(obj) {
 }
 
 // tables can only have one sort key of either **String or **Number
-function checkSort(obj) {
+function checkSort (obj) {
   var count = 0
-  Object.keys(obj).forEach(key=> {
+  Object.keys(obj).forEach(key => {
     if (obj[key] === '**String') count += 1
     if (obj[key] === '**Number') count += 1
   })

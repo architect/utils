@@ -16,7 +16,7 @@ let normalizePath = require('../path-to-unix')
  * Static asset fingerprinter
  * - Note: everything uses and assumes *nix-styile file paths, even when running on Windows
  */
-module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback) {
+module.exports = function fingerprint ({ fingerprint = false, ignore = [] }, callback) {
   let { arc } = readArc()
   let quiet = process.env.ARC_QUIET || process.env.QUIET
   let folderSetting = tuple => tuple[0] === 'folder'
@@ -44,7 +44,7 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
     /**
      * Early exit if disabled, clean up if necessary
      */
-    function bail(callback) {
+    function bail (callback) {
       if (fingerprint && !externalFingerprint) callback()
       else {
         if (existsSync(join(folder, 'static.json'))) {
@@ -53,7 +53,7 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
             let msg = chalk.white(`Found ${folder + sep}static.json file with fingerprinting ${externalFingerprint ? 'set to external' : 'disabled'}, deleting file`)
             console.log(`${warn} ${msg}`)
           }
-          exec('rm static.json', {cwd: folder}, (err, stdout, stderr) => {
+          exec('rm static.json', { cwd: folder }, (err, stdout, stderr) => {
             if (err) callback(err)
             else {
               if (stderr) {
@@ -71,14 +71,14 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
     /**
      * Scan for files in the public directory
      */
-    function globFiles(callback) {
-      glob(staticAssets, {dot:true, nodir:true, follow:true}, callback)
+    function globFiles (callback) {
+      glob(staticAssets, { dot: true, nodir: true, follow: true }, callback)
     },
 
     /**
      * Filter based on default and user-specified ignore rules
      */
-    function filterFiles(filesFound, callback) {
+    function filterFiles (filesFound, callback) {
       // Always ignore these files
       ignore = ignore.concat([
         '.DS_Store',
@@ -99,20 +99,20 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
     /**
      * Write (or remove) fingerprinted static asset manifest
      */
-    function writeStaticManifest(callback) {
+    function writeStaticManifest (callback) {
       // Hash those files
       let hashFiles = files.map(file => {
         return (callback) => {
-          sha.get(file, function done(err, hash) {
+          sha.get(file, function done (err, hash) {
             if (err) callback(err)
             else {
-              hash = hash.substr(0,10)
+              hash = hash.substr(0, 10)
               let ext = extname(file)
               let base = basename(file)
               let hashed = base.replace(ext, '') + `-${hash}${ext}`
               // Handle any nested dirs
               let dir = dirname(file).replace(folder, '').substr(1)
-              dir = `${dir ? dir + '/': ''}`
+              dir = `${dir ? dir + '/' : ''}`
               // Final key + value
               let staticKey = `${dir ? dir : ''}${base}`
               let staticValue = `${dir ? dir : ''}${hashed}`
@@ -123,7 +123,7 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
           })
         }
       })
-      series(hashFiles, function done(err) {
+      series(hashFiles, function done (err) {
         if (err) callback(err)
         else {
           // Write out folder/static.json
@@ -134,7 +134,7 @@ module.exports = function fingerprint({ fingerprint=false, ignore=[] }, callback
       })
     },
   ],
-  function done(err) {
+  function done (err) {
     if (err && err.message === 'no_files_found') {
       if (!quiet) {
         let msg = chalk.gray('No static assets found to fingerprint from public' + sep)

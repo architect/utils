@@ -8,7 +8,7 @@ let test = require('tape')
  */
 let output = ''
 process.stdout.write = (write => {
-  return function(string) {
+  return function (string) {
     output += string
     write.apply(process.stdout, arguments)
   }
@@ -16,7 +16,7 @@ process.stdout.write = (write => {
 
 let isBuildCI = process.env.CI
 let timer = 275 // Should animate only twice on both *nix + Win
-let tidy = i => i.replace(/(^\n|\n$)/g,'') // Remove trailing newline
+let tidy = i => i.replace(/(^\n|\n$)/g, '') // Remove trailing newline
 let reset = () => output = ''
 
 test('Set up env', t => {
@@ -84,7 +84,7 @@ test('Status update test (quiet)', t => {
   t.plan(13)
   reset()
   let name = 'Status test' // Should be different from test name
-  let update = updater(name, {quiet:true})
+  let update = updater(name, { quiet: true })
 
   // No message
   let result = update.status()
@@ -162,7 +162,7 @@ test('Start + cancel test (quiet)', t => {
   t.plan(count)
   reset()
   let name = 'Progress indicator + cancel test'
-  let update = updater(name, {quiet:true})
+  let update = updater(name, { quiet: true })
 
   // No message
   let result = update.start()
@@ -211,7 +211,7 @@ test('Start + done test (quiet)', t => {
   t.plan(count)
   reset()
   let name = 'Progress indicator + done test'
-  let update = updater(name, {quiet:true})
+  let update = updater(name, { quiet: true })
 
   // Message
   let msg = `Let's indicate some progress!`
@@ -268,7 +268,7 @@ test('Start + done with updated name test (quiet)', t => {
   t.plan(count)
   reset()
   let name = 'Progress indicator + done with updated name test'
-  let update = updater(name, {quiet:true})
+  let update = updater(name, { quiet: true })
 
   // Round 2
   let msg = `Let's indicate some more progress!`
@@ -322,7 +322,7 @@ test('Start / CI-mode test (quiet)', t => {
   process.env.CI = true
   reset()
   let name = 'Progress indicator CI-mode test'
-  let update = updater(name, {quiet:true})
+  let update = updater(name, { quiet: true })
 
   // Message
   let msg = `Let's indicate some progress for CI!`
@@ -374,7 +374,7 @@ test('Error test (quiet)', t => {
   t.plan(8)
   reset()
   let name = 'Error update test'
-  let update = updater(name, {quiet:true})
+  let update = updater(name, { quiet: true })
 
   // An error message
   let e = 'an error'
@@ -435,7 +435,7 @@ test('Start + error test (quiet)', t => {
   t.plan(count)
   reset()
   let name = 'Progress indicator + error'
-  let update = updater(name, {quiet:true})
+  let update = updater(name, { quiet: true })
 
   // Start then error
   let msg = `Let's indicate some progress!`

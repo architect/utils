@@ -6,12 +6,12 @@ let validPath = require('../_valid-path')
  * ---
  * validator for @http
  */
-module.exports = function _http(arc, raw) {
+module.exports = function _http (arc, raw) {
   var type = 'http'
   var errors = []
   if (arc[type]) {
     // http sections are arrays of tuples
-    var isTuple = v=> Array.isArray(v) && v.length === 2
+    var isTuple = v => Array.isArray(v) && v.length === 2
     var validTypes = Array.isArray(arc[type]) && arc[type].map(isTuple)
     if (!validTypes) {
       errors.push(Error(`@${type} is invalid`))
@@ -19,7 +19,7 @@ module.exports = function _http(arc, raw) {
     else {
       // if the shape of the data is ok we can check the contents
       // routes must be one of: get, post, put, patch or delete
-      function notGetOrPost(tuple) {
+      function notGetOrPost (tuple) {
         var v = tuple[0].toLowerCase()
         if (v === 'get') return false
         if (v === 'post') return false
@@ -29,7 +29,7 @@ module.exports = function _http(arc, raw) {
         return true
       }
       var invalidVerbs = arc[type].filter(notGetOrPost)
-      invalidVerbs.forEach(fkdtuple=> {
+      invalidVerbs.forEach(fkdtuple => {
         errors.push(Err({
           message: `@${type} unknown verb ${fkdtuple[0]}`,
           linenumber: findLineNumber(fkdtuple, raw),
@@ -39,7 +39,7 @@ module.exports = function _http(arc, raw) {
         }))
       })
 
-      arc[type].forEach(route=> {
+      arc[type].forEach(route => {
         var path = route[1]
         var err = validPath(path)
         if (err) {
@@ -66,7 +66,7 @@ module.exports = function _http(arc, raw) {
   return errors
 }
 
-function findLineNumber(tuple, raw) {
+function findLineNumber (tuple, raw) {
   var search = tuple.join(' ')
   var lines = raw.split('\n')
   for (var i = 0; i <= lines.length; i++) {

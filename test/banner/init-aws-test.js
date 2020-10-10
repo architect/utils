@@ -1,7 +1,7 @@
 let test = require('tape')
 let aws = require('aws-sdk')
 let tmpFile = require('temp-write')
-let mockCredsContent= require('./mock-aws-creds-file')
+let mockCredsContent = require('./mock-aws-creds-file')
 let mockCredsFile = tmpFile(mockCredsContent)
 let credsExists = true
 let fs = {
@@ -18,7 +18,7 @@ let initAWS = proxyquire('../../banner/init-aws', {
   '@noCallThru': true
 })
 
-function reset(t) {
+function reset (t) {
   let envVars = [
     'ARC_AWS_CREDS',
     'AWS_PROFILE',
@@ -32,7 +32,7 @@ function reset(t) {
   envVars.forEach(v => {
     if (process.env[v]) t.fail(`Found errant env var: ${v}`)
   })
-  aws.config = {credentials: null}
+  aws.config = { credentials: null }
 }
 
 /**
@@ -45,14 +45,14 @@ test('Set region', t => {
   let region = 'us-west-1'
   let arc = {
     aws: [
-      ['region', region]
+      [ 'region', region ]
     ]
   }
-  initAWS({arc})
+  initAWS({ arc })
   t.equal(process.env.AWS_REGION, region, `AWS region set by .arc`)
   // Leave AWS_REGION env var set for next test
   arc = {}
-  initAWS({arc})
+  initAWS({ arc })
   t.equal(process.env.AWS_REGION, region, `AWS region set by env`)
   reset(t)
 })
@@ -62,12 +62,12 @@ test('Credentials supplied by ~/.aws/credentials', async t => {
   process.env.AWS_SHARED_CREDENTIALS_FILE = await mockCredsFile
   let arc = {
     aws: [
-      ['profile', profile]
+      [ 'profile', profile ]
     ]
   }
   // Profile found, no env override
   // Profile specified by .arc
-  initAWS({arc})
+  initAWS({ arc })
   t.equal(process.env.ARC_AWS_CREDS, 'profile', `ARC_AWS_CREDS set to 'profile'`)
   t.equal(process.env.AWS_PROFILE, profile, `AWS_PROFILE set by .arc`)
   t.equal(aws.config.credentials.accessKeyId, 'architect_mock_access_key', `AWS config not mutated`)
@@ -78,7 +78,7 @@ test('Credentials supplied by ~/.aws/credentials', async t => {
   process.env.AWS_SHARED_CREDENTIALS_FILE = await mockCredsFile
   process.env.AWS_PROFILE = profile
 
-  initAWS({arc})
+  initAWS({ arc })
   t.equal(process.env.ARC_AWS_CREDS, 'profile', `ARC_AWS_CREDS set to 'profile'`)
   t.equal(process.env.AWS_PROFILE, profile, `AWS_PROFILE set by env`)
   t.equal(aws.config.credentials.accessKeyId, 'architect_mock_access_key', `AWS config not mutated`)
@@ -98,7 +98,7 @@ test('Credentials supplied by ~/.aws/credentials', async t => {
 
   // Profile defaulted
   process.env.AWS_SHARED_CREDENTIALS_FILE = await mockCredsFile
-  initAWS({arc})
+  initAWS({ arc })
   t.equal(process.env.ARC_AWS_CREDS, 'profile', `ARC_AWS_CREDS set to 'profile'`)
   t.equal(process.env.AWS_PROFILE, 'default', `AWS_PROFILE set to default`)
   t.equal(aws.config.credentials.accessKeyId, 'default_mock_access_key', `AWS config not mutated`)
@@ -109,14 +109,14 @@ test('Credentials supplied by env vars', t => {
   t.plan(10)
   let arc = {
     aws: [
-      ['profile', profile]
+      [ 'profile', profile ]
     ]
   }
   // Credentials file found, env override
   process.env.ARC_AWS_CREDS = 'env'
   process.env.AWS_ACCESS_KEY_ID = profile
   process.env.AWS_SECRET_ACCESS_KEY = 'so-secret'
-  initAWS({arc})
+  initAWS({ arc })
   t.equal(process.env.ARC_AWS_CREDS, 'env', `ARC_AWS_CREDS set to 'env'`)
   t.notOk(process.env.AWS_PROFILE, `AWS_PROFILE not set`)
   t.equal(aws.config.credentials.accessKeyId, profile, `AWS config access key set`)
@@ -128,7 +128,7 @@ test('Credentials supplied by env vars', t => {
   process.env.AWS_ACCESS_KEY_ID = profile
   process.env.AWS_SECRET_ACCESS_KEY = 'so-secret'
   process.env.AWS_SESSION_TOKEN = sessionToken
-  initAWS({arc})
+  initAWS({ arc })
   t.equal(process.env.ARC_AWS_CREDS, 'env', `ARC_AWS_CREDS set to 'env'`)
   t.notOk(process.env.AWS_PROFILE, `AWS_PROFILE not set`)
   t.equal(aws.config.credentials.accessKeyId, profile, `AWS config access key set`)
@@ -142,19 +142,19 @@ test('Final credential check', async t => {
   process.env.HIDE_HOME = true
   let arc = {
     aws: [
-      ['profile', 'does-not-exist']
+      [ 'profile', 'does-not-exist' ]
     ]
   }
   process.env.AWS_SHARED_CREDENTIALS_FILE = await tmpFile('')
 
-  initAWS({arc})
+  initAWS({ arc })
   t.equal(process.env.ARC_AWS_CREDS, 'missing', `ARC_AWS_CREDS set to 'missing'`)
   t.notOk(process.env.AWS_PROFILE, `AWS_PROFILE deleted`)
   t.notOk(Object.keys(aws.config.credentials).length, `AWS config not present`)
   reset(t)
 
   process.env.AWS_SHARED_CREDENTIALS_FILE = await tmpFile('')
-  initAWS({arc, needsValidCreds: false})
+  initAWS({ arc, needsValidCreds: false })
   t.equal(process.env.ARC_AWS_CREDS, 'dummy', `ARC_AWS_CREDS set to 'dummy'`)
   t.equal(process.env.AWS_ACCESS_KEY_ID, 'xxx', `AWS_ACCESS_KEY_ID backfilled`)
   t.equal(process.env.AWS_SECRET_ACCESS_KEY, 'xxx', `AWS_SECRET_ACCESS_KEY backfilled`)

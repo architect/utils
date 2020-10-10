@@ -27,7 +27,7 @@ let defaultRuntime = allowed[0]
  * Extract runtime from @aws section
  * - finds `runtime` in @aws section
  */
-module.exports = function getRuntime(arc) {
+module.exports = function getRuntime (arc) {
   if (!arc || !arc.aws) return defaultRuntime
 
   let awsRuntime = arc.aws.find(tuple => tuple.includes('runtime'))
@@ -38,7 +38,7 @@ module.exports = function getRuntime(arc) {
 /**
  * Check runtime validity
  */
-module.exports.allowed = function allowedRuntimes(runtime) {
+module.exports.allowed = function allowedRuntimes (runtime) {
   let quiet = process.env.ARC_QUIET || process.env.QUIET
   if (allowed.includes(runtime)) {
     return runtime

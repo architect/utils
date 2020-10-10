@@ -3,7 +3,7 @@
  * - finds for `layers` array in json or yaml files
  * - finds for `layer` tuples in arc file and return a `layers` array
  */
-module.exports = function getLayers(arc) {
+module.exports = function getLayers (arc) {
   if (!arc || !arc.aws) return
 
   // `layers` can come from json or yaml

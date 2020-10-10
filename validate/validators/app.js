@@ -10,7 +10,7 @@ let Err = require('../_error-factory')
  * - assert arc @app starts with a letter
  * - assert arc @app is otherwise lowcase alphanumeric and dashes only
  */
-module.exports = function app(arc, raw) {
+module.exports = function app (arc, raw) {
   var errors = []
   // validate app name
   var appname = Array.isArray(arc.app) && arc.app[0]
@@ -42,7 +42,7 @@ module.exports = function app(arc, raw) {
   return errors
 }
 
-function findLineNumber(search, raw) {
+function findLineNumber (search, raw) {
   var lines = raw.split('\n')
   for (var i = 0; i <= lines.length; i++) {
     if (lines[i] && lines[i].startsWith(search)) {

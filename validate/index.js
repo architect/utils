@@ -13,10 +13,11 @@ var tables = require('./validators/tables')
 /**
  * validates a parsed .arc file
  */
-module.exports = function validate(arc, raw, callback) {
+module.exports = function validate (arc, raw, callback) {
   if (process.env.ARC_DANGERZONE) {
     callback(null, arc)
-  } else {
+  }
+  else {
     // an array of the validators
     //
     // we'll map over this array applying each validator to the passed in arc object
@@ -51,7 +52,8 @@ module.exports = function validate(arc, raw, callback) {
     // continue if everything is ok
     if (errors.length === 0) {
       callback(null, arc)
-    } else {
+    }
+    else {
       // fail early and loudly if not
       callback(errors)
     }

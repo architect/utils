@@ -1,5 +1,5 @@
 module.exports = function fingerprintConfig (params) {
-  let { static=[] } = params
+  let { static = [] } = params
 
   // Maybe enable fingerprint
   let fingerprint = false
