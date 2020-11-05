@@ -2,6 +2,19 @@
 
 ---
 
+## [1.5.14] 2020-11-05
+
+### Added
+
+- `updater` errors now include stack traces
+
+
+### Changed
+
+- `updater` errors can no longer be quieted – errors are important!
+
+---
+
 ## [1.5.13] 2020-10-10
 
 ### Fixed

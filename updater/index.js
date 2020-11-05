@@ -93,10 +93,14 @@ module.exports = function updater (name, params = {}) {
 
   function err (error) {
     if (running) cancel()
-    if (error instanceof Error) error = error.message
-    let info = `${chars.err} ${chalk.red('Error:')} ${error}`.trim()
-
-    if (!quiet()) console.log(info)
+    let isErr = error instanceof Error
+    let name = isErr ? error.name : 'Error'
+    let msg = isErr ? error.message : error
+    let info = `${chars.err} ${chalk.red(name + ':')} ${msg}`.trim()
+    if (isErr) {
+      info += '\n' + error.stack.split('\n').slice(1).join('\n')
+    }
+    console.log(info)
     return info
   }
 
