@@ -340,7 +340,7 @@ test('Start / CI-mode test (quiet)', t => {
 })
 
 test('Error test', t => {
-  t.plan(8)
+  t.plan(10)
   reset()
   let name = 'Error update test'
   let update = updater(name)
@@ -354,6 +354,7 @@ test('Error test', t => {
   t.ok(result.includes(chars.err) && result.includes('Error:'), 'Returned / printed error name')
   t.notOk(result.includes(name), 'Did not return / print updater name')
   t.ok(result.includes(e), 'Returned / printed correct error')
+  t.ok(result.split('\n').length === 1, 'Did not return a stack trace')
   console.log(`Returned: ${result}`)
   reset()
 
@@ -367,6 +368,7 @@ test('Error test', t => {
   t.ok(result.includes(chars.err) && result.includes('Error:'), 'Returned / printed error name')
   t.notOk(result.includes(name), 'Did not return / print updater name')
   t.ok(result.includes(errMsg), 'Returned / printed correct error message')
+  t.ok(result.split('\n').length > 1, 'Returned a stack trace')
   console.log(`Returned: ${result}`)
 })
 
@@ -381,7 +383,7 @@ test('Error test (quiet)', t => {
   let result = update.error(e)
   let out = output
   reset()
-  t.notOk(tidy(out).includes(result), 'Output did not include return (except cursor restore escape chars)')
+  t.ok(tidy(out).includes(result), 'Output and return are equal (except cursor restore escape chars)')
   t.ok(result.includes(chars.err) && result.includes('Error:'), 'Returned error name')
   t.notOk(result.includes(name), 'Did not return updater name')
   t.ok(result.includes(e), 'Returned correct error')
@@ -394,7 +396,7 @@ test('Error test (quiet)', t => {
   result = update.error(error)
   out = output
   reset()
-  t.notOk(out, 'Did not print')
+  t.ok(out, 'Did print (because an error is present)')
   t.ok(result.includes(chars.err) && result.includes('Error:'), 'Returned error name')
   t.notOk(result.includes(name), 'Did not return updater name')
   t.ok(result.includes(errMsg), 'Returned correct error message')
@@ -414,8 +416,7 @@ test('Start + error test', t => {
   setTimeout(() => {
     let e = 'an error occurred'
     let err = update.error(e)
-    let out = output
-    out = out.split(name)
+    let out = output.split(name)
     reset()
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(result.includes(msg), 'Returned correct msg')
@@ -431,7 +432,7 @@ test('Start + error test', t => {
 })
 
 test('Start + error test (quiet)', t => {
-  let count = isBuildCI ? 6 : 7
+  let count = isBuildCI ? 6 : 8
   t.plan(count)
   reset()
   let name = 'Progress indicator + error'
@@ -443,15 +444,16 @@ test('Start + error test (quiet)', t => {
   setTimeout(() => {
     let e = 'an error occurred'
     let err = update.error(e)
-    let out = output
+    let out = output.split(name)
     reset()
-    t.notOk(out, 'Did not print')
+    t.ok(out, 'Did print (because an error is present)')
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(result.includes(msg), 'Returned correct msg')
     t.ok(err.includes(chars.err) && err.includes('Error:'), 'Returned error name')
     t.notOk(err.includes(name), 'Did not return updater name')
     t.ok(err.includes(e), 'Returned correct error message')
     if (!isBuildCI) {
+      t.equal(out.length, 1, 'Printed error')
       t.pass(`Error ended indicator, or this test wouldn't have run`)
     }
     console.log(`Returned: ${result}`)
