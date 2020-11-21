@@ -2,6 +2,15 @@
 
 ---
 
+## [2.0.0] 2020-11-20
+
+### Changed
+
+- Removed methods that are now the responsibility of Inventory: `read` + `readArc` + `getLayers` + `inventory` + `validate`
+- Removed methods no longer in use: `initEnv` + `portInUse`
+
+---
+
 ## [1.5.14] 2020-11-05
 
 ### Added
