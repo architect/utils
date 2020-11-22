@@ -8,7 +8,7 @@ let sha = require('sha')
 let sort = require('path-sort')
 let waterfall = require('run-waterfall')
 let normalizePath = require('../path-to-unix')
-let { updater } = require('../')
+let updater = require('../updater')
 
 /**
  * Static asset fingerprinter
