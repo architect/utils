@@ -6,8 +6,18 @@
 
 ### Changed
 
-- Removed methods that are now the responsibility of Inventory: `read` + `readArc` + `getLayers` + `inventory` + `validate`
-- Removed methods no longer in use: `initEnv` + `portInUse`
+- Refactored `fingerprint` and `banner` to require an Inventory object
+- Removed methods that are now the responsibility of Inventory:
+  - `fingerprint.config`
+  - `getLayers`
+  - `getRuntime`
+  - `inventory`
+  - `read`
+  - `readArc`
+  - `validate`
+- Removed methods no longer in active use by any Architect projects:
+  - `initEnv`
+  - `portInUse`
 
 ---
 

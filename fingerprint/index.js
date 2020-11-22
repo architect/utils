@@ -1,43 +1,46 @@
-let chalk = require('chalk')
-let config = require('./config')
 let { exec } = require('child_process')
 let { existsSync, mkdirSync } = require('fs')
 let fs = require('fs') // Broken out for testing writeFile calls
 let glob = require('glob')
 let { basename, dirname, extname, join, sep } = require('path')
-let { readArc } = require('@architect/parser')
 let series = require('run-series')
 let sha = require('sha')
 let sort = require('path-sort')
 let waterfall = require('run-waterfall')
 let normalizePath = require('../path-to-unix')
+let { updater } = require('../')
 
 /**
  * Static asset fingerprinter
  * - Note: everything uses and assumes *nix-styile file paths, even when running on Windows
  */
-module.exports = function fingerprint ({ fingerprint = false, ignore = [] }, callback) {
-  let { arc } = readArc()
-  let quiet = process.env.ARC_QUIET || process.env.QUIET
-  let folderSetting = tuple => tuple[0] === 'folder'
-  let staticFolder = arc.static && arc.static.some(folderSetting) ? arc.static.find(folderSetting)[1] : 'public'
+module.exports = function fingerprint (params, callback) {
+  let { fingerprint = false, ignore = [], inventory, update } = params
+  let { inv, get } = inventory
+
+  // Bail early if static isn't defined
+  if (!inv.static) {
+    callback()
+    return
+  }
+
+  if (!update) update = updater('Assets')
+
+  // Get the folder
+  let staticFolder = get.static('folder')
   let folder = normalizePath(join(process.cwd(), staticFolder))
 
-  /**
-   * Double check fingerprint status
-   */
-  if (!fingerprint && arc.static) {
-    fingerprint = config(arc).fingerprint
-    ignore = config(arc).ignore
-    // If @static is defined, create `public/` if it doesn't exist
-    if (!existsSync(folder)) {
-      mkdirSync(folder, { recursive: true })
-    }
+  // Create the public folder if it doesn't exist
+  if (!existsSync(folder)) {
+    mkdirSync(folder, { recursive: true })
   }
+
+  fingerprint = fingerprint || inv.static.fingerprint
+  ignore = ignore.length ? ignore : inv.static.ignore || []
+
   // Allow apps and frameworks to handle their own fingerprinting
   let externalFingerprint = fingerprint === 'external'
 
-  let staticAssets = folder + '/**/*'
   let files
   let staticManifest = {}
   waterfall([
@@ -48,17 +51,16 @@ module.exports = function fingerprint ({ fingerprint = false, ignore = [] }, cal
       if (fingerprint && !externalFingerprint) callback()
       else {
         if (existsSync(join(folder, 'static.json'))) {
-          let warn = chalk.yellow('Warning')
-          if (!quiet) {
-            let msg = chalk.white(`Found ${folder + sep}static.json file with fingerprinting ${externalFingerprint ? 'set to external' : 'disabled'}, deleting file`)
-            console.log(`${warn} ${msg}`)
-          }
-          exec('rm static.json', { cwd: folder }, (err, stdout, stderr) => {
+          let msg = `Found ${folder + sep}static.json file with fingerprinting ${externalFingerprint ? 'set to external' : 'disabled'}, deleting file`
+          update.warn(msg)
+
+          let remove = process.platform.startsWith('win') ? 'del' : 'rm'
+          exec(`${remove} static.json`, { cwd: folder }, (err, stdout, stderr) => {
             if (err) callback(err)
             else {
               if (stderr) {
-                let msg = chalk.gray(`Error removing static.json file, please remove it manually or static asset calls may be broken`)
-                console.log(`${warn} ${msg}`)
+                let msg = `Error removing static.json file, please remove it manually or static asset calls may be broken`
+                update.warn(msg)
               }
               callback(Error('cancel'))
             }
@@ -72,6 +74,7 @@ module.exports = function fingerprint ({ fingerprint = false, ignore = [] }, cal
      * Scan for files in the public directory
      */
     function globFiles (callback) {
+      let staticAssets = folder + '/**/*'
       glob(staticAssets, { dot: true, nodir: true, follow: true }, callback)
     },
 
@@ -136,10 +139,8 @@ module.exports = function fingerprint ({ fingerprint = false, ignore = [] }, cal
   ],
   function done (err) {
     if (err && err.message === 'no_files_found') {
-      if (!quiet) {
-        let msg = chalk.gray('No static assets found to fingerprint from public' + sep)
-        console.log(msg)
-      }
+      let msg = `No static assets found to fingerprint from ${staticFolder}${sep}`
+      update.done(msg)
       callback()
     }
     else if (err && err.message === 'cancel') {
@@ -151,5 +152,3 @@ module.exports = function fingerprint ({ fingerprint = false, ignore = [] }, cal
     else callback(null, staticManifest)
   })
 }
-
-module.exports.config = config

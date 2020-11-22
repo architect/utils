@@ -1,4 +1,4 @@
-let exists = require('fs').existsSync
+let { existsSync: exists } = require('fs')
 let homeDir = require('os').homedir()
 let { join } = require('path')
 let updater = require('../updater')
@@ -9,21 +9,19 @@ let updater = require('../updater')
  * - Environment variables
  * - Dummy creds (if absolutely necessary)
  */
-module.exports = function initAWS ({ arc, needsValidCreds = true }) {
+module.exports = function initAWS ({ inventory, needsValidCreds = true }) {
   // AWS SDK intentionally not added to package deps; assume caller already has it
   // eslint-disable-next-line
   let aws = require('aws-sdk')
   let credentialsMethod = 'SharedIniFileCredentials'
+  let { inv } = inventory
   try {
     let defaultCredsPath = join(homeDir, '.aws', 'credentials')
     let envCredsPath = process.env.AWS_SHARED_CREDENTIALS_FILE
     let credsPath = envCredsPath || defaultCredsPath
     let credsExists = exists(envCredsPath) || exists(defaultCredsPath)
-    arc.aws = arc.aws || []
-    let region = arc.aws.find(e => e[0] === 'region')
-    if (region && region[1]) {
-      process.env.AWS_REGION = region[1]
-    }
+    // Inventory always sets a dfeault region if not specified
+    process.env.AWS_REGION = inv.aws.region
     /**
      * Always ensure we end with a final sanity check on loaded credentials
      */
@@ -32,9 +30,8 @@ module.exports = function initAWS ({ arc, needsValidCreds = true }) {
     if (credsExists && !envOverride) {
       let profile = process.env.AWS_PROFILE
       aws.config.credentials = []
-      let arcProfile = arc.aws.find(e => e[0] === 'profile')
-      if (arcProfile && arcProfile[1]) {
-        process.env.AWS_PROFILE = profile = arcProfile[1]
+      if (inv.aws && inv.aws.profile) {
+        process.env.AWS_PROFILE = profile = inv.aws.profile
       }
 
       let init = new aws.IniLoader()
