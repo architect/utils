@@ -2,6 +2,25 @@
 
 ---
 
+## [2.0.0] 2020-11-20
+
+### Changed
+
+- Refactored `fingerprint` and `banner` to require an Inventory object
+- Removed methods that are now the responsibility of Inventory:
+  - `fingerprint.config`
+  - `getLayers`
+  - `getRuntime`
+  - `inventory`
+  - `read`
+  - `readArc`
+  - `validate`
+- Removed methods no longer in active use by any Architect projects:
+  - `initEnv`
+  - `portInUse`
+
+---
+
 ## [1.5.14] 2020-11-05
 
 ### Added

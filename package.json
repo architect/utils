@@ -1,6 +1,6 @@
 {
   "name": "@architect/utils",
-  "version": "1.5.14",
+  "version": "2.0.0-RC.1",
   "description": "Common utility functions",
   "main": "index.js",
   "repository": {
@@ -20,26 +20,23 @@
   "author": "Brian LeRoux <b@brian.io>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@architect/parser": "~2.3.0",
-    "@smallwins/validate": "~4.3.0",
     "chalk": "~4.1.0",
     "glob": "~7.1.6",
-    "is-domain-name": "~1.0.1",
     "path-sort": "~0.1.0",
     "restore-cursor": "~3.1.0",
-    "run-parallel": "~1.1.9",
-    "run-series": "~1.1.8",
-    "run-waterfall": "~1.1.6",
+    "run-series": "~1.1.9",
+    "run-waterfall": "~1.1.7",
     "sha": "~3.0.0"
   },
   "devDependencies": {
     "@architect/eslint-config": "1.0.0",
-    "aws-sdk": "2.796.0",
+    "@architect/inventory": "1.1.0",
+    "aws-sdk": "2.712.0",
     "cross-env": "7.0.2",
-    "eslint": "7.13.0",
+    "eslint": "7.14.0",
     "husky": "^4.3.0",
     "proxyquire": "^2.1.3",
-    "sinon": "^9.2.0",
+    "sinon": "^9.2.1",
     "tap-spec": "^5.0.0",
     "tape": "^5.0.1",
     "temp-write": "^4.0.0"
