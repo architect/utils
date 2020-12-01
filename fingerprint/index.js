@@ -1,5 +1,5 @@
 let { exec } = require('child_process')
-let { existsSync, mkdirSync } = require('fs')
+let { existsSync } = require('fs')
 let fs = require('fs') // Broken out for testing writeFile calls
 let glob = require('glob')
 let { basename, dirname, extname, join, sep } = require('path')
@@ -18,22 +18,17 @@ module.exports = function fingerprint (params, callback) {
   let { fingerprint = false, ignore = [], inventory, update } = params
   let { inv, get } = inventory
 
-  // Bail early if static isn't defined
-  if (!inv.static) {
+  // Get the folder
+  let staticFolder = get.static('folder')
+  let folder = normalizePath(join(process.cwd(), staticFolder))
+
+  // Bail early if static isn't defined or the folder isn't present
+  if (!inv.static || !existsSync(folder)) {
     callback()
     return
   }
 
   if (!update) update = updater('Assets')
-
-  // Get the folder
-  let staticFolder = get.static('folder')
-  let folder = normalizePath(join(process.cwd(), staticFolder))
-
-  // Create the public folder if it doesn't exist
-  if (!existsSync(folder)) {
-    mkdirSync(folder, { recursive: true })
-  }
 
   fingerprint = fingerprint || inv.static.fingerprint
   ignore = ignore.length ? ignore : inv.static.ignore || []
