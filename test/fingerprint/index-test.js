@@ -1,5 +1,5 @@
 let fs = require('fs')
-let path = require('path')
+let { join } = require('path')
 let proxyquire = require('proxyquire')
 let sha = require('sha')
 let sinon = require('sinon')
@@ -40,9 +40,14 @@ function reset (t) {
   t.pass('Reset')
 }
 
+let cwd = process.cwd()
+let mock = join(cwd, 'test', 'mock')
+
 test('Set up env', t => {
-  t.plan(1)
+  t.plan(2)
   t.ok(fingerprint, 'Fingerprint module is present')
+  process.chdir(mock)
+  t.equal(process.cwd(), mock, 'Switched to mock dir')
 })
 
 test('fingerprint respects folder setting', t => {
@@ -50,9 +55,9 @@ test('fingerprint respects folder setting', t => {
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake((filepath, options, callback) => callback(null, [
-    normalizePath(path.join(process.cwd(), 'foo', 'index.html')),
-    normalizePath(path.join(process.cwd(), 'foo', 'readme.md')), // this should get ignored
-    normalizePath(path.join(process.cwd(), 'foo', 'css', 'styles.css')),
+    normalizePath(join(process.cwd(), 'foo', 'index.html')),
+    normalizePath(join(process.cwd(), 'foo', 'readme.md')), // this should get ignored
+    normalizePath(join(process.cwd(), 'foo', 'css', 'styles.css')),
   ]))
   // Static manifest
   let manifest
@@ -87,9 +92,9 @@ test('fingerprint respects prefix setting (by doing nothing)', t => {
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake((filepath, options, callback) => callback(null, [
-    normalizePath(path.join(process.cwd(), 'public', 'index.html')),
-    normalizePath(path.join(process.cwd(), 'public', 'readme.md')), // this should get ignored
-    normalizePath(path.join(process.cwd(), 'public', 'css', 'styles.css')),
+    normalizePath(join(process.cwd(), 'public', 'index.html')),
+    normalizePath(join(process.cwd(), 'public', 'readme.md')), // this should get ignored
+    normalizePath(join(process.cwd(), 'public', 'css', 'styles.css')),
   ]))
   // Static manifest
   let manifest
@@ -123,9 +128,9 @@ test('fingerprint generates static.json manifest', t => {
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake((filepath, options, callback) => callback(null, [
-    normalizePath(path.join(process.cwd(), 'public', 'index.html')),
-    normalizePath(path.join(process.cwd(), 'public', 'readme.md')), // this should get ignored
-    normalizePath(path.join(process.cwd(), 'public', 'css', 'styles.css')),
+    normalizePath(join(process.cwd(), 'public', 'index.html')),
+    normalizePath(join(process.cwd(), 'public', 'readme.md')), // this should get ignored
+    normalizePath(join(process.cwd(), 'public', 'css', 'styles.css')),
   ]))
   // Static manifest
   let manifest
@@ -159,7 +164,7 @@ test('fingerprint does does not generate static.json when set to external', t =>
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake((filepath, options, callback) => callback(null, [
-    normalizePath(path.join(process.cwd(), 'public', 'index.html'))
+    normalizePath(join(process.cwd(), 'public', 'index.html'))
   ]))
   // Static manifest
   let fsStub = sinon.stub(fs, 'writeFile').callsFake((dest, data, callback) => {
@@ -186,9 +191,9 @@ test('fingerprint ignores specified static assets', t => {
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake((filepath, options, callback) => callback(null, [
-    normalizePath(path.join(process.cwd(), 'public', 'index.html')),
-    normalizePath(path.join(process.cwd(), 'public', 'readme.md')),
-    normalizePath(path.join(process.cwd(), 'public', 'styles.css')),
+    normalizePath(join(process.cwd(), 'public', 'index.html')),
+    normalizePath(join(process.cwd(), 'public', 'readme.md')),
+    normalizePath(join(process.cwd(), 'public', 'styles.css')),
   ]))
   // Static manifest
   let manifest
@@ -227,4 +232,10 @@ test('fingerprint cancels early if disabled', t => {
       shaStub.resetHistory()
     })
   })
+})
+
+test('Teardown', t => {
+  t.plan(1)
+  process.chdir(cwd)
+  t.equal(process.cwd(), cwd, 'Reset cwd')
 })

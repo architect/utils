@@ -2,6 +2,14 @@
 
 ---
 
+## [2.0.1] 2020-12-01
+
+### Changed
+
+- Fingerprint no longer generates a static folder (and exits early) if not found
+
+---
+
 ## [2.0.0] 2020-11-20
 
 ### Changed
