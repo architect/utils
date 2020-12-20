@@ -2,6 +2,19 @@
 
 ---
 
+## [2.0.3] 2020-12-19
+
+### Fixed
+
+- Fixed fingerprinter when called on an app that doesn't have `inv.static`
+
+
+### Changed
+
+- Updated deps
+
+---
+
 ## [2.0.2] 2020-12-04
 
 ### Changed

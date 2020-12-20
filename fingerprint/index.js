@@ -18,16 +18,17 @@ module.exports = function fingerprint (params, callback) {
   let { fingerprint = false, ignore = [], inventory, update } = params
   let { inv, get } = inventory
 
+  // Bail early if this project doesn't utilize static assets
+  if (!inv.static) return callback()
+
   // Get the folder
-  let staticFolder = get.static('folder')
+  let staticFolder = get.static('folder') || '' // Should never be falsy but jic
   let folder = normalizePath(join(process.cwd(), staticFolder))
 
-  // Bail early if static isn't defined or the folder isn't present
-  if (!inv.static || !existsSync(folder)) {
-    callback()
-    return
-  }
+  // Bail early if the folder isn't present
+  if (!existsSync(folder)) return callback()
 
+  // Ok, we've cleared the pre-reqs, let's go
   if (!update) update = updater('Assets')
 
   fingerprint = fingerprint || inv.static.fingerprint
