@@ -231,6 +231,77 @@ test('Start + done test (quiet)', t => {
   }, timer)
 })
 
+test('Warn test', t => {
+  t.plan(4)
+  reset()
+  let name = 'Warn test'
+  let update = updater(name)
+
+  let warning = `Here's a warning!`
+  let result = update.warn(warning)
+  let out = output
+  reset()
+  t.notOk(out.includes(name), 'Warning did not include name')
+  t.ok(out.includes(warning), 'Returned correct warning')
+  t.ok(out.includes(chars.warn), 'Warning included icon')
+  t.ok(result, 'Returned result')
+  console.log(`Returned: ${result}`)
+  reset()
+})
+
+test('Warn test (quiet)', t => {
+  t.plan(4)
+  reset()
+  let name = 'Warn test'
+  let update = updater(name, { quiet: true })
+
+  let warning = `Here's a warning!`
+  let result = update.warn(warning)
+  let out = output
+  reset()
+  t.notOk(result.includes(name), 'Warning did not include name')
+  t.ok(result.includes(warning), 'Returned correct warning')
+  t.ok(result.includes(chars.warn), 'Warning included icon')
+  t.notOk(out, 'Did not print')
+  console.log(`Returned: ${result}`)
+  reset()
+})
+
+test('Raw test', t => {
+  t.plan(3)
+  reset()
+  let name = 'Raw test'
+  let update = updater(name)
+
+  let raw = `Here's a raw log!`
+  let result = update.raw(raw)
+  let out = output
+  reset()
+  t.notOk(out.includes(name), 'Raw did not include name')
+  t.ok(out.includes(raw), 'Printed correct raw input')
+  t.ok(result.includes(raw), 'Returned correct raw input')
+  console.log(`Returned: ${result}`)
+  reset()
+})
+
+test('Raw test (quiet)', t => {
+  t.plan(3)
+  reset()
+  let name = 'Raw test'
+  let update = updater(name, { quiet: true })
+
+  let raw = `Here's a raw log!`
+  let result = update.raw(raw)
+  let out = output
+  reset()
+
+  t.notOk(out.includes(name), 'Raw did not include name')
+  t.ok(result.includes(raw), 'Returned correct raw input')
+  t.notOk(out, 'Did not print')
+  console.log(`Returned: ${result}`)
+  reset()
+})
+
 test('Start + done with updated name test', t => {
   let count = isBuildCI ? 4 : 7
   t.plan(count)
