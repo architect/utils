@@ -5,14 +5,17 @@ let { printer, spinner } = require('./lib')
 /**
  * Updater
  * - `status` - prints an affirmative status update - `chars.start`
- *   - optional: supporting info on new lines with additional params
- *   - aliases: `update`
+ *   - optional: supporting info on new lines with each additional param
  * - `start`  - start progress indicator - `spinner`||`chars.start`
+ *   - aliases: `update`
  * - `done`   - end progress indicator with an update - `chars.done`
  *   - aliases: `stop`
  * - `cancel` - cancel progress indicator without update - !char
- * - `err`   - pretty print an error - `chars.err`
+ * - `err`    - pretty print an error - `chars.err`
  *   - aliases: `error` and `fail`
+ * - `warn`   - cancel progress indicator and print a warning
+ *   - aliases: `warn`
+ * - `raw`    - just logs a message as-is (respecting quiet)
  *
  * Each method should also return a value to enable capture of progress data
  */
@@ -113,6 +116,11 @@ module.exports = function updater (name, params = {}) {
     return info
   }
 
+  function raw (msg) {
+    if (!quiet()) console.log(msg)
+    return msg
+  }
+
   return {
     start,
     update: start,
@@ -124,7 +132,8 @@ module.exports = function updater (name, params = {}) {
     error: err,
     fail: err,
     warn,
-    warning: warn
+    warning: warn,
+    raw,
   }
 }
 

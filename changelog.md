@@ -2,6 +2,19 @@
 
 ---
 
+## [2.0.4] 2021-01-05
+
+### Added
+
+- Add `updater.raw()`, a console.log passthrough that respects Architect quietude
+
+
+### Changed
+
+- Updated `updater` tests
+
+---
+
 ## [2.0.3] 2020-12-19
 
 ### Fixed
