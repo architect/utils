@@ -22,6 +22,7 @@ module.exports = function getLambdaName (fn) {
       .replace(/\./g, '_')
       .replace(/_/g,  '_')
       .replace(/\//g, '-')
+      .replace(/\\/g, '-')
       .replace(/:/g,  '000')
       .replace(/\*/,  'catchall')
 }
