@@ -2,6 +2,14 @@
 
 ---
 
+## [2.0.5] 2021-03-05
+
+### Changed
+
+- `getLambdaName` now sanitizes backslash characters to hyphens
+
+---
+
 ## [2.0.4] 2021-01-05
 
 ### Added
