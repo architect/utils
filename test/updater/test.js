@@ -26,6 +26,21 @@ test('Set up env', t => {
   t.ok(chars, 'Chars loaded')
 })
 
+test('Methods', t => {
+  t.plan(37)
+  let name = 'Methods test' // Should be different from test name
+  let update = updater(name)
+  let methods = [ 'start', 'status', 'done', 'cancel', 'err', 'warn', 'raw' ]
+  let aliases = [ 'update', 'stop', 'error', 'fail', 'warning' ]
+  let all = methods.concat(aliases)
+  all.forEach(method => {
+    t.ok(update[method], `Got updater.${method}`)
+    t.ok(update.verbose[method], `Got updater.verbose.${method}`)
+    t.ok(update.debug[method], `Got updater.debug.${method}`)
+  })
+  t.ok(update.get, `Got updater.get`)
+})
+
 test('Status update test', t => {
   t.plan(13)
   reset()

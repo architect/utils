@@ -3,55 +3,63 @@ let chars = require('../chars')
 let { printer, spinner } = require('./lib')
 let { frames, timing } = spinner
 
-function log (params, output) {
-  let quiet = params.quiet()
+function log (args, params, output, options = {}) {
+  let { logMode, logLevels } = args
+  let { logLevel, isCI } = params
+  let { force, animate } = options
+  let quiet = logLevel === 'quiet'
+  if (quiet && !force) return
+
   // Check for msg so as not to print an empty line
-  let print = (!quiet && output) || params.force
-  if (print) console.log(output)
+  let isLogLevel = logLevel === logMode
+  let greaterLogLevel = logLevels.indexOf(logLevel) > logLevels.indexOf(logMode)
+  let print = output && (isLogLevel || greaterLogLevel || force)
+  if (print) {
+    if (animate && !isCI) {
+      let i = 0
+      params.running = setInterval(function () {
+        printer.write(`${chalk.cyan(frames[i = ++i % frames.length])} ${output}`)
+        printer.reset()
+      }, timing)
+    }
+    else {
+      console.log(output)
+    }
+    // Append output to running log
+    let append = params.data.length ? `\n${output}` : output
+    params.data += append
+  }
 }
 
 // Optionally pass a message and/or post a multi-line supporting status update
-function status (params, msg, ...more) {
-  maybeCancel(params)
+function status (args, params, msg, ...more) {
+  maybeCancel(args, params)
   let { name } = params
   msg = msg ? chalk.cyan(msg) : ''
   let info = msg ? `${chars.start} ${name} ${msg}`.trim() : ''
-  log(params, info)
+  log(args, params, info)
   if (more.length) {
     more.forEach(i => {
       let add = chalk.dim(`  | ${i}`)
-      log(params, add)
+      log(args, params, add)
       info += `\n${add}`
     })
   }
   return info
 }
 
-function start (params, msg) {
-  maybeCancel(params)
-  let { name, isCI, quiet } = params
+function start (args, params, msg) {
+  maybeCancel(args, params)
+  let { name, isCI } = params
   msg = msg ? chalk.cyan(msg) : ''
-  let info = `${name} ${msg}`.trim()
-
-  // End-user progress mode
-  if (!params.running && !isCI && !quiet()) {
-    let i = 0
-    params.running = setInterval(function () {
-      printer.write(`${chalk.cyan(frames[i = ++i % frames.length])} ${info}`)
-      printer.reset()
-    }, timing)
-  }
-  // CI mode: updates console with status messages but not animations
-  else if (!params.running && isCI) {
-    log(params, `${chars.start} ${info}`)
-  }
-
+  let info = `${isCI ? chars.start + ' ' : ''}${name} ${msg}`.trim()
+  log(args, params, info, { animate: true })
   return `${chars.start} ${info}`
 }
 
-function done (params, newName, msg) {
+function done (args, params, newName, msg) {
   let { name } = params
-  maybeCancel(params) // Maybe clear running status and reset
+  maybeCancel(args, params) // Maybe clear running status and reset
   if (!msg) {
     msg = newName
     newName = ''
@@ -59,11 +67,11 @@ function done (params, newName, msg) {
   if (newName) newName = chalk.grey(newName)
   if (msg) msg = chalk.cyan(msg)
   let info = `${chars.done} ${newName ? newName : name} ${msg ? msg : ''}`.trim()
-  log(params, info)
+  log(args, params, info)
   return info
 }
 
-function cancel ({ running }) {
+function cancel (args, { running }) {
   if (running) {
     clearInterval(running)
     printer.reset()
@@ -73,8 +81,8 @@ function cancel ({ running }) {
 }
 let maybeCancel = cancel
 
-function err (params, error) {
-  maybeCancel(params)
+function err (args, params, error) {
+  maybeCancel(args, params)
   let isErr = error instanceof Error
   let name = isErr ? error.name : 'Error'
   let msg = isErr ? error.message : error
@@ -83,21 +91,25 @@ function err (params, error) {
     info += '\n' + error.stack.split('\n').slice(1).join('\n')
   }
   // Always print errors
-  log({ force: true, ...params }, info)
+  log(args, params, info, { force: true })
   return info
 }
 
-function warn (params, warning) {
-  maybeCancel(params)
+function warn (args, params, warning) {
+  maybeCancel(args, params)
   if (warning instanceof Error) warning = warning.message
   let info = `${chars.warn} ${chalk.yellow('Warning:')} ${warning}`.trim()
-  log(params, info)
+  log(args, params, info)
   return info
 }
 
-function raw (params, msg) {
-  log(params, msg)
+function raw (args, params, msg) {
+  log(args, params, msg)
   return msg
+}
+
+function get (args, params) {
+  return params.data
 }
 
 module.exports = {
@@ -108,4 +120,5 @@ module.exports = {
   err,
   warn,
   raw,
+  get,
 }

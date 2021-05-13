@@ -24,9 +24,9 @@ module.exports = function statusUpdater (name, args = {}) {
   let env = process.env
   name = name ? chalk.grey(name) : 'Info'
   let logLevel = args.logLevel || 'normal'
-  let quiet = () => env.ARC_QUIET || env.QUIET || args.logLevel === 'quiet' || args.quiet || false
+  if (env.ARC_QUIET || env.QUIET || args.quiet) logLevel = 'quiet'
   let isCI = env.CI || process.stdout.isTTY === false
-  if (!quiet() && !isCI) {
+  if ((logLevel !== 'quiet') && !isCI) {
     printer.hideCursor() // Disable cursor while updating
     printer.restoreCursor() // Restore cursor on exit
   }
@@ -38,33 +38,37 @@ module.exports = function statusUpdater (name, args = {}) {
     logLevel,
     name,
     printer,
-    quiet,
     running,
   }
 
-  let updater = {}
+  let updaters = {}
   let logLevels = [ 'quiet', 'normal', 'verbose', 'debug' ]
   if (!logLevels.includes(logLevel)) throw ReferenceError(`Invalid logLevel parameter, must be one of: ${logLevels.join(', ')}`)
 
   logLevels.forEach(logMode => {
-    updater[logLevel] = {}
-    let args = { logMode, logLevels, ...params }
-    updater[logLevel].start =   methods.start.bind({}, args)
-    updater[logLevel].status =  methods.status.bind({}, args)
-    updater[logLevel].done =    methods.done.bind({}, args)
-    updater[logLevel].cancel =  methods.cancel.bind({}, args)
-    updater[logLevel].err =     methods.err.bind({}, args)
-    updater[logLevel].warn =    methods.warn.bind({}, args)
-    updater[logLevel].raw =     methods.raw.bind({}, args)
+    if (logMode === 'quiet') return
+    updaters[logMode] = {}
+    let args = { logMode, logLevels }
+    updaters[logMode].start =   methods.start.bind({}, args, params)
+    updaters[logMode].status =  methods.status.bind({}, args, params)
+    updaters[logMode].done =    methods.done.bind({}, args, params)
+    updaters[logMode].cancel =  methods.cancel.bind({}, args, params)
+    updaters[logMode].err =     methods.err.bind({}, args, params)
+    updaters[logMode].warn =    methods.warn.bind({}, args, params)
+    updaters[logMode].raw =     methods.raw.bind({}, args, params)
     // Aliases
-    updater[logLevel].update =  updater[logLevel].start
-    updater[logLevel].stop =    updater[logLevel].done
-    updater[logLevel].error =   updater[logLevel].err
-    updater[logLevel].fail =    updater[logLevel].err
-    updater[logLevel].warning = updater[logLevel].warn
-
+    updaters[logMode].update =  updaters[logMode].start
+    updaters[logMode].stop =    updaters[logMode].done
+    updaters[logMode].error =   updaters[logMode].err
+    updaters[logMode].fail =    updaters[logMode].err
+    updaters[logMode].warning = updaters[logMode].warn
   })
-  return { ...updater.normal, ...updater }
+  return {
+    ...updaters.normal,
+    get: methods.get.bind({}, {}, params),
+    verbose: updaters.verbose,
+    debug: updaters.debug,
+  }
 }
 
 // For whatever reason signal-exit doesn't catch SIGINT, so do this
