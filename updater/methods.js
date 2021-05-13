@@ -5,29 +5,34 @@ let { frames, timing } = spinner
 
 function log (args, params, output, options = {}) {
   let { logMode, logLevels } = args
-  let { logLevel, isCI } = params
+  let { logLevel } = params
   let { force, animate } = options
-  let quiet = logLevel === 'quiet'
-  if (quiet && !force) return
 
-  // Check for msg so as not to print an empty line
-  let isLogLevel = logLevel === logMode
+  // Append output to running log
+  function append () {
+    if (!output) return
+    let moar = params.data.length ? `\n${output}` : output
+    params.data += moar
+  }
+
+  let quiet = logLevel === 'quiet'
+  if (quiet && !force) return append()
+
+  let sameLogLevel = logLevel === logMode
   let greaterLogLevel = logLevels.indexOf(logLevel) > logLevels.indexOf(logMode)
-  let print = output && (isLogLevel || greaterLogLevel || force)
+  let print = output && (sameLogLevel || greaterLogLevel || force)
   if (print) {
-    if (animate && !isCI) {
+    if (animate) {
       let i = 0
       params.running = setInterval(function () {
-        printer.write(`${chalk.cyan(frames[i = ++i % frames.length])} ${output}`)
+        printer.write(`${chalk.cyan(frames[i = ++i % frames.length])} ${output.substr(2)}`)
         printer.reset()
       }, timing)
     }
     else {
       console.log(output)
     }
-    // Append output to running log
-    let append = params.data.length ? `\n${output}` : output
-    params.data += append
+    append()
   }
 }
 
@@ -52,8 +57,8 @@ function start (args, params, msg) {
   maybeCancel(args, params)
   let { name, isCI } = params
   msg = msg ? chalk.cyan(msg) : ''
-  let info = `${isCI ? chars.start + ' ' : ''}${name} ${msg}`.trim()
-  log(args, params, info, { animate: true })
+  let info = `${chars.start} ${name} ${msg}`.trim()
+  log(args, params, info, { animate: !isCI })
   return `${chars.start} ${info}`
 }
 
