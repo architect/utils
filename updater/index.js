@@ -1,6 +1,7 @@
 let chalk = require('chalk')
-let chars = require('../chars')
-let { printer, spinner } = require('./lib')
+let { printer } = require('./lib')
+let methods = require('./methods')
+let data = ''
 
 /**
  * Updater
@@ -19,122 +20,51 @@ let { printer, spinner } = require('./lib')
  *
  * Each method should also return a value to enable capture of progress data
  */
-module.exports = function updater (name, params = {}) {
-  params.quiet = params.quiet || false
-  let quiet = () => process.env.ARC_QUIET || process.env.QUIET || params.quiet
+module.exports = function statusUpdater (name, args = {}) {
+  let env = process.env
   name = name ? chalk.grey(name) : 'Info'
-  let isCI = process.env.CI || process.stdout.isTTY === false
+  let logLevel = args.logLevel || 'normal'
+  let quiet = () => env.ARC_QUIET || env.QUIET || args.logLevel === 'quiet' || args.quiet || false
+  let isCI = env.CI || process.stdout.isTTY === false
   if (!quiet() && !isCI) {
     printer.hideCursor() // Disable cursor while updating
     printer.restoreCursor() // Restore cursor on exit
   }
   let running = false
-  let { frames, timing } = spinner
 
-  function progressIndicator (info) {
-    // End-user progress mode
-    if (!running && !isCI && !quiet()) {
-      let i = 0
-      running = setInterval(function () {
-        printer.write(`${chalk.cyan(frames[i = ++i % frames.length])} ${info}`)
-        printer.reset()
-      }, timing)
-    }
-    // CI mode: updates console with status messages but not animations
-    else if (!running && isCI && !quiet()) {
-      console.log(`${chars.start} ${info}`)
-    }
+  let params = {
+    data,
+    isCI,
+    logLevel,
+    name,
+    printer,
+    quiet,
+    running,
   }
 
-  // Optionally pass a message and/or post a multi-line supporting status update
-  function status (msg, ...more) {
-    msg = msg ? chalk.cyan(msg) : ''
-    let info = msg ? `${chars.start} ${name} ${msg}`.trim() : ''
-    if (running) cancel()
-    if (!quiet() && info) console.log(info) // Check for msg so as not to print an empty line
-    if (more.length) {
-      more.forEach(i => {
-        let add = chalk.dim(`  | ${i}`)
-        if (!quiet()) console.log(add)
-        info += `\n${add}`
-      })
-    }
+  let updater = {}
+  let logLevels = [ 'quiet', 'normal', 'verbose', 'debug' ]
+  if (!logLevels.includes(logLevel)) throw ReferenceError(`Invalid logLevel parameter, must be one of: ${logLevels.join(', ')}`)
 
-    return info
-  }
+  logLevels.forEach(logMode => {
+    updater[logLevel] = {}
+    let args = { logMode, logLevels, ...params }
+    updater[logLevel].start =   methods.start.bind({}, args)
+    updater[logLevel].status =  methods.status.bind({}, args)
+    updater[logLevel].done =    methods.done.bind({}, args)
+    updater[logLevel].cancel =  methods.cancel.bind({}, args)
+    updater[logLevel].err =     methods.err.bind({}, args)
+    updater[logLevel].warn =    methods.warn.bind({}, args)
+    updater[logLevel].raw =     methods.raw.bind({}, args)
+    // Aliases
+    updater[logLevel].update =  updater[logLevel].start
+    updater[logLevel].stop =    updater[logLevel].done
+    updater[logLevel].error =   updater[logLevel].err
+    updater[logLevel].fail =    updater[logLevel].err
+    updater[logLevel].warning = updater[logLevel].warn
 
-  function start (msg) {
-    msg = msg ? chalk.cyan(msg) : ''
-    let info = `${name} ${msg}`.trim()
-    if (running) cancel()
-    progressIndicator(info)
-    return `${chars.start} ${info}`
-  }
-
-  function done (newName, msg) {
-    if (!msg) {
-      msg = newName
-      newName = ''
-    }
-    if (newName) newName = chalk.grey(newName)
-    if (msg) msg = chalk.cyan(msg)
-    cancel() // Maybe clear running status and reset
-    let info = `${chars.done} ${newName ? newName : name} ${msg ? msg : ''}`.trim()
-
-    if (!quiet()) console.log(info)
-    return info
-  }
-
-  function cancel () {
-    if (running) {
-      clearInterval(running)
-      printer.reset()
-      printer.clear()
-      running = false // Prevent accidental second done print
-    }
-  }
-
-  function err (error) {
-    if (running) cancel()
-    let isErr = error instanceof Error
-    let name = isErr ? error.name : 'Error'
-    let msg = isErr ? error.message : error
-    let info = `${chars.err} ${chalk.red(name + ':')} ${msg}`.trim()
-    if (isErr) {
-      info += '\n' + error.stack.split('\n').slice(1).join('\n')
-    }
-    console.log(info)
-    return info
-  }
-
-  function warn (warning) {
-    if (running) cancel()
-    if (warning instanceof Error) warning = warning.message
-    let info = `${chars.warn} ${chalk.yellow('Warning:')} ${warning}`.trim()
-
-    if (!quiet()) console.log(info)
-    return info
-  }
-
-  function raw (msg) {
-    if (!quiet()) console.log(msg)
-    return msg
-  }
-
-  return {
-    start,
-    update: start,
-    status,
-    done,
-    stop: done,
-    cancel,
-    err,
-    error: err,
-    fail: err,
-    warn,
-    warning: warn,
-    raw,
-  }
+  })
+  return { ...updater.normal, ...updater }
 }
 
 // For whatever reason signal-exit doesn't catch SIGINT, so do this
