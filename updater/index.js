@@ -24,9 +24,9 @@ module.exports = function statusUpdater (name, args = {}) {
   let env = process.env
   name = name ? chalk.grey(name) : 'Info'
   let logLevel = args.logLevel || 'normal'
-  if (env.ARC_QUIET || env.QUIET || args.quiet) logLevel = 'quiet'
+  let quiet = env.ARC_QUIET || env.QUIET || args.quiet || false
   let isCI = env.CI || process.stdout.isTTY === false
-  if ((logLevel !== 'quiet') && !isCI) {
+  if (!quiet && !isCI) {
     printer.hideCursor() // Disable cursor while updating
     printer.restoreCursor() // Restore cursor on exit
   }
@@ -38,15 +38,15 @@ module.exports = function statusUpdater (name, args = {}) {
     logLevel,
     name,
     printer,
+    quiet,
     running,
   }
 
   let updaters = {}
-  let logLevels = [ 'quiet', 'normal', 'verbose', 'debug' ]
+  let logLevels = [ 'normal', 'verbose', 'debug' ]
   if (!logLevels.includes(logLevel)) throw ReferenceError(`Invalid logLevel parameter, must be one of: ${logLevels.join(', ')}`)
 
   logLevels.forEach(logMode => {
-    if (logMode === 'quiet') return
     updaters[logMode] = {}
     let args = { logMode, logLevels }
     updaters[logMode].start =   methods.start.bind({}, args, params)

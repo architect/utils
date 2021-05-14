@@ -545,3 +545,130 @@ test('Start + error test (quiet)', t => {
     console.log(`Returned: ${result}`)
   }, timer)
 })
+
+test('Log getter test', t => {
+  t.plan(4)
+  reset()
+  let name = 'Getter'
+  let bits = [ 'one', 'two', 'three' ]
+  let log = []
+  let out
+  let result
+
+  function go () {
+    log = []
+    bits.forEach(bit => log.push(update.status(`update ${bit}`)))
+    out = output
+    result = log.join('\n')
+    reset()
+  }
+
+  let update = updater(name)
+  go()
+  t.ok(tidy(out).includes(result), 'Output and return are equal (except cursor restore escape chars)')
+  t.equal(update.get(), log.join('\n'), 'Getter returned log of all printed updates')
+  reset()
+
+
+  update = updater(name, { quiet: true })
+  go()
+  t.notOk(out, 'Did not print')
+  t.equal(update.get(), log.join('\n'), 'Getter returned log of all updates even (with quiet param)')
+  reset()
+})
+
+test('Log levels (logLevel) test', t => {
+  t.plan(12)
+  reset()
+  let name = 'Log levels'
+  let quiet = false
+  let update
+  let logLevel
+  let out
+  let normal
+  let verbose
+  let debug
+
+  // Normal
+  update = updater(name, { logLevel, quiet })
+  normal = update.status('normal, quiet: false')
+  verbose = update.verbose.status('verbose, quiet: false')
+  debug = update.debug.status('debug, quiet: false')
+  out = output
+  t.ok(tidy(out).includes(normal), 'Output includes statements with logLevel normal (except cursor restore escape chars)')
+  t.notOk(tidy(out).includes(verbose), 'Output does not include statements with logLevel verbose')
+  t.notOk(tidy(out).includes(debug), 'Output does not include statements with logLevel debug')
+  t.equal(update.get(), normal, 'Getter returned only normal statements')
+  reset()
+
+  // Verbose
+  logLevel = 'verbose'
+  update = updater(name, { logLevel, quiet })
+  normal = update.status('normal, quiet: false')
+  verbose = update.verbose.status('verbose, quiet: false')
+  debug = update.debug.status('debug, quiet: false')
+  out = output
+  t.ok(tidy(out).includes(normal), 'Output includes statements with logLevel normal (except cursor restore escape chars)')
+  t.ok(tidy(out).includes(verbose), 'Output includes statements with logLevel verbose')
+  t.notOk(tidy(out).includes(debug), 'Output does not include statements with logLevel debug')
+  t.equal(update.get(), `${normal}\n${verbose}`, 'Getter returned only normal & verbose statements')
+  reset()
+
+  // Debug
+  logLevel = 'debug'
+  update = updater(name, { logLevel, quiet })
+  normal = update.status('normal, quiet: false')
+  verbose = update.verbose.status('verbose, quiet: false')
+  debug = update.debug.status('debug, quiet: false')
+  out = output
+  t.ok(tidy(out).includes(normal), 'Output includes statements with logLevel normal (except cursor restore escape chars)')
+  t.ok(tidy(out).includes(verbose), 'Output includes statements with logLevel verbose')
+  t.ok(tidy(out).includes(debug), 'Output includes statements with logLevel debug')
+  t.equal(update.get(), `${normal}\n${verbose}\n${debug}`, 'Getter returned only normal, verbose, & debug statements')
+  reset()
+})
+
+test('Log levels (logLevel) test (quiet)', t => {
+  t.plan(6)
+  reset()
+  let name = 'Log levels'
+  let quiet = true
+  let update
+  let logLevel
+  let out
+  let normal
+  let verbose
+  let debug
+
+  // Normal
+  update = updater(name, { logLevel, quiet })
+  normal = update.status('normal, quiet: true')
+  verbose = update.verbose.status('verbose, quiet: true')
+  debug = update.debug.status('debug, quiet: true')
+  out = output
+  t.notOk(out, 'Did not print')
+  t.equal(update.get(), normal, 'Getter returned only normal statements')
+  reset()
+
+  // Verbose
+  logLevel = 'verbose'
+  update = updater(name, { logLevel, quiet })
+  normal = update.status('normal, quiet: true')
+  verbose = update.verbose.status('verbose, quiet: true')
+  debug = update.debug.status('debug, quiet: true')
+  out = output
+  t.notOk(out, 'Did not print')
+  t.equal(update.get(), `${normal}\n${verbose}`, 'Getter returned only normal & verbose statements')
+  reset()
+
+  // Debug
+  logLevel = 'debug'
+  update = updater(name, { logLevel, quiet })
+  normal = update.status('normal, quiet: true')
+  verbose = update.verbose.status('verbose, quiet: true')
+  debug = update.debug.status('debug, quiet: true')
+  out = output
+  t.notOk(out, 'Did not print')
+  t.equal(update.get(), `${normal}\n${verbose}\n${debug}`, 'Getter returned only normal, verbose, & debug statements')
+  reset()
+})

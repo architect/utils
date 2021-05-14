@@ -5,7 +5,7 @@ let { frames, timing } = spinner
 
 function log (args, params, output, options = {}) {
   let { logMode, logLevels } = args
-  let { logLevel } = params
+  let { logLevel, quiet } = params
   let { force, animate } = options
 
   // Append output to running log
@@ -15,14 +15,12 @@ function log (args, params, output, options = {}) {
     params.data += moar
   }
 
-  let quiet = logLevel === 'quiet'
-  if (quiet && !force) return append()
-
   let sameLogLevel = logLevel === logMode
   let greaterLogLevel = logLevels.indexOf(logLevel) > logLevels.indexOf(logMode)
   let print = output && (sameLogLevel || greaterLogLevel || force)
   if (print) {
-    if (animate) {
+    if (quiet && !force) { /* noop to suppress logging */ }
+    else if (animate) {
       let i = 0
       params.running = setInterval(function () {
         printer.write(`${chalk.cyan(frames[i = ++i % frames.length])} ${output.substr(2)}`)
