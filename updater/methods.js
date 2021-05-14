@@ -115,6 +115,10 @@ function get (args, params) {
   return params.data
 }
 
+function reset (params) {
+  params.data = ''
+}
+
 module.exports = {
   start,
   status,
@@ -124,4 +128,5 @@ module.exports = {
   warn,
   raw,
   get,
+  reset,
 }

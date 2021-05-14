@@ -27,7 +27,7 @@ test('Set up env', t => {
 })
 
 test('Methods', t => {
-  t.plan(37)
+  t.plan(38)
   let name = 'Methods test' // Should be different from test name
   let update = updater(name)
   let methods = [ 'start', 'status', 'done', 'cancel', 'err', 'warn', 'raw' ]
@@ -39,6 +39,7 @@ test('Methods', t => {
     t.ok(update.debug[method], `Got updater.debug.${method}`)
   })
   t.ok(update.get, `Got updater.get`)
+  t.ok(update.reset, `Got updater.reset`)
 })
 
 test('Status update test', t => {
@@ -670,5 +671,19 @@ test('Log levels (logLevel) test (quiet)', t => {
   out = output
   t.notOk(out, 'Did not print')
   t.equal(update.get(), `${normal}\n${verbose}\n${debug}`, 'Getter returned only normal, verbose, & debug statements')
+  reset()
+})
+
+test('Reset test', t => {
+  t.plan(3)
+  reset()
+  let name = 'Reset'
+  let update = updater(name)
+  let normal = update.status('normal')
+  let out = output
+  t.ok(tidy(out).includes(normal), 'Output includes statements with logLevel normal (except cursor restore escape chars)')
+  t.equal(update.get(), normal, 'Getter returned only normal statements')
+  update.reset()
+  t.equal(update.get(), '', 'Resetter cleared updater data')
   reset()
 })

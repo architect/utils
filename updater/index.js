@@ -66,6 +66,7 @@ module.exports = function statusUpdater (name, args = {}) {
   return {
     ...updaters.normal,
     get: methods.get.bind({}, {}, params),
+    reset: methods.reset.bind({}, params),
     verbose: updaters.verbose,
     debug: updaters.debug,
   }
