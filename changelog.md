@@ -2,6 +2,19 @@
 
 ---
 
+## [2.1.0] 2021-05-13
+
+### Added
+
+- Added log levels to `updater`:
+  - Pass it a `logLevel` param with one of `normal` (default), `verbose`, or `debug`
+  - `verbose` outputs logs at its level and `normal`; `debug` outputs logs at all levels
+  - The `quiet` boolean flag still suppresses writing to `stdout`, but all relevant log data is still collected by the updater log buffer (see `get()` + `reset()` below)
+- Added `updater.get()`, which returns the captured log buffer
+- Added `updater.reset()` to clear the captured log buffer
+
+---
+
 ## [2.0.5] 2021-03-05
 
 ### Changed
