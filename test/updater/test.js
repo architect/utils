@@ -5,6 +5,7 @@ let test = require('tape')
 
 /**
  * Note: this test analyzes stdout output, do not run through tap-spec or other TTY-mungers
+ * Always run reset() before your test to expunge tap output from the running log
  */
 let output = ''
 process.stdout.write = (write => {
@@ -17,7 +18,10 @@ process.stdout.write = (write => {
 let isBuildCI = process.env.CI
 let timer = 275 // Should animate only twice on both *nix + Win
 let tidy = i => i.replace(/(^\n|\n$)/g, '') // Remove trailing newline
-let reset = () => output = ''
+let reset = update => {
+  output = ''
+  if (update) update.reset()
+}
 
 test('Set up env', t => {
   t.plan(3)
@@ -27,7 +31,7 @@ test('Set up env', t => {
 })
 
 test('Methods', t => {
-  t.plan(38)
+  t.plan(39)
   let name = 'Methods test' // Should be different from test name
   let update = updater(name)
   let methods = [ 'start', 'status', 'done', 'cancel', 'err', 'warn', 'raw' ]
@@ -40,6 +44,7 @@ test('Methods', t => {
   })
   t.ok(update.get, `Got updater.get`)
   t.ok(update.reset, `Got updater.reset`)
+  t.ok(update.clear, `Got updater.clear`)
 })
 
 test('Status update test', t => {
@@ -51,21 +56,19 @@ test('Status update test', t => {
   // No message
   let result = update.status()
   let out = output
-  reset()
   t.notOk(tidy(out).includes(name) && result.includes(name), 'Did not return / print anything')
   console.log(`Returned: ${result}`)
-  reset()
+  reset(update)
 
   // One message
   let msg = 'one liner'
   result = update.status(msg)
   out = output
-  reset()
   t.equal(tidy(out), result, 'Output and return are equal')
   t.ok(result.includes(name), 'Returned / printed correct name')
   t.ok(result.includes(msg), 'Returned / printed correct msg')
   console.log(`Returned: ${result}`)
-  reset()
+  reset(update)
 
   // Message + multi-line update
   msg = 'multi liner'
@@ -73,14 +76,13 @@ test('Status update test', t => {
   let line3 = 'and this is line three'
   result = update.status(msg, line2, line3)
   out = output
-  reset()
   t.equal(tidy(out), result, 'Output and return are equal')
   t.ok(result.includes(name), 'Returned / printed correct name')
   t.ok(result.includes(msg), 'Returned / printed correct msg')
   t.ok(result.includes(line2), 'Returned / printed line2')
   t.ok(result.includes(line3), 'Returned / printed line3')
   console.log(`Returned: ${result}`)
-  reset()
+  reset(update)
 
   // No message + multi-line update
   msg = ''
@@ -88,12 +90,12 @@ test('Status update test', t => {
   line3 = 'and this is line three'
   result = update.status(msg, line2, line3)
   out = output
-  reset()
   t.equal(tidy(out), tidy(result), 'Output and return are equal (except newline placement)')
   t.notOk(result.includes(name), 'Did not return / print name')
   t.ok(result.includes(line2), 'Returned / printed line2')
   t.ok(result.includes(line3), 'Returned / printed line3')
   console.log(`Returned: ${result}`)
+  reset(update)
 })
 
 test('Status update test (quiet)', t => {
@@ -105,21 +107,19 @@ test('Status update test (quiet)', t => {
   // No message
   let result = update.status()
   let out = output
-  reset()
   t.notOk(tidy(out).includes(name) && result.includes(name), 'Did not return / print anything')
   console.log(`Returned: ${result}`)
-  reset()
+  reset(update)
 
   // One message
   let msg = 'one liner'
   result = update.status(msg)
   out = output
-  reset()
   t.notOk(out, 'Did not print')
   t.ok(result.includes(name), 'Returned correct name')
   t.ok(result.includes(msg), 'Returned correct msg')
   console.log(`Returned: ${result}`)
-  reset()
+  reset(update)
 
   // Message + multi-line update
   msg = 'multi liner'
@@ -127,14 +127,13 @@ test('Status update test (quiet)', t => {
   let line3 = 'and this is line three'
   result = update.status(msg, line2, line3)
   out = output
-  reset()
   t.notOk(out, 'Did not print')
   t.ok(result.includes(name), 'Returned correct name')
   t.ok(result.includes(msg), 'Returned correct msg')
   t.ok(result.includes(line2), 'Returned line2')
   t.ok(result.includes(line3), 'Returned line3')
   console.log(`Returned: ${result}`)
-  reset()
+  reset(update)
 
   // No message + multi-line update
   msg = ''
@@ -142,12 +141,12 @@ test('Status update test (quiet)', t => {
   line3 = 'and this is line three'
   result = update.status(msg, line2, line3)
   out = output
-  reset()
   t.notOk(out, 'Did not print')
   t.notOk(result.includes(name), 'Did not return name')
   t.ok(result.includes(line2), 'Returned / printed line2')
   t.ok(result.includes(line3), 'Returned / printed line3')
   console.log(`Returned: ${result}`)
+  reset(update)
 })
 
 test('Start + cancel test', t => {
@@ -163,13 +162,13 @@ test('Start + cancel test', t => {
     update.cancel()
     let out = output
     out = out.split(name)
-    reset()
     t.ok(result.includes(name), 'Returned correct name')
     if (!isBuildCI) {
       t.equal(out.length, 3, 'Printed correct name, animated twice')
       t.pass(`update.cancel ended indicator, or this test wouldn't have run`)
     }
     console.log(`Returned: ${result}`)
+    reset(update)
   }, timer)
 })
 
@@ -185,13 +184,13 @@ test('Start + cancel test (quiet)', t => {
   setTimeout(() => {
     update.cancel()
     let out = output
-    reset()
     t.ok(result.includes(name), 'Returned correct name')
     t.notOk(out, 'Did not print')
     if (!isBuildCI) {
       t.pass(`update.cancel ended indicator, or this test wouldn't have run`)
     }
     console.log(`Returned: ${result}`)
+    reset(update)
   }, timer)
 })
 
@@ -208,7 +207,6 @@ test('Start + done test', t => {
   setTimeout(() => {
     update.done()
     let out = output
-    reset()
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(result.includes(msg), 'Returned correct msg')
     t.ok(out.includes(chars.done), 'update.done updated line with done status')
@@ -218,7 +216,7 @@ test('Start + done test', t => {
       t.pass(`update.done ended indicator, or this test wouldn't have run`)
     }
     console.log(`Returned: ${result}`)
-    reset()
+    reset(update)
   }, timer)
 })
 
@@ -235,7 +233,6 @@ test('Start + done test (quiet)', t => {
   setTimeout(() => {
     update.done()
     let out = output
-    reset()
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(result.includes(msg), 'Returned correct msg')
     t.notOk(out, 'Did not print')
@@ -243,7 +240,7 @@ test('Start + done test (quiet)', t => {
       t.pass(`update.done ended indicator, or this test wouldn't have run`)
     }
     console.log(`Returned: ${result}`)
-    reset()
+    reset(update)
   }, timer)
 })
 
@@ -256,13 +253,12 @@ test('Warn test', t => {
   let warning = `Here's a warning!`
   let result = update.warn(warning)
   let out = output
-  reset()
   t.notOk(out.includes(name), 'Warning did not include name')
   t.ok(out.includes(warning), 'Returned correct warning')
   t.ok(out.includes(chars.warn), 'Warning included icon')
   t.ok(result, 'Returned result')
   console.log(`Returned: ${result}`)
-  reset()
+  reset(update)
 })
 
 test('Warn test (quiet)', t => {
@@ -274,13 +270,12 @@ test('Warn test (quiet)', t => {
   let warning = `Here's a warning!`
   let result = update.warn(warning)
   let out = output
-  reset()
   t.notOk(result.includes(name), 'Warning did not include name')
   t.ok(result.includes(warning), 'Returned correct warning')
   t.ok(result.includes(chars.warn), 'Warning included icon')
   t.notOk(out, 'Did not print')
   console.log(`Returned: ${result}`)
-  reset()
+  reset(update)
 })
 
 test('Raw test', t => {
@@ -292,12 +287,11 @@ test('Raw test', t => {
   let raw = `Here's a raw log!`
   let result = update.raw(raw)
   let out = output
-  reset()
   t.notOk(out.includes(name), 'Raw did not include name')
   t.ok(out.includes(raw), 'Printed correct raw input')
   t.ok(result.includes(raw), 'Returned correct raw input')
   console.log(`Returned: ${result}`)
-  reset()
+  reset(update)
 })
 
 test('Raw test (quiet)', t => {
@@ -309,13 +303,11 @@ test('Raw test (quiet)', t => {
   let raw = `Here's a raw log!`
   let result = update.raw(raw)
   let out = output
-  reset()
-
   t.notOk(out.includes(name), 'Raw did not include name')
   t.ok(result.includes(raw), 'Returned correct raw input')
   t.notOk(out, 'Did not print')
   console.log(`Returned: ${result}`)
-  reset()
+  reset(update)
 })
 
 test('Start + done with updated name test', t => {
@@ -333,8 +325,6 @@ test('Start + done with updated name test', t => {
   setTimeout(() => {
     let done = update.done(newName, newMsg)
     let out = output
-
-    reset()
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(done.includes(newName), 'Returned correct updated name')
     t.ok(result.includes(msg), 'Returned correct msg')
@@ -346,7 +336,7 @@ test('Start + done with updated name test', t => {
       t.pass(`update.done ended indicator, or this test wouldn't have run`)
     }
     console.log(`Returned: ${result}`)
-    t.end()
+    reset(update)
   }, timer)
 })
 
@@ -365,8 +355,6 @@ test('Start + done with updated name test (quiet)', t => {
   setTimeout(() => {
     let done = update.done(newName, newMsg)
     let out = output
-
-    reset()
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(done.includes(newName), 'Returned correct updated name')
     t.ok(result.includes(msg), 'Returned correct msg')
@@ -376,7 +364,7 @@ test('Start + done with updated name test (quiet)', t => {
       t.pass(`update.done ended indicator, or this test wouldn't have run`)
     }
     console.log(`Returned: ${result}`)
-    t.end()
+    reset(update)
   }, timer)
 })
 
@@ -393,13 +381,13 @@ test('Start / CI-mode test', t => {
   setTimeout(() => {
     let out = output
     out = out.split(name)
-    reset()
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(result.includes(msg), 'Returned correct msg')
     t.equal(out.length, 2, 'Did not animate')
     t.notOk(out.join('').includes(lib.spinner.frames[1]), 'Really did not animate')
     t.pass(`In CI mode, process wouldn't hang endlessly if update.cancel or update.done aren't run`) // As evidenced by this test having run without update.cancel or update.done
     console.log(`Returned: ${result}`)
+    reset(update)
     delete process.env.CI
   }, timer)
 })
@@ -416,12 +404,12 @@ test('Start / CI-mode test (quiet)', t => {
   let result = update.start(msg)
   setTimeout(() => {
     let out = output
-    reset()
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(result.includes(msg), 'Returned correct msg')
     t.notOk(out, 'Did not print')
     t.pass(`In CI mode, process wouldn't hang endlessly if update.cancel or update.done aren't run`) // As evidenced by this test having run without update.cancel or update.done
     console.log(`Returned: ${result}`)
+    reset(update)
     delete process.env.CI
   }, timer)
 })
@@ -436,27 +424,26 @@ test('Error test', t => {
   let e = 'an error'
   let result = update.error(e)
   let out = output
-  reset()
   t.ok(tidy(out).includes(result), 'Output and return are equal (except cursor restore escape chars)')
   t.ok(result.includes(chars.err) && result.includes('Error:'), 'Returned / printed error name')
   t.notOk(result.includes(name), 'Did not return / print updater name')
   t.ok(result.includes(e), 'Returned / printed correct error')
   t.ok(result.split('\n').length === 1, 'Did not return a stack trace')
   console.log(`Returned: ${result}`)
-  reset()
+  reset(update)
 
   // An actual error
   let errMsg = 'a real error'
   let error = Error(errMsg)
   result = update.error(error)
   out = output
-  reset()
   t.equal(tidy(out), result, 'Output and return are equal')
   t.ok(result.includes(chars.err) && result.includes('Error:'), 'Returned / printed error name')
   t.notOk(result.includes(name), 'Did not return / print updater name')
   t.ok(result.includes(errMsg), 'Returned / printed correct error message')
   t.ok(result.split('\n').length > 1, 'Returned a stack trace')
   console.log(`Returned: ${result}`)
+  reset(update)
 })
 
 test('Error test (quiet)', t => {
@@ -469,25 +456,24 @@ test('Error test (quiet)', t => {
   let e = 'an error'
   let result = update.error(e)
   let out = output
-  reset()
   t.ok(tidy(out).includes(result), 'Output and return are equal (except cursor restore escape chars)')
   t.ok(result.includes(chars.err) && result.includes('Error:'), 'Returned error name')
   t.notOk(result.includes(name), 'Did not return updater name')
   t.ok(result.includes(e), 'Returned correct error')
   console.log(`Returned: ${result}`)
-  reset()
+  reset(update)
 
   // An actual error
   let errMsg = 'a real error'
   let error = Error(errMsg)
   result = update.error(error)
   out = output
-  reset()
   t.ok(out, 'Did print (because an error is present)')
   t.ok(result.includes(chars.err) && result.includes('Error:'), 'Returned error name')
   t.notOk(result.includes(name), 'Did not return updater name')
   t.ok(result.includes(errMsg), 'Returned correct error message')
   console.log(`Returned: ${result}`)
+  reset(update)
 })
 
 test('Start + error test', t => {
@@ -504,7 +490,6 @@ test('Start + error test', t => {
     let e = 'an error occurred'
     let err = update.error(e)
     let out = output.split(name)
-    reset()
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(result.includes(msg), 'Returned correct msg')
     t.ok(err.includes(chars.err) && err.includes('Error:'), 'Returned / printed error name')
@@ -515,6 +500,7 @@ test('Start + error test', t => {
       t.pass(`Error ended indicator, or this test wouldn't have run`)
     }
     console.log(`Returned: ${result}`)
+    reset(update)
   }, timer)
 })
 
@@ -532,7 +518,6 @@ test('Start + error test (quiet)', t => {
     let e = 'an error occurred'
     let err = update.error(e)
     let out = output.split(name)
-    reset()
     t.ok(out, 'Did print (because an error is present)')
     t.ok(result.includes(name), 'Returned correct name')
     t.ok(result.includes(msg), 'Returned correct msg')
@@ -544,6 +529,7 @@ test('Start + error test (quiet)', t => {
       t.pass(`Error ended indicator, or this test wouldn't have run`)
     }
     console.log(`Returned: ${result}`)
+    reset(update)
   }, timer)
 })
 
@@ -557,25 +543,23 @@ test('Log getter test', t => {
   let result
 
   function go () {
+    reset(update)
     log = []
     bits.forEach(bit => log.push(update.status(`update ${bit}`)))
     out = output
     result = log.join('\n')
-    reset()
   }
 
   let update = updater(name)
   go()
   t.ok(tidy(out).includes(result), 'Output and return are equal (except cursor restore escape chars)')
-  t.equal(update.get(), log.join('\n'), 'Getter returned log of all printed updates')
-  reset()
-
+  t.equal(update.get(), result, 'Getter returned log of all printed updates')
 
   update = updater(name, { quiet: true })
   go()
   t.notOk(out, 'Did not print')
-  t.equal(update.get(), log.join('\n'), 'Getter returned log of all updates even (with quiet param)')
-  reset()
+  t.equal(update.get(), result, 'Getter returned log of all updates even (with quiet param)')
+  reset(update)
 })
 
 test('Log levels (logLevel) test', t => {
@@ -600,7 +584,7 @@ test('Log levels (logLevel) test', t => {
   t.notOk(tidy(out).includes(verbose), 'Output does not include statements with logLevel verbose')
   t.notOk(tidy(out).includes(debug), 'Output does not include statements with logLevel debug')
   t.equal(update.get(), normal, 'Getter returned only normal statements')
-  reset()
+  reset(update)
 
   // Verbose
   logLevel = 'verbose'
@@ -613,7 +597,7 @@ test('Log levels (logLevel) test', t => {
   t.ok(tidy(out).includes(verbose), 'Output includes statements with logLevel verbose')
   t.notOk(tidy(out).includes(debug), 'Output does not include statements with logLevel debug')
   t.equal(update.get(), `${normal}\n${verbose}`, 'Getter returned only normal & verbose statements')
-  reset()
+  reset(update)
 
   // Debug
   logLevel = 'debug'
@@ -626,7 +610,7 @@ test('Log levels (logLevel) test', t => {
   t.ok(tidy(out).includes(verbose), 'Output includes statements with logLevel verbose')
   t.ok(tidy(out).includes(debug), 'Output includes statements with logLevel debug')
   t.equal(update.get(), `${normal}\n${verbose}\n${debug}`, 'Getter returned only normal, verbose, & debug statements')
-  reset()
+  reset(update)
 })
 
 test('Log levels (logLevel) test (quiet)', t => {
@@ -649,7 +633,7 @@ test('Log levels (logLevel) test (quiet)', t => {
   out = output
   t.notOk(out, 'Did not print')
   t.equal(update.get(), normal, 'Getter returned only normal statements')
-  reset()
+  reset(update)
 
   // Verbose
   logLevel = 'verbose'
@@ -660,7 +644,7 @@ test('Log levels (logLevel) test (quiet)', t => {
   out = output
   t.notOk(out, 'Did not print')
   t.equal(update.get(), `${normal}\n${verbose}`, 'Getter returned only normal & verbose statements')
-  reset()
+  reset(update)
 
   // Debug
   logLevel = 'debug'
@@ -671,7 +655,7 @@ test('Log levels (logLevel) test (quiet)', t => {
   out = output
   t.notOk(out, 'Did not print')
   t.equal(update.get(), `${normal}\n${verbose}\n${debug}`, 'Getter returned only normal, verbose, & debug statements')
-  reset()
+  reset(update)
 })
 
 test('Reset test', t => {
@@ -685,5 +669,5 @@ test('Reset test', t => {
   t.equal(update.get(), normal, 'Getter returned only normal statements')
   update.reset()
   t.equal(update.get(), '', 'Resetter cleared updater data')
-  reset()
+  reset(update)
 })

@@ -2,6 +2,7 @@ let chalk = require('chalk')
 let chars = require('../chars')
 let { printer, spinner } = require('./lib')
 let { frames, timing } = spinner
+let data = []
 
 function log (args, params, output, options = {}) {
   let { logMode, logLevels } = args
@@ -10,9 +11,7 @@ function log (args, params, output, options = {}) {
 
   // Append output to running log
   function append () {
-    if (!output) return
-    let moar = params.data.length ? `\n${output}` : output
-    params.data += moar
+    if (output) data.push(output)
   }
 
   let sameLogLevel = logLevel === logMode
@@ -111,12 +110,12 @@ function raw (args, params, msg) {
   return msg
 }
 
-function get (args, params) {
-  return params.data
+function get () {
+  return data.length ? data.join('\n') : ''
 }
 
-function reset (params) {
-  params.data = ''
+function reset () {
+  data = []
 }
 
 module.exports = {

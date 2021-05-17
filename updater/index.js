@@ -1,7 +1,6 @@
 let chalk = require('chalk')
 let { printer } = require('./lib')
 let methods = require('./methods')
-let data = ''
 
 /**
  * Updater
@@ -33,7 +32,6 @@ module.exports = function statusUpdater (name, args = {}) {
   let running = false
 
   let params = {
-    data,
     isCI,
     logLevel,
     name,
@@ -66,7 +64,8 @@ module.exports = function statusUpdater (name, args = {}) {
   return {
     ...updaters.normal,
     get: methods.get.bind({}, {}, params),
-    reset: methods.reset.bind({}, params),
+    reset: methods.reset,
+    clear: methods.reset,
     verbose: updaters.verbose,
     debug: updaters.debug,
   }
