@@ -11,7 +11,7 @@
   - `verbose` outputs logs at its level and `normal`; `debug` outputs logs at all levels
   - The `quiet` boolean flag still suppresses writing to `stdout`, but all relevant log data is still collected by the updater log buffer (see `get()` + `reset()` below)
 - Added `updater.get()`, which returns the captured log buffer
-- Added `updater.reset()` to clear the captured log buffer
+- Added `updater.reset()` (and `updater.clear()` alias) to clear the captured log buffer
 
 ---
 
