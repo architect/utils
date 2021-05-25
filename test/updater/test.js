@@ -48,7 +48,7 @@ test('Methods', t => {
 })
 
 test('Status update test', t => {
-  t.plan(13)
+  t.plan(14)
   reset()
   let name = 'Status test' // Should be different from test name
   let update = updater(name)
@@ -56,8 +56,8 @@ test('Status update test', t => {
   // No message
   let result = update.status()
   let out = output
-  t.notOk(tidy(out).includes(name) && result.includes(name), 'Did not return / print anything')
-  console.log(`Returned: ${result}`)
+  t.doesNotMatch(tidy(out), new RegExp(name), 'no message parameter yields no updater name in output')
+  t.doesNotMatch(result, new RegExp(name), 'no message parameter yields no updater name in return value')
   reset(update)
 
   // One message
@@ -65,9 +65,8 @@ test('Status update test', t => {
   result = update.status(msg)
   out = output
   t.equal(tidy(out), result, 'Output and return are equal')
-  t.ok(result.includes(name), 'Returned / printed correct name')
-  t.ok(result.includes(msg), 'Returned / printed correct msg')
-  console.log(`Returned: ${result}`)
+  t.match(result, new RegExp(name), 'Returned / printed correct name')
+  t.match(result, new RegExp(msg), 'Returned / printed correct msg')
   reset(update)
 
   // Message + multi-line update
@@ -77,11 +76,10 @@ test('Status update test', t => {
   result = update.status(msg, line2, line3)
   out = output
   t.equal(tidy(out), result, 'Output and return are equal')
-  t.ok(result.includes(name), 'Returned / printed correct name')
-  t.ok(result.includes(msg), 'Returned / printed correct msg')
-  t.ok(result.includes(line2), 'Returned / printed line2')
-  t.ok(result.includes(line3), 'Returned / printed line3')
-  console.log(`Returned: ${result}`)
+  t.match(result, new RegExp(name), 'Returned / printed correct name')
+  t.match(result, new RegExp(msg), 'Returned / printed correct msg')
+  t.match(result, new RegExp(line2), 'Returned / printed line2')
+  t.match(result, new RegExp(line3), 'Returned / printed line3')
   reset(update)
 
   // No message + multi-line update
@@ -91,15 +89,14 @@ test('Status update test', t => {
   result = update.status(msg, line2, line3)
   out = output
   t.equal(tidy(out), tidy(result), 'Output and return are equal (except newline placement)')
-  t.notOk(result.includes(name), 'Did not return / print name')
-  t.ok(result.includes(line2), 'Returned / printed line2')
-  t.ok(result.includes(line3), 'Returned / printed line3')
-  console.log(`Returned: ${result}`)
+  t.doesNotMatch(result, new RegExp(name), 'Did not return / print name')
+  t.match(result, new RegExp(line2), 'Returned / printed line2')
+  t.match(result, new RegExp(line3), 'Returned / printed line3')
   reset(update)
 })
 
 test('Status update test (quiet)', t => {
-  t.plan(13)
+  t.plan(14)
   reset()
   let name = 'Status test' // Should be different from test name
   let update = updater(name, { quiet: true })
@@ -107,8 +104,8 @@ test('Status update test (quiet)', t => {
   // No message
   let result = update.status()
   let out = output
-  t.notOk(tidy(out).includes(name) && result.includes(name), 'Did not return / print anything')
-  console.log(`Returned: ${result}`)
+  t.doesNotMatch(tidy(out), new RegExp(name), 'no message parameter yields no updater name in output')
+  t.doesNotMatch(result, new RegExp(name), 'no message parameter yields no updater name in return value')
   reset(update)
 
   // One message
@@ -116,9 +113,8 @@ test('Status update test (quiet)', t => {
   result = update.status(msg)
   out = output
   t.notOk(out, 'Did not print')
-  t.ok(result.includes(name), 'Returned correct name')
-  t.ok(result.includes(msg), 'Returned correct msg')
-  console.log(`Returned: ${result}`)
+  t.match(result, new RegExp(name), 'Returned correct name')
+  t.match(result, new RegExp(msg), 'Returned correct msg')
   reset(update)
 
   // Message + multi-line update
@@ -128,11 +124,10 @@ test('Status update test (quiet)', t => {
   result = update.status(msg, line2, line3)
   out = output
   t.notOk(out, 'Did not print')
-  t.ok(result.includes(name), 'Returned correct name')
-  t.ok(result.includes(msg), 'Returned correct msg')
-  t.ok(result.includes(line2), 'Returned line2')
-  t.ok(result.includes(line3), 'Returned line3')
-  console.log(`Returned: ${result}`)
+  t.match(result, new RegExp(name), 'Returned correct name')
+  t.match(result, new RegExp(msg), 'Returned correct msg')
+  t.match(result, new RegExp(line2), 'Returned line2')
+  t.match(result, new RegExp(line3), 'Returned line3')
   reset(update)
 
   // No message + multi-line update
@@ -142,10 +137,9 @@ test('Status update test (quiet)', t => {
   result = update.status(msg, line2, line3)
   out = output
   t.notOk(out, 'Did not print')
-  t.notOk(result.includes(name), 'Did not return name')
-  t.ok(result.includes(line2), 'Returned / printed line2')
-  t.ok(result.includes(line3), 'Returned / printed line3')
-  console.log(`Returned: ${result}`)
+  t.doesNotMatch(result, new RegExp(name), 'Did not return name')
+  t.match(result, new RegExp(line2), 'Returned / printed line2')
+  t.match(result, new RegExp(line3), 'Returned / printed line3')
   reset(update)
 })
 
@@ -153,7 +147,7 @@ test('Start + cancel test', t => {
   let count = isBuildCI ? 1 : 3
   t.plan(count)
   reset()
-  let name = 'Progress indicator + cancel test'
+  let name = 'Progress indicator and cancel test'
   let update = updater(name)
 
   // No message
@@ -162,12 +156,11 @@ test('Start + cancel test', t => {
     update.cancel()
     let out = output
     out = out.split(name)
-    t.ok(result.includes(name), 'Returned correct name')
+    t.match(result, new RegExp(name), 'Returned correct name')
     if (!isBuildCI) {
       t.equal(out.length, 3, 'Printed correct name, animated twice')
       t.pass(`update.cancel ended indicator, or this test wouldn't have run`)
     }
-    console.log(`Returned: ${result}`)
     reset(update)
   }, timer)
 })
@@ -176,7 +169,7 @@ test('Start + cancel test (quiet)', t => {
   let count = isBuildCI ? 2 : 3
   t.plan(count)
   reset()
-  let name = 'Progress indicator + cancel test'
+  let name = 'Progress indicator and cancel test'
   let update = updater(name, { quiet: true })
 
   // No message
@@ -184,12 +177,11 @@ test('Start + cancel test (quiet)', t => {
   setTimeout(() => {
     update.cancel()
     let out = output
-    t.ok(result.includes(name), 'Returned correct name')
+    t.match(result, new RegExp(name), 'Returned correct name')
     t.notOk(out, 'Did not print')
     if (!isBuildCI) {
       t.pass(`update.cancel ended indicator, or this test wouldn't have run`)
     }
-    console.log(`Returned: ${result}`)
     reset(update)
   }, timer)
 })
@@ -198,7 +190,7 @@ test('Start + done test', t => {
   let count = isBuildCI ? 3 : 5
   t.plan(count)
   reset()
-  let name = 'Progress indicator + done test'
+  let name = 'Progress indicator and done test'
   let update = updater(name)
 
   // Message
@@ -207,15 +199,14 @@ test('Start + done test', t => {
   setTimeout(() => {
     update.done()
     let out = output
-    t.ok(result.includes(name), 'Returned correct name')
-    t.ok(result.includes(msg), 'Returned correct msg')
-    t.ok(out.includes(chars.done), 'update.done updated line with done status')
+    t.match(result, new RegExp(name), 'Returned correct name')
+    t.match(result, new RegExp(msg), 'Returned correct msg')
+    t.match(out, new RegExp(chars.done), 'update.done updated line with done status')
     out = out.split(name)
     if (!isBuildCI) {
       t.equal(out.length, 4, 'Printed correct name, animated twice')
       t.pass(`update.done ended indicator, or this test wouldn't have run`)
     }
-    console.log(`Returned: ${result}`)
     reset(update)
   }, timer)
 })
@@ -224,7 +215,7 @@ test('Start + done test (quiet)', t => {
   let count = isBuildCI ? 3 : 4
   t.plan(count)
   reset()
-  let name = 'Progress indicator + done test'
+  let name = 'Progress indicator and done test'
   let update = updater(name, { quiet: true })
 
   // Message
@@ -233,13 +224,12 @@ test('Start + done test (quiet)', t => {
   setTimeout(() => {
     update.done()
     let out = output
-    t.ok(result.includes(name), 'Returned correct name')
-    t.ok(result.includes(msg), 'Returned correct msg')
+    t.match(result, new RegExp(name), 'Returned correct name')
+    t.match(result, new RegExp(msg), 'Returned correct msg')
     t.notOk(out, 'Did not print')
     if (!isBuildCI) {
       t.pass(`update.done ended indicator, or this test wouldn't have run`)
     }
-    console.log(`Returned: ${result}`)
     reset(update)
   }, timer)
 })
@@ -253,11 +243,10 @@ test('Warn test', t => {
   let warning = `Here's a warning!`
   let result = update.warn(warning)
   let out = output
-  t.notOk(out.includes(name), 'Warning did not include name')
-  t.ok(out.includes(warning), 'Returned correct warning')
-  t.ok(out.includes(chars.warn), 'Warning included icon')
+  t.doesNotMatch(out, new RegExp(name), 'Warning did not include name')
+  t.match(out, new RegExp(warning), 'Returned correct warning')
+  t.match(out, new RegExp(chars.warn), 'Warning included icon')
   t.ok(result, 'Returned result')
-  console.log(`Returned: ${result}`)
   reset(update)
 })
 
@@ -270,11 +259,10 @@ test('Warn test (quiet)', t => {
   let warning = `Here's a warning!`
   let result = update.warn(warning)
   let out = output
-  t.notOk(result.includes(name), 'Warning did not include name')
-  t.ok(result.includes(warning), 'Returned correct warning')
-  t.ok(result.includes(chars.warn), 'Warning included icon')
+  t.doesNotMatch(result, new RegExp(name), 'Warning did not include name')
+  t.match(result, new RegExp(warning), 'Returned correct warning')
+  t.match(result, new RegExp(chars.warn), 'Warning included icon')
   t.notOk(out, 'Did not print')
-  console.log(`Returned: ${result}`)
   reset(update)
 })
 
@@ -287,10 +275,9 @@ test('Raw test', t => {
   let raw = `Here's a raw log!`
   let result = update.raw(raw)
   let out = output
-  t.notOk(out.includes(name), 'Raw did not include name')
-  t.ok(out.includes(raw), 'Printed correct raw input')
-  t.ok(result.includes(raw), 'Returned correct raw input')
-  console.log(`Returned: ${result}`)
+  t.doesNotMatch(out, new RegExp(name), 'Raw did not include name')
+  t.match(out, new RegExp(raw), 'Printed correct raw input')
+  t.match(result, new RegExp(raw), 'Returned correct raw input')
   reset(update)
 })
 
@@ -303,18 +290,17 @@ test('Raw test (quiet)', t => {
   let raw = `Here's a raw log!`
   let result = update.raw(raw)
   let out = output
-  t.notOk(out.includes(name), 'Raw did not include name')
-  t.ok(result.includes(raw), 'Returned correct raw input')
+  t.doesNotMatch(out, new RegExp(name), 'Raw did not include name')
+  t.match(result, new RegExp(raw), 'Returned correct raw input')
   t.notOk(out, 'Did not print')
-  console.log(`Returned: ${result}`)
   reset(update)
 })
 
 test('Start + done with updated name test', t => {
-  let count = isBuildCI ? 4 : 7
+  let count = isBuildCI ? 5 : 8
   t.plan(count)
   reset()
-  let name = 'Progress indicator + done with updated name test'
+  let name = 'Progress indicator and done with updated name test'
   let update = updater(name)
 
   // Round 2
@@ -325,17 +311,17 @@ test('Start + done with updated name test', t => {
   setTimeout(() => {
     let done = update.done(newName, newMsg)
     let out = output
-    t.ok(result.includes(name), 'Returned correct name')
-    t.ok(done.includes(newName), 'Returned correct updated name')
-    t.ok(result.includes(msg), 'Returned correct msg')
-    t.ok(out.includes(chars.done) && out.includes(newName) && out.includes(newMsg), 'update.done updated line with update done status (both name and message)')
+    t.match(result, new RegExp(name), 'Returned correct name')
+    t.match(done, new RegExp(newName), 'Returned correct updated name')
+    t.match(result, new RegExp(msg), 'Returned correct msg')
+    t.match(out, new RegExp(chars.done), 'update.done updated line with update done chars')
+    t.match(out, new RegExp(newMsg), 'update.done updated line with updated msg')
     out = out.split(name)
     if (!isBuildCI) {
-      t.ok(done.includes(newMsg), 'Returned correct updated msg')
+      t.match(done, new RegExp(newMsg), 'Returned correct updated msg')
       t.equal(out.length, 3, 'Printed correct updated name, animated twice')
       t.pass(`update.done ended indicator, or this test wouldn't have run`)
     }
-    console.log(`Returned: ${result}`)
     reset(update)
   }, timer)
 })
@@ -344,7 +330,7 @@ test('Start + done with updated name test (quiet)', t => {
   let count = isBuildCI ? 4 : 6
   t.plan(count)
   reset()
-  let name = 'Progress indicator + done with updated name test'
+  let name = 'Progress indicator and done with updated name test'
   let update = updater(name, { quiet: true })
 
   // Round 2
@@ -355,15 +341,14 @@ test('Start + done with updated name test (quiet)', t => {
   setTimeout(() => {
     let done = update.done(newName, newMsg)
     let out = output
-    t.ok(result.includes(name), 'Returned correct name')
-    t.ok(done.includes(newName), 'Returned correct updated name')
-    t.ok(result.includes(msg), 'Returned correct msg')
+    t.match(result, new RegExp(name), 'Returned correct name')
+    t.match(done, new RegExp(newName), 'Returned correct updated name')
+    t.match(result, new RegExp(msg), 'Returned correct msg')
     t.notOk(out, 'Did not print')
     if (!isBuildCI) {
-      t.ok(done.includes(newMsg), 'Returned correct updated msg')
+      t.match(done, new RegExp(newMsg), 'Returned correct updated msg')
       t.pass(`update.done ended indicator, or this test wouldn't have run`)
     }
-    console.log(`Returned: ${result}`)
     reset(update)
   }, timer)
 })
@@ -381,12 +366,11 @@ test('Start / CI-mode test', t => {
   setTimeout(() => {
     let out = output
     out = out.split(name)
-    t.ok(result.includes(name), 'Returned correct name')
-    t.ok(result.includes(msg), 'Returned correct msg')
+    t.match(result, new RegExp(name), 'Returned correct name')
+    t.match(result, new RegExp(msg), 'Returned correct msg')
     t.equal(out.length, 2, 'Did not animate')
-    t.notOk(out.join('').includes(lib.spinner.frames[1]), 'Really did not animate')
+    t.doesNotMatch(out.join(''), new RegExp(lib.spinner.frames[1]), 'Really did not animate')
     t.pass(`In CI mode, process wouldn't hang endlessly if update.cancel or update.done aren't run`) // As evidenced by this test having run without update.cancel or update.done
-    console.log(`Returned: ${result}`)
     reset(update)
     delete process.env.CI
   }, timer)
@@ -404,18 +388,17 @@ test('Start / CI-mode test (quiet)', t => {
   let result = update.start(msg)
   setTimeout(() => {
     let out = output
-    t.ok(result.includes(name), 'Returned correct name')
-    t.ok(result.includes(msg), 'Returned correct msg')
+    t.match(result, new RegExp(name), 'Returned correct name')
+    t.match(result, new RegExp(msg), 'Returned correct msg')
     t.notOk(out, 'Did not print')
     t.pass(`In CI mode, process wouldn't hang endlessly if update.cancel or update.done aren't run`) // As evidenced by this test having run without update.cancel or update.done
-    console.log(`Returned: ${result}`)
     reset(update)
     delete process.env.CI
   }, timer)
 })
 
 test('Error test', t => {
-  t.plan(10)
+  t.plan(12)
   reset()
   let name = 'Error update test'
   let update = updater(name)
@@ -424,12 +407,12 @@ test('Error test', t => {
   let e = 'an error'
   let result = update.error(e)
   let out = output
-  t.ok(tidy(out).includes(result), 'Output and return are equal (except cursor restore escape chars)')
-  t.ok(result.includes(chars.err) && result.includes('Error:'), 'Returned / printed error name')
-  t.notOk(result.includes(name), 'Did not return / print updater name')
-  t.ok(result.includes(e), 'Returned / printed correct error')
-  t.ok(result.split('\n').length === 1, 'Did not return a stack trace')
-  console.log(`Returned: ${result}`)
+  t.match(tidy(out), new RegExp(result), 'Output and return are equal (except cursor restore escape chars)')
+  t.match(result, new RegExp(chars.err), 'Returned error name')
+  t.match(result, /Error:/, 'Printed error prefix')
+  t.doesNotMatch(result, new RegExp(name), 'Did not return / print updater name')
+  t.match(result, new RegExp(e), 'Returned / printed correct error')
+  t.equals(result.split('\n').length, 1, 'Did not return a stack trace')
   reset(update)
 
   // An actual error
@@ -438,16 +421,16 @@ test('Error test', t => {
   result = update.error(error)
   out = output
   t.equal(tidy(out), result, 'Output and return are equal')
-  t.ok(result.includes(chars.err) && result.includes('Error:'), 'Returned / printed error name')
-  t.notOk(result.includes(name), 'Did not return / print updater name')
-  t.ok(result.includes(errMsg), 'Returned / printed correct error message')
+  t.match(result, new RegExp(chars.err), 'Returned error name')
+  t.match(result, /Error:/, 'Returned error prefix')
+  t.doesNotMatch(result, new RegExp(name), 'Did not return / print updater name')
+  t.match(result, new RegExp(errMsg), 'Returned / printed correct error message')
   t.ok(result.split('\n').length > 1, 'Returned a stack trace')
-  console.log(`Returned: ${result}`)
   reset(update)
 })
 
 test('Error test (quiet)', t => {
-  t.plan(8)
+  t.plan(10)
   reset()
   let name = 'Error update test'
   let update = updater(name, { quiet: true })
@@ -456,11 +439,11 @@ test('Error test (quiet)', t => {
   let e = 'an error'
   let result = update.error(e)
   let out = output
-  t.ok(tidy(out).includes(result), 'Output and return are equal (except cursor restore escape chars)')
-  t.ok(result.includes(chars.err) && result.includes('Error:'), 'Returned error name')
-  t.notOk(result.includes(name), 'Did not return updater name')
-  t.ok(result.includes(e), 'Returned correct error')
-  console.log(`Returned: ${result}`)
+  t.match(tidy(out), new RegExp(result), 'Output and return are equal (except cursor restore escape chars)')
+  t.match(result, new RegExp(chars.err), 'Returned error name')
+  t.match(result, /Error:/, 'Returned error prefix')
+  t.doesNotMatch(result, new RegExp(name), 'Did not return updater name')
+  t.match(result, new RegExp(e), 'Returned correct error')
   reset(update)
 
   // An actual error
@@ -469,18 +452,18 @@ test('Error test (quiet)', t => {
   result = update.error(error)
   out = output
   t.ok(out, 'Did print (because an error is present)')
-  t.ok(result.includes(chars.err) && result.includes('Error:'), 'Returned error name')
-  t.notOk(result.includes(name), 'Did not return updater name')
-  t.ok(result.includes(errMsg), 'Returned correct error message')
-  console.log(`Returned: ${result}`)
+  t.match(result, new RegExp(chars.err), 'Returned error name')
+  t.match(result, /Error:/, 'Returned error prefix')
+  t.doesNotMatch(result, new RegExp(name), 'Did not return updater name')
+  t.match(result, new RegExp(errMsg), 'Returned correct error message')
   reset(update)
 })
 
 test('Start + error test', t => {
-  let count = isBuildCI ? 5 : 7
+  let count = isBuildCI ? 6 : 8
   t.plan(count)
   reset()
-  let name = 'Progress indicator + error'
+  let name = 'Progress indicator and error'
   let update = updater(name)
 
   // Start then error
@@ -490,25 +473,25 @@ test('Start + error test', t => {
     let e = 'an error occurred'
     let err = update.error(e)
     let out = output.split(name)
-    t.ok(result.includes(name), 'Returned correct name')
-    t.ok(result.includes(msg), 'Returned correct msg')
-    t.ok(err.includes(chars.err) && err.includes('Error:'), 'Returned / printed error name')
-    t.notOk(err.includes(name), 'Did not return / print updater name')
-    t.ok(err.includes(e), 'Returned / printed correct error message')
+    t.match(result, new RegExp(name), 'Returned correct name')
+    t.match(result, new RegExp(msg), 'Returned correct msg')
+    t.match(err, new RegExp(chars.err), 'Returned error name')
+    t.match(err, /Error:/, 'Returned error prefix')
+    t.doesNotMatch(err, new RegExp(name), 'Did not return / print updater name')
+    t.match(err, new RegExp(e), 'Returned / printed correct error message')
     if (!isBuildCI) {
       t.equal(out.length, 3, 'Printed correct name, animated twice')
       t.pass(`Error ended indicator, or this test wouldn't have run`)
     }
-    console.log(`Returned: ${result}`)
     reset(update)
   }, timer)
 })
 
 test('Start + error test (quiet)', t => {
-  let count = isBuildCI ? 6 : 8
+  let count = isBuildCI ? 7 : 9
   t.plan(count)
   reset()
-  let name = 'Progress indicator + error'
+  let name = 'Progress indicator and error'
   let update = updater(name, { quiet: true })
 
   // Start then error
@@ -519,16 +502,16 @@ test('Start + error test (quiet)', t => {
     let err = update.error(e)
     let out = output.split(name)
     t.ok(out, 'Did print (because an error is present)')
-    t.ok(result.includes(name), 'Returned correct name')
-    t.ok(result.includes(msg), 'Returned correct msg')
-    t.ok(err.includes(chars.err) && err.includes('Error:'), 'Returned error name')
-    t.notOk(err.includes(name), 'Did not return updater name')
-    t.ok(err.includes(e), 'Returned correct error message')
+    t.match(result, new RegExp(name), 'Returned correct name')
+    t.match(result, new RegExp(msg), 'Returned correct msg')
+    t.match(err, new RegExp(chars.err), 'Returned error name')
+    t.match(err, /Error:/, 'Returned error prefix')
+    t.doesNotMatch(err, new RegExp(name), 'Did not return updater name')
+    t.match(err, new RegExp(e), 'Returned correct error message')
     if (!isBuildCI) {
       t.equal(out.length, 1, 'Printed error')
       t.pass(`Error ended indicator, or this test wouldn't have run`)
     }
-    console.log(`Returned: ${result}`)
     reset(update)
   }, timer)
 })
@@ -552,7 +535,7 @@ test('Log getter test', t => {
 
   let update = updater(name)
   go()
-  t.ok(tidy(out).includes(result), 'Output and return are equal (except cursor restore escape chars)')
+  t.match(tidy(out), new RegExp(result), 'Output and return are equal (except cursor restore escape chars)')
   t.equal(update.get(), result, 'Getter returned log of all printed updates')
 
   update = updater(name, { quiet: true })
@@ -580,9 +563,9 @@ test('Log levels (logLevel) test', t => {
   verbose = update.verbose.status('verbose, quiet: false')
   debug = update.debug.status('debug, quiet: false')
   out = output
-  t.ok(tidy(out).includes(normal), 'Output includes statements with logLevel normal (except cursor restore escape chars)')
-  t.notOk(tidy(out).includes(verbose), 'Output does not include statements with logLevel verbose')
-  t.notOk(tidy(out).includes(debug), 'Output does not include statements with logLevel debug')
+  t.match(tidy(out), new RegExp(normal), 'Output includes statements with logLevel normal (except cursor restore escape chars)')
+  t.doesNotMatch(tidy(out), new RegExp(verbose), 'Output does not include statements with logLevel verbose')
+  t.doesNotMatch(tidy(out), new RegExp(debug), 'Output does not include statements with logLevel debug')
   t.equal(update.get(), normal, 'Getter returned only normal statements')
   reset(update)
 
@@ -593,9 +576,9 @@ test('Log levels (logLevel) test', t => {
   verbose = update.verbose.status('verbose, quiet: false')
   debug = update.debug.status('debug, quiet: false')
   out = output
-  t.ok(tidy(out).includes(normal), 'Output includes statements with logLevel normal (except cursor restore escape chars)')
-  t.ok(tidy(out).includes(verbose), 'Output includes statements with logLevel verbose')
-  t.notOk(tidy(out).includes(debug), 'Output does not include statements with logLevel debug')
+  t.match(tidy(out), new RegExp(normal), 'Output includes statements with logLevel normal (except cursor restore escape chars)')
+  t.match(tidy(out), new RegExp(verbose), 'Output includes statements with logLevel verbose')
+  t.doesNotMatch(tidy(out), new RegExp(debug), 'Output does not include statements with logLevel debug')
   t.equal(update.get(), `${normal}\n${verbose}`, 'Getter returned only normal & verbose statements')
   reset(update)
 
@@ -606,9 +589,9 @@ test('Log levels (logLevel) test', t => {
   verbose = update.verbose.status('verbose, quiet: false')
   debug = update.debug.status('debug, quiet: false')
   out = output
-  t.ok(tidy(out).includes(normal), 'Output includes statements with logLevel normal (except cursor restore escape chars)')
-  t.ok(tidy(out).includes(verbose), 'Output includes statements with logLevel verbose')
-  t.ok(tidy(out).includes(debug), 'Output includes statements with logLevel debug')
+  t.match(tidy(out), new RegExp(normal), 'Output includes statements with logLevel normal (except cursor restore escape chars)')
+  t.match(tidy(out), new RegExp(verbose), 'Output includes statements with logLevel verbose')
+  t.match(tidy(out), new RegExp(debug), 'Output includes statements with logLevel debug')
   t.equal(update.get(), `${normal}\n${verbose}\n${debug}`, 'Getter returned only normal, verbose, & debug statements')
   reset(update)
 })
@@ -665,7 +648,7 @@ test('Reset test', t => {
   let update = updater(name)
   let normal = update.status('normal')
   let out = output
-  t.ok(tidy(out).includes(normal), 'Output includes statements with logLevel normal (except cursor restore escape chars)')
+  t.match(tidy(out), new RegExp(normal), 'Output includes statements with logLevel normal (except cursor restore escape chars)')
   t.equal(update.get(), normal, 'Getter returned only normal statements')
   update.reset()
   t.equal(update.get(), '', 'Resetter cleared updater data')
