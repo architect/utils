@@ -2,6 +2,14 @@
 
 ---
 
+## [2.1.1] 2021-06-14
+
+### Fixed
+
+- Fixed `updater` truncated color escape sequence, return correct log data in `updater.start()`
+
+---
+
 ## [2.1.0] 2021-05-13
 
 ### Added

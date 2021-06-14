@@ -22,7 +22,8 @@ function log (args, params, output, options = {}) {
     else if (animate) {
       let i = 0
       params.running = setInterval(function () {
-        printer.write(`${chalk.cyan(frames[i = ++i % frames.length])} ${output.substr(2)}`)
+        let out = output.replace(chars.start + ' ', '') // Don't strip via substr, which might truncate escape sequences
+        printer.write(`${chalk.cyan(frames[i = ++i % frames.length])} ${out}`)
         printer.reset()
       }, timing)
     }
@@ -56,7 +57,7 @@ function start (args, params, msg) {
   msg = msg ? chalk.cyan(msg) : ''
   let info = `${chars.start} ${name} ${msg}`.trim()
   log(args, params, info, { animate: !isCI })
-  return `${chars.start} ${info}`
+  return info
 }
 
 function done (args, params, newName, msg) {
