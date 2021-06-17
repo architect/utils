@@ -2,6 +2,14 @@
 
 ---
 
+## [2.1.2] 2021-06-16
+
+### Added
+
+- Accept `cwd` param in `banner` instead of solely relying on `process.cwd()`
+
+---
+
 ## [2.1.1] 2021-06-14
 
 ### Fixed
