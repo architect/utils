@@ -4,6 +4,7 @@ let initAWS = require('./init-aws')
 
 module.exports = function printBanner (params = {}) {
   let {
+    cwd = process.cwd(),
     inventory,
     disableBanner,
     disableRegion,
@@ -52,7 +53,7 @@ module.exports = function printBanner (params = {}) {
     }
 
     // cwd
-    log('cwd', process.cwd())
+    log('cwd', cwd)
 
     // Space
     if (!quiet) {
