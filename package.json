@@ -31,7 +31,7 @@
   "devDependencies": {
     "@architect/eslint-config": "1.0.0",
     "@architect/inventory": "1.4.3",
-    "aws-sdk": "2.933.0",
+    "aws-sdk": "2.934.0",
     "cross-env": "7.0.3",
     "eslint": "7.29.0",
     "husky": "^6.0.0",
