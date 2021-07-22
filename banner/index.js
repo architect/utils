@@ -48,9 +48,6 @@ module.exports = function printBanner (params = {}) {
     // Caller version
     // Also: set deprecation status for legacy Arc installs
     log('Version', version)
-    if (version.startsWith('Architect 5')) {
-      process.env.DEPRECATED = true
-    }
 
     // cwd
     log('cwd', cwd)
