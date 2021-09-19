@@ -2,6 +2,19 @@
 
 ---
 
+## [3.0.3] 2021-09-18
+
+### Added
+
+- Added `quiet` param to `banner` (instead of relying solely on `ARC_QUIET` or `QUIET` env vars)
+
+
+### Changed
+
+- Updated dependencies
+
+---
+
 ## [3.0.0 - 3.0.2] 2021-07-22
 
 ### Added

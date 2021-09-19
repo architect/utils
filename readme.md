@@ -16,10 +16,11 @@ Responsible for printing the standard banner, and loading the basic environment 
 `params` are required with the following available properties:
 
 - `inventory` (required): Inventory object from `@architect/inventory`
-- `disableBanner`: run Architect's environment bootstrapping routines, but don't display the actual banner
-- `disableRegion`: don't print the AWS region
-- `disableProfile`: don't print the AWS profile
-- `version`: the package version string to print out (e.g. `Architect 1.2.3`)
+- `disableBanner` (boolean): skip printing the banner and Architect's AWS environment bootstrapping routines
+- `disableRegion` (boolean): don't print the AWS region (useful in public CI scenarios, for example)
+- `disableProfile` (boolean): don't print the AWS profile (also useful in public CI scenarios)
+- `version` (string): the package version string to print out (e.g. `Architect 1.2.3`)
+- `quiet` (boolean): disable banner printing
 
 
 ## `utils.getLambdaName(fn)`
