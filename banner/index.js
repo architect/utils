@@ -10,9 +10,9 @@ module.exports = function printBanner (params = {}) {
     disableRegion,
     disableProfile,
     needsValidCreds,
-    version = '–'
+    version = '–',
   } = params
-  let quiet = process.env.ARC_QUIET || process.env.QUIET
+  let quiet = process.env.ARC_QUIET || process.env.QUIET || params.quiet
 
   if (disableBanner) return
   else {
