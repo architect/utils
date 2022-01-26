@@ -7,6 +7,7 @@
 ### Changed
 
 - Stop publishing to the GitHub Package registry
+- Updated deps
 
 ---
 
