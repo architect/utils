@@ -9,6 +9,11 @@
 - Stop publishing to the GitHub Package registry
 - Updated deps
 
+
+### Fixed
+
+- Ensure multi-line error messages passed to `updater.error` do not double print
+
 ---
 
 ## [3.0.4] 2021-10-12

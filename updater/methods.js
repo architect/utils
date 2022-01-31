@@ -91,7 +91,7 @@ function err (args, params, error) {
   let msg = isErr ? error.message : error
   let info = `${chars.err} ${chalk.red(name + ':')} ${msg}`.trim()
   if (isErr) {
-    info += '\n' + error.stack.split('\n').slice(1).join('\n')
+    info += '\n' + error.stack.replace(msg, '')
   }
   // Always print errors
   log(args, params, info, { force: true })
