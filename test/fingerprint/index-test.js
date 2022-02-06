@@ -41,7 +41,7 @@ function reset (t) {
 }
 
 let cwd = process.cwd()
-let mock = join(cwd, 'test', 'mock')
+let mock = join(cwd, 'test', 'mock', 'fingerprint')
 
 test('Set up env', t => {
   t.plan(2)
