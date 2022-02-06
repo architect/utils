@@ -1,5 +1,6 @@
 let banner = require('./banner')
 let chars = require('./chars')
+let deepFrozenCopy = require('./deep-frozen-copy')
 let fingerprint = require('./fingerprint')
 let getLambdaName = require('./get-lambda-name')
 let pathToUnix = require('./path-to-unix')
@@ -9,6 +10,7 @@ let updater = require('./updater')
 module.exports = {
   banner,         // Prints banner and loads basic env vars and AWS creds
   chars,          // Returns platform appropriate characters for CLI UI printing
+  deepFrozenCopy, // Fast deep frozen object copy
   fingerprint,    // Generates public/static.json for `@static fingerprint true`
   getLambdaName,  // Get Lambda name from Arc path
   pathToUnix,     // Normalize to `/` seperated paths for Windows-specific calls
