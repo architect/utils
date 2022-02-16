@@ -2,7 +2,12 @@
 
 ---
 
-## [next] 2022-01-23
+## [3.1.0] 2022-01-23
+
+### Added
+
+- Added `deepFrozenCopy` method
+
 
 ### Changed
 
