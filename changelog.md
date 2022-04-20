@@ -2,6 +2,14 @@
 
 ---
 
+## [3.1.1] 2022-04-19
+
+### Fixed
+
+- Guard against invalid credentials file without default profile; thanks @stuartlangridge!
+
+---
+
 ## [3.1.0] 2022-01-23
 
 ### Added

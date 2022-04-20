@@ -79,7 +79,8 @@ module.exports = function initAWS ({ inventory, needsValidCreds = true }) {
      */
     function credentialCheck () {
       let creds = aws.config.credentials
-      let noCreds = !creds || process.env.ARC_AWS_CREDS == 'missing'
+      let invalidCreds = Array.isArray(creds) && !creds.length
+      let noCreds = !creds || invalidCreds || process.env.ARC_AWS_CREDS == 'missing'
       if (noCreds && needsValidCreds) {
         // Set missing creds flag and let consuming modules handle as necessary
         process.env.ARC_AWS_CREDS = 'missing'
