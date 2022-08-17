@@ -47,6 +47,7 @@ module.exports = function initAWS ({ inventory, needsValidCreds = true }) {
         process.env.ARC_AWS_CREDS = 'profile'
 
         if (profileData[profile].credential_process) credentialsMethod = 'ProcessCredentials'
+        if (profileData[profile].sso_start_url) credentialsMethod = 'SsoCredentials'
         aws.config.credentials = new aws[credentialsMethod]({
           ...opts,
           profile: process.env.AWS_PROFILE
