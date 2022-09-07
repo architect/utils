@@ -2,6 +2,14 @@
 
 ---
 
+## [Unreleased] 2022-09-07
+
+### Changed
+
+- Updated deps
+
+---
+
 ## [3.1.1] 2022-04-19
 
 ### Fixed
