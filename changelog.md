@@ -2,11 +2,16 @@
 
 ---
 
-## [Unreleased] 2022-09-07
+## [3.1.2] 2022-09-07
 
 ### Changed
 
 - Updated deps
+
+
+### Fixed
+
+- Fix `toLogicalID` to ensures the passed value is coerced to a string
 
 ---
 
