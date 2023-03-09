@@ -1,7 +1,7 @@
 let { exec } = require('child_process')
 let { existsSync } = require('fs')
 let fs = require('fs') // Broken out for testing writeFile calls
-let glob = require('glob')
+let { globSync } = require('glob')
 let { basename, dirname, extname, join, sep } = require('path')
 let series = require('run-series')
 let sha = require('sha')
@@ -71,7 +71,7 @@ module.exports = function fingerprint (params, callback) {
      */
     function globFiles (callback) {
       let staticAssets = folder + '/**/*'
-      glob(staticAssets, { dot: true, nodir: true, follow: true }, callback)
+      globSync(staticAssets, { dot: true, nodir: true, follow: true }, callback)
     },
 
     /**
