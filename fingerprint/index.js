@@ -71,7 +71,13 @@ module.exports = function fingerprint (params, callback) {
      */
     function globFiles (callback) {
       let staticAssets = folder + '/**/*'
-      globSync(staticAssets, { dot: true, nodir: true, follow: true }, callback)
+      try {
+        let filesFound = globSync(staticAssets, { dot: true, nodir: true, follow: true })
+        callback(null, filesFound)
+      }
+      catch (err) {
+        callback(err)
+      }
     },
 
     /**
