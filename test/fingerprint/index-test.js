@@ -9,9 +9,10 @@ let _inventory = require('@architect/inventory')
 let inventory
 
 let globStub = sinon.stub().callsFake((path, options, callback) => callback(null, []))
+let glob = { globSync: globStub }
 let shaStub = sinon.stub(sha, 'get').callsFake((file, callback) => callback(null, 'df330f3f12')) // Fake hash
 let fingerprint = proxyquire('../../fingerprint', {
-  'glob': globStub
+  'glob': glob
 })
 
 let params = () => ({
