@@ -70,7 +70,7 @@ module.exports = function fingerprint (params, callback) {
      * Scan for files in the public directory
      */
     function globFiles (callback) {
-      let staticAssets = folder + '/**/*'
+      let staticAssets = normalizePath(folder + '/**/*')
       try {
         let filesFound = globSync(staticAssets, { dot: true, nodir: true, follow: true })
         callback(null, filesFound)
