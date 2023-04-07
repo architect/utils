@@ -4,7 +4,7 @@ let proxyquire = require('proxyquire')
 let sha = require('sha')
 let sinon = require('sinon')
 let test = require('tape')
-let normalizePath = require('../../path-to-unix')
+let pathToUnix = require('../../path-to-unix')
 let _inventory = require('@architect/inventory')
 let inventory
 
@@ -56,9 +56,9 @@ test('fingerprint respects folder setting', t => {
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake(() => [
-    normalizePath(join(process.cwd(), 'foo', 'index.html')),
-    normalizePath(join(process.cwd(), 'foo', 'readme.md')), // this should get ignored
-    normalizePath(join(process.cwd(), 'foo', 'css', 'styles.css')),
+    pathToUnix(join(process.cwd(), 'foo', 'index.html')),
+    pathToUnix(join(process.cwd(), 'foo', 'readme.md')), // this should get ignored
+    pathToUnix(join(process.cwd(), 'foo', 'css', 'styles.css')),
   ])
   // Static manifest
   let manifest
@@ -93,9 +93,9 @@ test('fingerprint respects prefix setting (by doing nothing)', t => {
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake(() => [
-    normalizePath(join(process.cwd(), 'public', 'index.html')),
-    normalizePath(join(process.cwd(), 'public', 'readme.md')), // this should get ignored
-    normalizePath(join(process.cwd(), 'public', 'css', 'styles.css')),
+    pathToUnix(join(process.cwd(), 'public', 'index.html')),
+    pathToUnix(join(process.cwd(), 'public', 'readme.md')), // this should get ignored
+    pathToUnix(join(process.cwd(), 'public', 'css', 'styles.css')),
   ])
   // Static manifest
   let manifest
@@ -129,9 +129,9 @@ test('fingerprint generates static.json manifest', t => {
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake(() => [
-    normalizePath(join(process.cwd(), 'public', 'index.html')),
-    normalizePath(join(process.cwd(), 'public', 'readme.md')), // this should get ignored
-    normalizePath(join(process.cwd(), 'public', 'css', 'styles.css')),
+    pathToUnix(join(process.cwd(), 'public', 'index.html')),
+    pathToUnix(join(process.cwd(), 'public', 'readme.md')), // this should get ignored
+    pathToUnix(join(process.cwd(), 'public', 'css', 'styles.css')),
   ])
   // Static manifest
   let manifest
@@ -165,7 +165,7 @@ test('fingerprint does does not generate static.json when set to external', t =>
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake(() => [
-    normalizePath(join(process.cwd(), 'public', 'index.html'))
+    pathToUnix(join(process.cwd(), 'public', 'index.html'))
   ])
   // Static manifest
   let fsStub = sinon.stub(fs, 'writeFile').callsFake((dest, data, callback) => {
@@ -192,9 +192,9 @@ test('fingerprint ignores specified static assets', t => {
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake(() => [
-    normalizePath(join(process.cwd(), 'public', 'index.html')),
-    normalizePath(join(process.cwd(), 'public', 'readme.md')),
-    normalizePath(join(process.cwd(), 'public', 'styles.css')),
+    pathToUnix(join(process.cwd(), 'public', 'index.html')),
+    pathToUnix(join(process.cwd(), 'public', 'readme.md')),
+    pathToUnix(join(process.cwd(), 'public', 'styles.css')),
   ])
   // Static manifest
   let manifest

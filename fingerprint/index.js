@@ -1,4 +1,3 @@
-let { exec } = require('child_process')
 let { existsSync } = require('fs')
 let fs = require('fs') // Broken out for testing writeFile calls
 let { globSync } = require('glob')
@@ -7,7 +6,7 @@ let series = require('run-series')
 let sha = require('sha')
 let sort = require('path-sort')
 let waterfall = require('run-waterfall')
-let normalizePath = require('../path-to-unix')
+let pathToUnix = require('../path-to-unix')
 let updater = require('../updater')
 
 /**
@@ -15,7 +14,7 @@ let updater = require('../updater')
  * - Note: everything uses and assumes *nix-styile file paths, even when running on Windows
  */
 module.exports = function fingerprint (params, callback) {
-  let { fingerprint = false, ignore = [], inventory, update } = params
+  let { fingerprint = false, ignore, inventory, update } = params
   let { inv, get } = inventory
 
   // Bail early if this project doesn't utilize static assets
@@ -23,56 +22,47 @@ module.exports = function fingerprint (params, callback) {
 
   // Get the folder
   let staticFolder = get.static('folder') || '' // Should never be falsy but jic
-  let folder = normalizePath(join(process.cwd(), staticFolder))
+  let folder = pathToUnix(join(inv._project.cwd, staticFolder))
+  let staticJson = join(folder, 'static.json')
 
-  // Bail early if the folder isn't present
-  if (!existsSync(folder)) return callback()
-
-  // Ok, we've cleared the pre-reqs, let's go
   if (!update) update = updater('Assets')
 
   fingerprint = fingerprint || inv.static.fingerprint
-  ignore = ignore.length ? ignore : inv.static.ignore || []
+  ignore = ignore?.length ? ignore : inv.static.ignore || []
 
   // Allow apps and frameworks to handle their own fingerprinting
   let externalFingerprint = fingerprint === 'external'
+
+  // Bail early if fingerprinting is disabled, it's set to external, or the static folder isn't present
+  if (!fingerprint || externalFingerprint || !existsSync(folder)) {
+    // Clean up if necessary
+    if (existsSync(staticJson)) {
+      let filename = join(folder, 'static.json')
+      let msg = `Found ${filename} file with fingerprinting ${externalFingerprint ? 'set to external' : 'disabled'}, deleting file`
+      update.warn(msg)
+      try {
+        fs.rmSync(staticJson, { force: true })
+      }
+      catch (err) {
+        let msg = `Error removing ${filename} file, please remove it manually or static asset calls may be broken`
+        update.warn(msg)
+      }
+    }
+    return callback()
+  }
 
   let files
   let staticManifest = {}
   waterfall([
     /**
-     * Early exit if disabled, clean up if necessary
-     */
-    function bail (callback) {
-      if (fingerprint && !externalFingerprint) callback()
-      else {
-        if (existsSync(join(folder, 'static.json'))) {
-          let msg = `Found ${folder + sep}static.json file with fingerprinting ${externalFingerprint ? 'set to external' : 'disabled'}, deleting file`
-          update.warn(msg)
-
-          let remove = process.platform.startsWith('win') ? 'del' : 'rm'
-          exec(`${remove} static.json`, { cwd: folder }, (err, stdout, stderr) => {
-            if (err) callback(err)
-            else {
-              if (stderr) {
-                let msg = `Error removing static.json file, please remove it manually or static asset calls may be broken`
-                update.warn(msg)
-              }
-              callback(Error('cancel'))
-            }
-          })
-        }
-        else callback(Error('cancel'))
-      }
-    },
-
-    /**
      * Scan for files in the public directory
      */
     function globFiles (callback) {
-      let staticAssets = normalizePath(folder + '/**/*')
+      let staticAssets = pathToUnix(folder + '/**/*')
       try {
         let filesFound = globSync(staticAssets, { dot: true, nodir: true, follow: true })
+        // Renormalize to Unix, otherwise deployments from Windows will fail in Lambda
+        filesFound = filesFound.map(file => pathToUnix(file))
         callback(null, filesFound)
       }
       catch (err) {
@@ -140,16 +130,16 @@ module.exports = function fingerprint (params, callback) {
     },
   ],
   function done (err) {
-    if (err && err.message === 'no_files_found') {
+    if (err?.message === 'no_files_found') {
       let msg = `No static assets found to fingerprint from ${staticFolder}${sep}`
       update.done(msg)
       callback()
     }
-    else if (err && err.message === 'cancel') {
+    else if (err?.message === 'cancel') {
       callback()
     }
     else if (err) {
-      callback(err, staticManifest)
+      callback(err)
     }
     else callback(null, staticManifest)
   })
