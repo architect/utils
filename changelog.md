@@ -2,6 +2,14 @@
 
 ---
 
+## [3.1.6] 2023-04-06
+
+### Fixed
+
+- Fixed static asset fingerprinting in Windows
+
+---
+
 ## [3.1.3 - 3.1.5] 2023-03-09
 
 ### Changed
