@@ -31,7 +31,7 @@
   "devDependencies": {
     "@architect/eslint-config": "~2.1.1",
     "@architect/inventory": "~3.4.3",
-    "aws-sdk": "2.1055.0",
+    "aws-sdk": "^2.1363.0",
     "cross-env": "~7.0.3",
     "eslint": "~8.39.0",
     "proxyquire": "~2.1.3",
