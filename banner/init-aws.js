@@ -11,6 +11,11 @@ let updater = require('../updater')
  */
 module.exports = function initAWS ({ inventory, needsValidCreds = true }) {
   // AWS SDK intentionally not added to package deps; assume caller already has it
+  try {
+    // eslint-disable-next-line
+    require('aws-sdk/lib/maintenance_mode_message').suppress = true
+  }
+  catch { /* Noop */ }
   // eslint-disable-next-line
   let aws = require('aws-sdk')
   let credentialsMethod = 'SharedIniFileCredentials'

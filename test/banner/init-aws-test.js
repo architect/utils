@@ -1,4 +1,5 @@
 let test = require('tape')
+require('aws-sdk/lib/maintenance_mode_message').suppress = true
 let aws = require('aws-sdk')
 let tmpFile = require('temp-write')
 let mockCredsContent = require('./mock-aws-creds-file')
