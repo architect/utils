@@ -51,14 +51,3 @@ test('Credential checks', t => {
   console.log(err)
   reset(t)
 })
-
-test('Credential backfill', t => {
-  t.plan(4)
-  process.env.AWS_PROFILE = 'random_profile_name_that_does_not_exist'
-  let err = credCheck({ inventory })
-  t.notOk(err, 'No credential loading error reported')
-  t.equal(process.env.ARC_AWS_CREDS, 'dummy', 'Mutated ARC_AWS_CREDS')
-  t.equal(process.env.AWS_ACCESS_KEY_ID, 'arc_dummy_access_key', 'Mutated AWS_ACCESS_KEY_ID')
-  t.equal(process.env.AWS_SECRET_ACCESS_KEY, 'arc_dummy_secret_key', 'Mutated AWS_SECRET_ACCESS_KEY')
-  reset(t)
-})

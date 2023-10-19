@@ -8,7 +8,7 @@
 
 - Initializing the Architect banner is now significantly faster by way of relying on `aws-lite` (instead of `aws-sdk`)
 - Breaking change: banner initialization no longer mutates `AWS_PROFILE`, or uses `ARC_AWS_CREDS` as a signal to other modules about credential loading
-  - While credential env vars (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`) are still backfilled in certain circumstances, modules relying on the banner for credential-related operations must review the changes and refactor accordingly
+  - Modules relying on the banner for credential-related operations must review the changes and refactor accordingly
 - Breaking change: banner initialization now throws on invalid credentials
 
 ---

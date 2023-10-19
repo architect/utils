@@ -31,14 +31,4 @@ module.exports = function credCheck ({ checkCreds = true, inventory, needsValidC
   if (creds.error && needsValidCreds) {
     return Error('Valid credentials needed to run this command; missing or invalid credentials')
   }
-  else if (creds.error) {
-    /**
-     * Backfill creds - any creds will do for local service emulation
-     * - Be sure we backfill Lambda's prepopulated env vars
-     * - sessionToken / AWS_SESSION_TOKEN is optional, skip so as not to introduce unintended side-effects
-     */
-    process.env.ARC_AWS_CREDS = 'dummy'
-    process.env.AWS_ACCESS_KEY_ID = 'arc_dummy_access_key'
-    process.env.AWS_SECRET_ACCESS_KEY = 'arc_dummy_secret_key'
-  }
 }
