@@ -1,10 +1,11 @@
 let chalk = require('chalk')
 let chars = require('../chars')
-let initAWS = require('./init-aws')
+let credCheck = require('./cred-check')
 
 module.exports = function printBanner (params = {}) {
   let {
     cwd = process.cwd(),
+    checkCreds,
     inventory,
     disableBanner,
     disableRegion,
@@ -25,22 +26,25 @@ module.exports = function printBanner (params = {}) {
 
     // Initialize config
     process.env.ARC_APP_NAME = inventory.inv.app
-    initAWS({ inventory, needsValidCreds })
+
+    // Check creds
+    let credError = credCheck({ checkCreds, inventory, needsValidCreds })
 
     // App name
     let name = process.env.ARC_APP_NAME || 'Architect project manifest not found'
     log('App', name)
 
     // Region
-    let region = process.env.AWS_REGION || '@aws region / AWS_REGION not configured'
+    let region = inventory.inv?.aws?.region || process.env.AWS_REGION || 'Region not configured'
     if (!disableRegion) {
       log('Region', region)
     }
 
     // Profile
-    let profile = process.env.ARC_AWS_CREDS === 'env'
+    let profile = process.env.AWS_ACCESS_KEY_ID &&
+                  process.env.ARC_AWS_CREDS !== 'dummy'
       ? 'Set via environment'
-      : process.env.AWS_PROFILE || '@aws profile / AWS_PROFILE not configured'
+      : inventory.inv?.aws?.profile || process.env.AWS_PROFILE || 'Profile not configured'
     if (!disableProfile) {
       log('Profile', profile)
     }
@@ -52,9 +56,10 @@ module.exports = function printBanner (params = {}) {
     // cwd
     log('cwd', cwd)
 
+    // Blow up (if necessary) after printing basic diagnostic stuff
+    if (credError) throw credError
+
     // Space
-    if (!quiet) {
-      console.log()
-    }
+    if (!quiet) console.log()
   }
 }
