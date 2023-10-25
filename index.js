@@ -1,5 +1,6 @@
 let banner = require('./banner')
 let chars = require('./chars')
+let checkCreds = require('./check-creds')
 let deepFrozenCopy = require('./deep-frozen-copy')
 let fingerprint = require('./fingerprint')
 let getLambdaName = require('./get-lambda-name')
@@ -8,8 +9,9 @@ let toLogicalID = require('./to-logical-id')
 let updater = require('./updater')
 
 module.exports = {
-  banner,         // Prints banner and loads basic env vars and AWS creds
+  banner,         // Prints banner
   chars,          // Returns platform appropriate characters for CLI UI printing
+  checkCreds,     // Performs basic AWS credential check
   deepFrozenCopy, // Fast deep frozen object copy
   fingerprint,    // Generates public/static.json for `@static fingerprint true`
   getLambdaName,  // Get Lambda name from Arc path

@@ -4,12 +4,18 @@
 
 ## [4.0.0] 2023-10-19
 
+### Added
+
+- Added `checkCreds` method for manually performing basic AWS credential checks
+
+
 ### Changed
 
-- Initializing the Architect banner is now significantly faster by way of relying on `aws-lite` (instead of `aws-sdk`)
-- Breaking change: banner initialization no longer mutates `AWS_PROFILE`, or uses `ARC_AWS_CREDS` as a signal to other modules about credential loading
+- Initializing the Architect banner is significantly faster, as it no longer has any interactions with `aws-sdk`
+- Breaking change: banner initialization no longer has any direct responsibility for credential checking
+  - Related: banner initialization no longer mutates `AWS_PROFILE`, or uses `ARC_AWS_CREDS` as a signal to other modules about credential loading
   - Modules relying on the banner for credential-related operations must review the changes and refactor accordingly
-- Breaking change: banner initialization now throws on invalid credentials
+- Banner initialization no longer utilizes `disableRegion` or `disableProfile` params when printing
 
 ---
 
