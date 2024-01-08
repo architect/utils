@@ -16,6 +16,9 @@
   - Related: banner initialization no longer mutates `AWS_PROFILE`, or uses `ARC_AWS_CREDS` as a signal to other modules about credential loading
   - Modules relying on the banner for credential-related operations must review the changes and refactor accordingly
 - Banner initialization no longer utilizes `disableRegion` or `disableProfile` params when printing
+- Transitioned from `aws-sdk` to [`aws-lite`](https://aws-lite.org)
+- Added Node.js 20.x to test matrix
+- Breaking change: removed support for Node.js 14.x (now EOL, and no longer available to created in AWS Lambda)
 
 ---
 
