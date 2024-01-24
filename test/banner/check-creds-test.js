@@ -51,8 +51,8 @@ test('Credential checks (async)', async t => {
   reset(t)
 })
 
-test('Credential checks (callback)', t => {
-  t.plan(2)
+test('Credential checks (callback, via env)', t => {
+  t.plan(1)
 
   // Count on aws-lite finding creds (via env)
   process.env.AWS_ACCESS_KEY_ID = 'yo'
@@ -62,7 +62,10 @@ test('Credential checks (callback)', t => {
     if (err) t.fail(err)
     else t.pass('No credential loading error reported')
   })
+})
 
+test('Credential checks (callback failure, via profile)', t => {
+  t.plan(1)
   // Fail a cred check
   reset(t)
   process.env.AWS_PROFILE = 'random_profile_name_that_does_not_exist'
