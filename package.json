@@ -20,7 +20,7 @@
   "author": "Brian LeRoux <b@brian.io>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@aws-lite/client": "^0.15.1",
+    "@aws-lite/client": "^0.15.2",
     "chalk": "4.1.2",
     "glob": "~10.3.10",
     "path-sort": "~0.1.0",
