@@ -20,7 +20,7 @@
   "author": "Brian LeRoux <b@brian.io>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@aws-lite/client": "^0.15.2",
+    "@aws-lite/client": "^0.16.1",
     "chalk": "4.1.2",
     "glob": "~10.3.10",
     "path-sort": "~0.1.0",
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@architect/eslint-config": "~2.1.2",
-    "@architect/inventory": "~3.6.5",
+    "@architect/inventory": "~4.0.1",
     "cross-env": "~7.0.3",
     "eslint": "~8.56.0",
     "proxyquire": "~2.1.3",
