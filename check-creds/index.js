@@ -18,8 +18,8 @@ module.exports = function checkAwsCredentials (params, callback) {
 
   let errMsg = 'Valid AWS credentials needed to continue; missing or invalid credentials'
   awsLite({
-    autoloadPlugins: false,
-    profile: inventory.inv?.aws?.profile, // aws-lite falls back to AWS_PROFILE or 'default' if undefined
+    // aws-lite falls back to AWS_PROFILE or 'default' if undefined
+    profile: inventory.inv?.aws?.profile,
     region: 'us-west-1',
   })
     .then(() => callback())
