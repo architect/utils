@@ -1,3 +1,4 @@
+let { getEventListeners } = require('events')
 let chalk = require('chalk')
 let { printer } = require('./lib')
 let methods = require('./methods')
@@ -71,9 +72,18 @@ module.exports = function statusUpdater (name, args = {}) {
   }
 }
 
-// For whatever reason signal-exit doesn't catch SIGINT, so do this
-process.on('SIGINT', () => {
-  printer.restoreCursor()
-  console.log('')
-  process.exit()
-})
+// For whatever reason signal-exit doesn't catch SIGINT, so do this...
+// Also, if the resolved dep tree isn't totally flat on the filesystem, multiple installations of utils can attempt to attach SIGINT listeners, so we have to guard against that
+function restoreCursor () {
+  let listeners = getEventListeners(process, 'SIGINT')
+  let needsRestore =  !listeners?.length ||
+                      !listeners.some(fn => fn.name === '_arcRestoreCursor')
+  if (needsRestore) {
+    process.on('SIGINT', function _arcRestoreCursor () {
+      printer.restoreCursor()
+      console.log('')
+      process.exit()
+    })
+  }
+}
+restoreCursor()

@@ -2,6 +2,14 @@
 
 ---
 
+## [4.0.3] 2024-02-09
+
+### Fixed
+
+- Fixed `MaxListenersExceededWarning` if npm or another package manager resolves many different versions of Utils on the filesystem
+
+---
+
 ## [4.0.2] 2024-02-06
 
 ### Changed
