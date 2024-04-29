@@ -12,7 +12,7 @@ let globStub = sinon.stub().callsFake(() => [])
 let glob = { globSync: globStub }
 let shaStub = sinon.stub(sha, 'get').callsFake((file, callback) => callback(null, 'df330f3f12')) // Fake hash
 let fingerprint = proxyquire('../../fingerprint', {
-  'glob': glob
+  'glob': glob,
 })
 
 let params = () => ({
@@ -165,7 +165,7 @@ test('fingerprint does does not generate static.json when set to external', t =>
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake(() => [
-    pathToUnix(join(process.cwd(), 'public', 'index.html'))
+    pathToUnix(join(process.cwd(), 'public', 'index.html')),
   ])
   // Static manifest
   let fsStub = sinon.stub(fs, 'writeFile').callsFake((dest, data, callback) => {

@@ -43,7 +43,7 @@ module.exports = function fingerprint (params, callback) {
       try {
         fs.rmSync(staticJson, { force: true })
       }
-      catch (err) {
+      catch {
         let msg = `Error removing ${filename} file, please remove it manually or static asset calls may be broken`
         update.warn(msg)
       }

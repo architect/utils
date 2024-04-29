@@ -5,7 +5,6 @@
  * - Thus, sometimes it's ok to use dummy creds, but sometimes we need to halt (via this util)
  */
 module.exports = function checkAwsCredentials (params, callback) {
-  // eslint-disable-next-line
   let awsLite = require('@aws-lite/client')
   let { inventory } = params
 
