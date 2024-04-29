@@ -4,7 +4,7 @@
 
 To maintain a high standard of quality in our releases, before merging every pull request we ask that you've completed the following:
 
-- [ ] Forked the repo and created your branch from `master`
+- [ ] Forked the repo and created your branch from `main`
 - [ ] Made sure tests pass (run `npm it` from the repo root)
 - [ ] Expanded test coverage related to your changes:
   - [ ] Added and/or updated unit tests (if appropriate)
@@ -15,7 +15,7 @@ To maintain a high standard of quality in our releases, before merging every pul
 - [ ] Summarized your changes in `changelog.md`
 - [ ] Linked to any related issues, PRs, etc. below that may relate to, consume, or necessitate these changes
 
-Please also be sure to completed the CLA (if you haven't already).
+Please also be sure to completed the CLA. If you haven't already, you'll be prompted to do so after submitting your PR.
 
 Learn more about [contributing to Architect here](https://arc.codes/intro/community).
 
