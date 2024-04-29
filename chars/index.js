@@ -29,5 +29,5 @@ module.exports = {
   start,
   done,
   warn,
-  err
+  err,
 }

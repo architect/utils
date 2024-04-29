@@ -8,6 +8,7 @@
     "url": "git+https://github.com/architect/utils.git"
   },
   "scripts": {
+    "test:nolint": "npm run test:unit:updater && npm run test:unit",
     "test": "npm run lint && npm run test:unit:updater && npm run test:unit",
     "test:unit": "cross-env tape 'test/**/*-test.js' | tap-arc",
     "test:unit:updater": "cross-env tape test/updater/test.js | tap-arc",
