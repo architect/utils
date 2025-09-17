@@ -1,4 +1,4 @@
-let chalk = require('chalk')
+let chalk = require('../chalk')
 let chars = require('../chars')
 let { printer, spinner } = require('./lib')
 let { frames, timing } = spinner

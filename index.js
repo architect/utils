@@ -1,4 +1,10 @@
 let banner = require('./banner')
+let chalk = require('./chalk')
+let series = require('./run-series')
+let parallel = require('./run-parallel')
+let waterfall = require('./run-waterfall')
+let minimist = require('./minimist')
+let lambdaRuntimes = require('./lambda-runtimes')
 let chars = require('./chars')
 let checkCreds = require('./check-creds')
 let deepFrozenCopy = require('./deep-frozen-copy')
@@ -10,6 +16,12 @@ let updater = require('./updater')
 
 module.exports = {
   banner,         // Prints banner
+  chalk,          // Vendored chalk
+  series,         // Returns the classic async.series
+  parallel,       // Returns the classic async.parallel
+  waterfall,      // Returns the classic async.waterfall
+  minimist,       // Vendored minimist
+  lambdaRuntimes, // Helper for listing all supported Lambda runtimes
   chars,          // Returns platform appropriate characters for CLI UI printing
   checkCreds,     // Performs basic AWS credential check
   deepFrozenCopy, // Fast deep frozen object copy

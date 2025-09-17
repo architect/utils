@@ -1,4 +1,4 @@
-let chalk = require('chalk')
+let chalk = require('../chalk')
 let notWin = !process.platform.startsWith('win')
 
 /**

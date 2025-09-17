@@ -1,4 +1,4 @@
-let chalk = require('chalk')
+let chalk = require('../chalk')
 let chars = require('../chars')
 
 module.exports = function printBanner (params = {}) {

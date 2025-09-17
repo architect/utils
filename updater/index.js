@@ -1,5 +1,5 @@
 let { getEventListeners } = require('events')
-let chalk = require('chalk')
+let chalk = require('../chalk')
 let { printer } = require('./lib')
 let methods = require('./methods')
 
