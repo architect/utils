@@ -20,11 +20,11 @@ module.exports = function printBanner (params = {}) {
   }
 
   // App name
-  let name = inventory.inv.app || 'Architect project manifest not found'
+  let name = inventory?.inv?.app || 'Architect project manifest not found'
   log('App', name)
 
   // Region
-  let region =  inventory.inv?.aws?.region ||
+  let region =  inventory?.inv?.aws?.region ||
                 process.env.AWS_REGION ||
                 'Region not configured'
   log('Region', region)
@@ -32,7 +32,7 @@ module.exports = function printBanner (params = {}) {
   // Profile
   let credsViaEnv = process.env.AWS_ACCESS_KEY_ID ? 'Set via environment' : undefined
   let profile = credsViaEnv ||
-                inventory.inv?.aws?.profile ||
+                inventory?.inv?.aws?.profile ||
                 process.env.AWS_PROFILE ||
                 'Not configured / default'
   log('Profile', profile)

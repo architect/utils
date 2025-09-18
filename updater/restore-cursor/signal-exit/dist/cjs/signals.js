@@ -1,6 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.signals = void 0;
+'use strict'
+Object.defineProperty(exports, '__esModule', { value: true })
+exports.signals = void 0
 /**
  * This is not the set of all possible signals.
  *
@@ -27,16 +27,16 @@ exports.signals = void 0;
  * state from which it is not safe to try and enter JS
  * listeners.
  */
-exports.signals = [];
-exports.signals.push('SIGHUP', 'SIGINT', 'SIGTERM');
+exports.signals = []
+exports.signals.push('SIGHUP', 'SIGINT', 'SIGTERM')
 if (process.platform !== 'win32') {
-    exports.signals.push('SIGALRM', 'SIGABRT', 'SIGVTALRM', 'SIGXCPU', 'SIGXFSZ', 'SIGUSR2', 'SIGTRAP', 'SIGSYS', 'SIGQUIT', 'SIGIOT'
+  exports.signals.push('SIGALRM', 'SIGABRT', 'SIGVTALRM', 'SIGXCPU', 'SIGXFSZ', 'SIGUSR2', 'SIGTRAP', 'SIGSYS', 'SIGQUIT', 'SIGIOT',
     // should detect profiler and enable/disable accordingly.
     // see #21
     // 'SIGPROF'
-    );
+  )
 }
 if (process.platform === 'linux') {
-    exports.signals.push('SIGIO', 'SIGPOLL', 'SIGPWR', 'SIGSTKFLT');
+  exports.signals.push('SIGIO', 'SIGPOLL', 'SIGPWR', 'SIGSTKFLT')
 }
-//# sourceMappingURL=signals.js.map
+// # sourceMappingURL=signals.js.map

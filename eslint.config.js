@@ -7,6 +7,8 @@ module.exports = [
       'coverage',
       'node_modules',
       'test/mock/src',
+      'chalk',
+      'updater',
     ],
   },
 ]
