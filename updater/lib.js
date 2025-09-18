@@ -1,4 +1,4 @@
-let restore = require('restore-cursor')
+let restore = require('./restore-cursor')
 let isCI = process.env.CI || !process.stdout.isTTY
 let out = process.stdout
 let printer = {

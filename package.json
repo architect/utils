@@ -22,12 +22,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@aws-lite/client": "^0.21.1",
-    "chalk": "^4.1.2",
-    "glob": "~10.3.12",
     "lambda-runtimes": "2.0.5",
-    "minimist": "1.2.8",
+    "glob": "~10.3.12",
     "path-sort": "~0.1.0",
-    "restore-cursor": "3.1.0",
     "sha": "~3.0.0"
   },
   "devDependencies": {
