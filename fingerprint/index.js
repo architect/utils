@@ -1,13 +1,14 @@
 let { existsSync } = require('fs')
 let fs = require('fs') // Broken out for testing writeFile calls
 let { basename, dirname, extname, join, sep } = require('path')
+
 let series = require('../run-series')
 let waterfall = require('../run-waterfall')
 let pathToUnix = require('../path-to-unix')
 let updater = require('../updater')
-let sha = require('sha')
-let sort = require('path-sort')
-let { globSync } = require('glob')
+let sort = require('../path-sort')
+let { globSync } = require('../glob')
+let sha = require('../sha')
 
 /**
  * Static asset fingerprinter

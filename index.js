@@ -13,6 +13,8 @@ let getLambdaName = require('./get-lambda-name')
 let pathToUnix = require('./path-to-unix')
 let toLogicalID = require('./to-logical-id')
 let updater = require('./updater')
+let pathSort = require('./path-sort')
+let glob = require('./glob')
 
 module.exports = {
   banner,         // Prints banner
@@ -30,4 +32,6 @@ module.exports = {
   pathToUnix,     // Normalize to `/` seperated paths for Windows-specific calls
   toLogicalID,    // Converts dash casing into Pascal casing for CloudFormation
   updater,        // Standard Arc status updater and progress indicator
+  pathSort,       // Sort paths
+  glob,           // Glob paths
 }

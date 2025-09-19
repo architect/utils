@@ -22,10 +22,8 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@aws-lite/client": "^0.21.1",
-    "lambda-runtimes": "2.0.5",
     "glob": "~10.3.12",
-    "path-sort": "~0.1.0",
-    "sha": "~3.0.0"
+    "lambda-runtimes": "2.0.5"
   },
   "devDependencies": {
     "@architect/eslint-config": "~3.0.0",
