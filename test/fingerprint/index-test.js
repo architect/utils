@@ -1,18 +1,17 @@
 let fs = require('fs')
 let { join } = require('path')
 let proxyquire = require('proxyquire')
-let sha = require('sha')
+let sha = require('../../sha')
 let sinon = require('sinon')
 let test = require('tape')
 let pathToUnix = require('../../path-to-unix')
 let _inventory = require('@architect/inventory')
 let inventory
-
 let globStub = sinon.stub().callsFake(() => [])
 let glob = { globSync: globStub }
 let shaStub = sinon.stub(sha, 'get').callsFake((file, callback) => callback(null, 'df330f3f12')) // Fake hash
 let fingerprint = proxyquire('../../fingerprint', {
-  'glob': glob,
+  '../glob': glob,
 })
 
 let params = () => ({
