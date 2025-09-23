@@ -19,7 +19,7 @@ test('parallel runs array tasks concurrently', t => {
   parallel(tasks, (err, results) => {
     let elapsed = Date.now() - startTime
     t.notOk(err, 'No error returned')
-    t.deepEqual(results, ['first', 'second', 'third'], 'Results in original order')
+    t.deepEqual(results, [ 'first', 'second', 'third' ], 'Results in original order')
     t.equal(results.length, 3, 'All results returned')
     t.ok(elapsed < 80, 'Tasks ran concurrently (should be ~50ms, not 90ms)')
   })
@@ -103,7 +103,7 @@ test('parallel handles synchronous tasks', t => {
 
   parallel(tasks, (err, results) => {
     t.notOk(err, 'No error returned')
-    t.deepEqual(results, ['sync1', 'sync2', 'sync3'], 'All sync results returned')
+    t.deepEqual(results, [ 'sync1', 'sync2', 'sync3' ], 'All sync results returned')
   })
 })
 
@@ -118,7 +118,7 @@ test('parallel handles mixed sync and async tasks', t => {
 
   parallel(tasks, (err, results) => {
     t.notOk(err, 'No error returned')
-    t.deepEqual(results, ['sync', 'async', 'sync2'], 'Mixed results returned correctly')
+    t.deepEqual(results, [ 'sync', 'async', 'sync2' ], 'Mixed results returned correctly')
   })
 })
 
@@ -133,7 +133,7 @@ test('parallel handles undefined results', t => {
 
   parallel(tasks, (err, results) => {
     t.notOk(err, 'No error returned')
-    t.deepEqual(results, [undefined, 'defined', undefined], 'Undefined results handled correctly')
+    t.deepEqual(results, [ undefined, 'defined', undefined ], 'Undefined results handled correctly')
   })
 })
 
@@ -153,7 +153,7 @@ test('parallel prevents multiple callback invocations', t => {
   parallel(tasks, (err, results) => {
     callbackCount++
     t.notOk(err, 'No error returned')
-    t.deepEqual(results, ['first', 'second'], 'Results returned correctly')
+    t.deepEqual(results, [ 'first', 'second' ], 'Results returned correctly')
 
     // Wait a bit to ensure the delayed callback doesn't fire
     setTimeout(() => {
