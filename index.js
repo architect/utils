@@ -14,7 +14,6 @@ let pathToUnix = require('./path-to-unix')
 let toLogicalID = require('./to-logical-id')
 let updater = require('./updater')
 let pathSort = require('./path-sort')
-let glob = require('./glob')
 let hashid = require('./hashid')
 
 module.exports = {
@@ -34,6 +33,5 @@ module.exports = {
   toLogicalID,    // Converts dash casing into Pascal casing for CloudFormation
   updater,        // Standard Arc status updater and progress indicator
   pathSort,       // Sort paths
-  glob,           // Glob paths
   hashid,          // Generate unique IDs from numbers
 }

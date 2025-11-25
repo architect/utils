@@ -1,6 +1,6 @@
 {
   "name": "@architect/utils",
-  "version": "5.0.0",
+  "version": "6.0.0-RC.0",
   "description": "Common utility functions",
   "main": "index.js",
   "repository": {
@@ -17,18 +17,17 @@
     "rc": "npm version prerelease --preid RC"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "author": "Brian LeRoux <b@brian.io>",
   "license": "Apache-2.0",
   "dependencies": {
     "@aws-lite/client": "^0.21.1",
-    "glob": "~10.3.12",
     "lambda-runtimes": "2.0.5"
   },
   "devDependencies": {
     "@architect/eslint-config": "~3.0.0",
-    "@architect/inventory": "~4.0.4",
+    "@architect/inventory": "latest",
     "cross-env": "~7.0.3",
     "eslint": "~9.1.1",
     "proxyquire": "~2.1.3",

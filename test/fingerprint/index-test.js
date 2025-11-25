@@ -1,17 +1,18 @@
 let fs = require('fs')
 let { join } = require('path')
 let proxyquire = require('proxyquire')
-let sha = require('../../sha')
 let sinon = require('sinon')
 let test = require('tape')
 let pathToUnix = require('../../path-to-unix')
 let _inventory = require('@architect/inventory')
 let inventory
 let globStub = sinon.stub().callsFake(() => [])
-let glob = { globSync: globStub }
-let shaStub = sinon.stub(sha, 'get').callsFake((file, callback) => callback(null, 'df330f3f12')) // Fake hash
+let writeFileStub = sinon.stub().callsFake((dest, data, callback) => callback())
+let statSyncStub = sinon.stub().callsFake(() => ({ isFile: () => true })) // All paths are files
+let shaGetStub = sinon.stub().callsFake((file, callback) => callback(null, 'df330f3f12')) // Fake hash
 let fingerprint = proxyquire('../../fingerprint', {
-  '../glob': glob,
+  'fs': { ...fs, globSync: globStub, writeFile: writeFileStub, statSync: statSyncStub, '@global': true },
+  '../sha': { get: shaGetStub },
 })
 
 let params = () => ({
@@ -34,9 +35,6 @@ function updateInventory (t, settings = '', callback) {
 }
 
 function reset (t) {
-  // Reset env for next test
-  fs.writeFile.restore()
-  shaStub.resetHistory()
   t.pass('Reset')
 }
 
@@ -52,6 +50,8 @@ test('Set up env', t => {
 
 test('fingerprint respects folder setting', t => {
   t.plan(7)
+  // Reset stubs
+  shaGetStub.resetHistory()
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake(() => [
@@ -61,7 +61,8 @@ test('fingerprint respects folder setting', t => {
   ])
   // Static manifest
   let manifest
-  let fsStub = sinon.stub(fs, 'writeFile').callsFake((dest, data, callback) => {
+  writeFileStub.resetBehavior()
+  writeFileStub.callsFake((dest, data, callback) => {
     manifest = data
     callback()
   })
@@ -72,16 +73,13 @@ test('fingerprint respects folder setting', t => {
       console.log('Generated manifest:')
       console.log(manifest)
 
-      t.ok(shaStub.calledTwice, 'Correct number of files hashed')
+      t.ok(shaGetStub.calledTwice, 'Correct number of files hashed')
       t.equal(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
       t.equal(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
       t.equal(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
       t.equal(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
-      t.ok(fsStub.called, 'static.json manifest written')
+      t.ok(writeFileStub.called, 'static.json manifest written')
 
-      // Reset env for next test
-      fs.writeFile.restore()
-      shaStub.resetHistory()
     })
   })
 })
@@ -89,6 +87,8 @@ test('fingerprint respects folder setting', t => {
 test('fingerprint respects prefix setting (by doing nothing)', t => {
   // This test effectively does nothing, but it's here to ensure the presence of prefix does not influence how the static manifest is generated
   t.plan(7)
+  // Reset stubs
+  shaGetStub.resetHistory()
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake(() => [
@@ -98,7 +98,8 @@ test('fingerprint respects prefix setting (by doing nothing)', t => {
   ])
   // Static manifest
   let manifest
-  let fsStub = sinon.stub(fs, 'writeFile').callsFake((dest, data, callback) => {
+  writeFileStub.resetBehavior()
+  writeFileStub.callsFake((dest, data, callback) => {
     manifest = data
     callback()
   })
@@ -109,21 +110,19 @@ test('fingerprint respects prefix setting (by doing nothing)', t => {
       console.log('Generated manifest:')
       console.log(manifest)
 
-      t.ok(shaStub.calledTwice, 'Correct number of files hashed')
+      t.ok(shaGetStub.calledTwice, 'Correct number of files hashed')
       t.equal(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
       t.equal(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
       t.equal(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
       t.equal(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
-      t.ok(fsStub.called, 'static.json manifest written')
+      t.ok(writeFileStub.called, 'static.json manifest written')
 
-      // Reset env for next test
-      fs.writeFile.restore()
-      shaStub.resetHistory()
     })
   })
 })
 
 test('fingerprint generates static.json manifest', t => {
+  shaGetStub.resetHistory()
   t.plan(7)
   // Globbing
   globStub.resetBehavior()
@@ -134,7 +133,8 @@ test('fingerprint generates static.json manifest', t => {
   ])
   // Static manifest
   let manifest
-  let fsStub = sinon.stub(fs, 'writeFile').callsFake((dest, data, callback) => {
+  writeFileStub.resetBehavior()
+  writeFileStub.callsFake((dest, data, callback) => {
     manifest = data
     callback()
   })
@@ -145,48 +145,40 @@ test('fingerprint generates static.json manifest', t => {
       console.log('Generated manifest:')
       console.log(manifest)
 
-      t.ok(shaStub.calledTwice, 'Correct number of files hashed')
+      t.ok(shaGetStub.calledTwice, 'Correct number of files hashed')
       t.equal(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
       t.equal(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
       t.equal(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
       t.equal(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
-      t.ok(fsStub.called, 'static.json manifest written')
+      t.ok(writeFileStub.called, 'static.json manifest written')
 
-      // Reset env for next test
-      fs.writeFile.restore()
-      shaStub.resetHistory()
     })
   })
 })
 
 test('fingerprint does does not generate static.json when set to external', t => {
+  shaGetStub.resetHistory()
+  writeFileStub.resetHistory()
   t.plan(4)
   // Globbing
   globStub.resetBehavior()
   globStub.callsFake(() => [
     pathToUnix(join(process.cwd(), 'public', 'index.html')),
   ])
-  // Static manifest
-  let fsStub = sinon.stub(fs, 'writeFile').callsFake((dest, data, callback) => {
-    callback()
-  })
   updateInventory(t, 'fingerprint external', () => {
     let p = params()
     delete p.fingerprint
     fingerprint(p, (err, result) => {
       if (err) t.fail(err)
       t.notOk(result, 'Did not pass back manifest')
-      t.ok(shaStub.notCalled, 'No files hashed')
-      t.ok(fsStub.notCalled, 'static.json manifest not written')
-
-      // Reset env for next test
-      fs.writeFile.restore()
-      shaStub.resetHistory()
+      t.ok(shaGetStub.notCalled, 'No files hashed')
+      t.ok(writeFileStub.notCalled, 'static.json manifest not written')
     })
   })
 })
 
 test('fingerprint ignores specified static assets', t => {
+  shaGetStub.resetHistory()
   t.plan(6)
   // Globbing
   globStub.resetBehavior()
@@ -197,7 +189,8 @@ test('fingerprint ignores specified static assets', t => {
   ])
   // Static manifest
   let manifest
-  let fsStub = sinon.stub(fs, 'writeFile').callsFake((dest, data, callback) => {
+  writeFileStub.resetBehavior()
+  writeFileStub.callsFake((dest, data, callback) => {
     manifest = data
     callback()
   })
@@ -208,16 +201,17 @@ test('fingerprint ignores specified static assets', t => {
       console.log('Generated manifest:')
       console.log(manifest)
 
-      t.ok(shaStub.calledOnce, 'Correct number of files hashed')
+      t.ok(shaGetStub.calledOnce, 'Correct number of files hashed')
       t.equal(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly')
       t.equal(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly')
-      t.ok(fsStub.called, 'static.json manifest written')
+      t.ok(writeFileStub.called, 'static.json manifest written')
       reset(t)
     })
   })
 })
 
 test('fingerprint cancels early if disabled', t => {
+  shaGetStub.resetHistory()
   t.plan(3)
   updateInventory(t, 'fingerprint false', () => {
     let p = params()
@@ -225,11 +219,8 @@ test('fingerprint cancels early if disabled', t => {
     fingerprint(p, (err, result) => {
       if (err) t.fail(err)
 
-      t.ok(shaStub.notCalled, 'Correct number of files hashed (none)')
+      t.ok(shaGetStub.notCalled, 'Correct number of files hashed (none)')
       t.notOk(result, 'Returned no result')
-
-      // Reset env for next test
-      shaStub.resetHistory()
     })
   })
 })

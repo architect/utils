@@ -1,4 +1,4 @@
-let { existsSync } = require('fs')
+let { existsSync, globSync } = require('fs')
 let fs = require('fs') // Broken out for testing writeFile calls
 let { basename, dirname, extname, join, sep } = require('path')
 
@@ -7,7 +7,6 @@ let waterfall = require('../run-waterfall')
 let pathToUnix = require('../path-to-unix')
 let updater = require('../updater')
 let sort = require('../path-sort')
-let { globSync } = require('../glob')
 let sha = require('../sha')
 
 /**
@@ -61,7 +60,20 @@ module.exports = function fingerprint (params, callback) {
     function globFiles (callback) {
       let staticAssets = pathToUnix(folder + '/**/*')
       try {
-        let filesFound = globSync(staticAssets, { dot: true, nodir: true, follow: true })
+        // Node 22 native fs.globSync returns an array of file paths (strings)
+        // Unlike the glob package, it includes directories, so we need to filter them out
+        let filesFound = globSync(staticAssets, {
+          exclude: (name) => name.includes('node_modules'),
+        })
+        // Filter out directories (native glob includes them unlike the glob package with nodir: true)
+        filesFound = filesFound.filter(file => {
+          try {
+            return fs.statSync(file).isFile()
+          }
+          catch {
+            return false
+          }
+        })
         // Renormalize to Unix, otherwise deployments from Windows will fail in Lambda
         filesFound = filesFound.map(file => pathToUnix(file))
         callback(null, filesFound)
