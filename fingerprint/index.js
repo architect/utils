@@ -1,4 +1,4 @@
-let { existsSync } = require('fs')
+let { existsSync, globSync } = require('fs')
 let fs = require('fs') // Broken out for testing writeFile calls
 let { basename, dirname, extname, join, sep } = require('path')
 
@@ -7,7 +7,6 @@ let waterfall = require('../run-waterfall')
 let pathToUnix = require('../path-to-unix')
 let updater = require('../updater')
 let sort = require('../path-sort')
-let { globSync } = require('../glob')
 let sha = require('../sha')
 
 /**
