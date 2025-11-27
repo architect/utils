@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@architect/eslint-config": "~3.0.0",
-    "@architect/inventory": "latest",
+    "@architect/inventory": "6.0.0-RC.0",
     "cross-env": "~7.0.3",
     "eslint": "~9.1.1",
     "proxyquire": "~2.1.3",
