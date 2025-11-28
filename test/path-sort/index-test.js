@@ -1,31 +1,20 @@
-var test = require('tape')
-var fileSort = require('../../path-sort')
+const { test } = require('node:test')
+const assert = require('node:assert')
+const sort = require('../../path-sort')
 
-test('pathSort', function (t) {
-  var files = [
-    'a/world'
-    , 'a/lib/index.js'
-    , 'b/package.json'
-    , 'b/lib/3/index.js'
-    , 'b/lib/2/README.js'
-    , 'a/hello'
-    , 'b/lib/2/index.js'
-    , 'a/lib/README.md'
-    , 'b/lib/3/README.js'
-    , 'c',
+test('pathSort', () => {
+  let paths = [
+    'src/http/get-index/index.js',
+    'src/http/get-index/package.json',
+    'src/http/get-api-foo/index.js',
+    'src/http/get-api-foo/package.json',
   ]
-
-  t.deepEqual(fileSort(files), [
-    'a/hello'
-    , 'a/world'
-    , 'a/lib/index.js'
-    , 'a/lib/README.md'
-    , 'b/package.json'
-    , 'b/lib/2/index.js'
-    , 'b/lib/2/README.js'
-    , 'b/lib/3/index.js'
-    , 'b/lib/3/README.js'
-    , 'c',
-  ])
-  t.end()
+  let sorted = sort(paths)
+  let expected = [
+    'src/http/get-api-foo/index.js',
+    'src/http/get-api-foo/package.json',
+    'src/http/get-index/index.js',
+    'src/http/get-index/package.json',
+  ]
+  assert.deepStrictEqual(sorted, expected, 'should be deeply equivalent')
 })

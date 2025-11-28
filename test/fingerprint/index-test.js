@@ -1,232 +1,211 @@
-let fs = require('fs')
-let { join } = require('path')
-let proxyquire = require('proxyquire')
-let sinon = require('sinon')
-let test = require('tape')
-let pathToUnix = require('../../path-to-unix')
-let _inventory = require('@architect/inventory')
+const { test, mock } = require('node:test')
+const assert = require('node:assert')
+const { join } = require('path')
+const pathToUnix = require('../../path-to-unix')
+const _inventory = require('@architect/inventory')
+
 let inventory
-let globStub = sinon.stub().callsFake(() => [])
-let writeFileStub = sinon.stub().callsFake((dest, data, callback) => callback())
-let statSyncStub = sinon.stub().callsFake(() => ({ isFile: () => true })) // All paths are files
-let shaGetStub = sinon.stub().callsFake((file, callback) => callback(null, 'df330f3f12')) // Fake hash
-let fingerprint = proxyquire('../../fingerprint', {
-  'fs': { ...fs, globSync: globStub, writeFile: writeFileStub, statSync: statSyncStub, '@global': true },
-  '../sha': { get: shaGetStub },
-})
+let cwd = process.cwd()
+let mockDir = join(cwd, 'test', 'mock', 'fingerprint')
+
+// Track mock state
+let globResults = []
+let writeFileCalls = []
+let shaGetCalls = []
+const shaHash = 'df330f3f12'
+
+// Create a fresh fingerprint module loader with mocks
+function loadFingerprintWithMocks () {
+  // Clear module cache
+  delete require.cache[require.resolve('../../fingerprint')]
+  delete require.cache[require.resolve('fs')]
+
+  // Mock fs module
+  const fs = require('fs')
+
+  mock.method(fs, 'globSync', () => globResults)
+  mock.method(fs, 'writeFile', (dest, data, callback) => {
+    writeFileCalls.push({ dest, data })
+    callback()
+  })
+  mock.method(fs, 'statSync', () => ({ isFile: () => true }))
+
+  // Mock sha module
+  const sha = require('../../sha')
+  mock.method(sha, 'get', (file, callback) => {
+    shaGetCalls.push(file)
+    callback(null, shaHash)
+  })
+
+  return require('../../fingerprint')
+}
+
+const fingerprint = loadFingerprintWithMocks()
 
 let params = () => ({
   inventory,
   fingerprint: true,
-  // ignore: [],
 })
 
-function updateInventory (t, settings = '', callback) {
+async function updateInventory (settings = '') {
   inventory = undefined
   let rawArc = `@app\nfingerprinting\n@static\n${settings}`
-  _inventory({ rawArc }, function (err, result) {
-    if (err) t.fail(err)
-    else {
-      t.pass('Updated inventory')
-      inventory = result
-      callback()
-    }
-  })
+  inventory = await _inventory({ rawArc })
+  return inventory
 }
 
-function reset (t) {
-  t.pass('Reset')
+function resetMocks () {
+  writeFileCalls = []
+  shaGetCalls = []
 }
 
-let cwd = process.cwd()
-let mock = join(cwd, 'test', 'mock', 'fingerprint')
-
-test('Set up env', t => {
-  t.plan(2)
-  t.ok(fingerprint, 'Fingerprint module is present')
-  process.chdir(mock)
-  t.equal(process.cwd(), mock, 'Switched to mock dir')
+test('Set up env', () => {
+  assert.ok(fingerprint, 'Fingerprint module is present')
+  process.chdir(mockDir)
+  assert.strictEqual(process.cwd(), mockDir, 'Switched to mock dir')
 })
 
-test('fingerprint respects folder setting', t => {
-  t.plan(7)
-  // Reset stubs
-  shaGetStub.resetHistory()
-  // Globbing
-  globStub.resetBehavior()
-  globStub.callsFake(() => [
+test('fingerprint respects folder setting', (t, done) => {
+  resetMocks()
+  globResults = [
     pathToUnix(join(process.cwd(), 'foo', 'index.html')),
     pathToUnix(join(process.cwd(), 'foo', 'readme.md')), // this should get ignored
     pathToUnix(join(process.cwd(), 'foo', 'css', 'styles.css')),
-  ])
-  // Static manifest
-  let manifest
-  writeFileStub.resetBehavior()
-  writeFileStub.callsFake((dest, data, callback) => {
-    manifest = data
-    callback()
-  })
-  updateInventory(t, 'folder foo', () => {
+  ]
+
+  updateInventory('folder foo').then(() => {
     fingerprint(params(), (err, result) => {
-      if (err) t.fail(err)
-      manifest = JSON.parse(manifest)
+      if (err) assert.fail(err)
+
+      const manifest = JSON.parse(writeFileCalls[0].data)
       console.log('Generated manifest:')
       console.log(manifest)
 
-      t.ok(shaGetStub.calledTwice, 'Correct number of files hashed')
-      t.equal(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
-      t.equal(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
-      t.equal(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
-      t.equal(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
-      t.ok(writeFileStub.called, 'static.json manifest written')
-
+      assert.strictEqual(shaGetCalls.length, 2, 'Correct number of files hashed')
+      assert.strictEqual(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
+      assert.strictEqual(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
+      assert.strictEqual(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
+      assert.strictEqual(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
+      assert.ok(writeFileCalls.length > 0, 'static.json manifest written')
+      done()
     })
   })
 })
 
-test('fingerprint respects prefix setting (by doing nothing)', t => {
-  // This test effectively does nothing, but it's here to ensure the presence of prefix does not influence how the static manifest is generated
-  t.plan(7)
-  // Reset stubs
-  shaGetStub.resetHistory()
-  // Globbing
-  globStub.resetBehavior()
-  globStub.callsFake(() => [
+test('fingerprint respects prefix setting (by doing nothing)', (t, done) => {
+  resetMocks()
+  globResults = [
     pathToUnix(join(process.cwd(), 'public', 'index.html')),
     pathToUnix(join(process.cwd(), 'public', 'readme.md')), // this should get ignored
     pathToUnix(join(process.cwd(), 'public', 'css', 'styles.css')),
-  ])
-  // Static manifest
-  let manifest
-  writeFileStub.resetBehavior()
-  writeFileStub.callsFake((dest, data, callback) => {
-    manifest = data
-    callback()
-  })
-  updateInventory(t, 'prefix a-prefix', () => {
+  ]
+
+  updateInventory('prefix a-prefix').then(() => {
     fingerprint(params(), (err, result) => {
-      if (err) t.fail(err)
-      manifest = JSON.parse(manifest)
+      if (err) assert.fail(err)
+
+      const manifest = JSON.parse(writeFileCalls[0].data)
       console.log('Generated manifest:')
       console.log(manifest)
 
-      t.ok(shaGetStub.calledTwice, 'Correct number of files hashed')
-      t.equal(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
-      t.equal(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
-      t.equal(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
-      t.equal(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
-      t.ok(writeFileStub.called, 'static.json manifest written')
-
+      assert.strictEqual(shaGetCalls.length, 2, 'Correct number of files hashed')
+      assert.strictEqual(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
+      assert.strictEqual(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
+      assert.strictEqual(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
+      assert.strictEqual(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
+      assert.ok(writeFileCalls.length > 0, 'static.json manifest written')
+      done()
     })
   })
 })
 
-test('fingerprint generates static.json manifest', t => {
-  shaGetStub.resetHistory()
-  t.plan(7)
-  // Globbing
-  globStub.resetBehavior()
-  globStub.callsFake(() => [
+test('fingerprint generates static.json manifest', (t, done) => {
+  resetMocks()
+  globResults = [
     pathToUnix(join(process.cwd(), 'public', 'index.html')),
     pathToUnix(join(process.cwd(), 'public', 'readme.md')), // this should get ignored
     pathToUnix(join(process.cwd(), 'public', 'css', 'styles.css')),
-  ])
-  // Static manifest
-  let manifest
-  writeFileStub.resetBehavior()
-  writeFileStub.callsFake((dest, data, callback) => {
-    manifest = data
-    callback()
-  })
-  updateInventory(t, null, () => {
+  ]
+
+  updateInventory(null).then(() => {
     fingerprint(params(), (err, result) => {
-      if (err) t.fail(err)
-      manifest = JSON.parse(manifest)
+      if (err) assert.fail(err)
+
+      const manifest = JSON.parse(writeFileCalls[0].data)
       console.log('Generated manifest:')
       console.log(manifest)
 
-      t.ok(shaGetStub.calledTwice, 'Correct number of files hashed')
-      t.equal(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
-      t.equal(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
-      t.equal(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
-      t.equal(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
-      t.ok(writeFileStub.called, 'static.json manifest written')
-
+      assert.strictEqual(shaGetCalls.length, 2, 'Correct number of files hashed')
+      assert.strictEqual(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly for index.html')
+      assert.strictEqual(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly for index.html')
+      assert.strictEqual(manifest['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data parsed correctly for css/styles.css')
+      assert.strictEqual(result['css/styles.css'], 'css/styles-df330f3f12.css', 'Manifest data returned correctly for css/styles.css')
+      assert.ok(writeFileCalls.length > 0, 'static.json manifest written')
+      done()
     })
   })
 })
 
-test('fingerprint does does not generate static.json when set to external', t => {
-  shaGetStub.resetHistory()
-  writeFileStub.resetHistory()
-  t.plan(4)
-  // Globbing
-  globStub.resetBehavior()
-  globStub.callsFake(() => [
+test('fingerprint does does not generate static.json when set to external', (t, done) => {
+  resetMocks()
+  globResults = [
     pathToUnix(join(process.cwd(), 'public', 'index.html')),
-  ])
-  updateInventory(t, 'fingerprint external', () => {
+  ]
+
+  updateInventory('fingerprint external').then(() => {
     let p = params()
     delete p.fingerprint
     fingerprint(p, (err, result) => {
-      if (err) t.fail(err)
-      t.notOk(result, 'Did not pass back manifest')
-      t.ok(shaGetStub.notCalled, 'No files hashed')
-      t.ok(writeFileStub.notCalled, 'static.json manifest not written')
+      if (err) assert.fail(err)
+      assert.ok(!result, 'Did not pass back manifest')
+      assert.strictEqual(shaGetCalls.length, 0, 'No files hashed')
+      assert.strictEqual(writeFileCalls.length, 0, 'static.json manifest not written')
+      done()
     })
   })
 })
 
-test('fingerprint ignores specified static assets', t => {
-  shaGetStub.resetHistory()
-  t.plan(6)
-  // Globbing
-  globStub.resetBehavior()
-  globStub.callsFake(() => [
+test('fingerprint ignores specified static assets', (t, done) => {
+  resetMocks()
+  globResults = [
     pathToUnix(join(process.cwd(), 'public', 'index.html')),
     pathToUnix(join(process.cwd(), 'public', 'readme.md')),
     pathToUnix(join(process.cwd(), 'public', 'styles.css')),
-  ])
-  // Static manifest
-  let manifest
-  writeFileStub.resetBehavior()
-  writeFileStub.callsFake((dest, data, callback) => {
-    manifest = data
-    callback()
-  })
-  updateInventory(t, 'ignore\n  styles.css', () => {
+  ]
+
+  updateInventory('ignore\n  styles.css').then(() => {
     fingerprint(params(), (err, result) => {
-      if (err) t.fail(err)
-      manifest = JSON.parse(manifest)
+      if (err) assert.fail(err)
+
+      const manifest = JSON.parse(writeFileCalls[0].data)
       console.log('Generated manifest:')
       console.log(manifest)
 
-      t.ok(shaGetStub.calledOnce, 'Correct number of files hashed')
-      t.equal(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly')
-      t.equal(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly')
-      t.ok(writeFileStub.called, 'static.json manifest written')
-      reset(t)
+      assert.strictEqual(shaGetCalls.length, 1, 'Correct number of files hashed')
+      assert.strictEqual(manifest['index.html'], 'index-df330f3f12.html', 'Manifest data parsed correctly')
+      assert.strictEqual(result['index.html'], 'index-df330f3f12.html', 'Manifest data returned correctly')
+      assert.ok(writeFileCalls.length > 0, 'static.json manifest written')
+      done()
     })
   })
 })
 
-test('fingerprint cancels early if disabled', t => {
-  shaGetStub.resetHistory()
-  t.plan(3)
-  updateInventory(t, 'fingerprint false', () => {
+test('fingerprint cancels early if disabled', (t, done) => {
+  resetMocks()
+
+  updateInventory('fingerprint false').then(() => {
     let p = params()
     delete p.fingerprint
     fingerprint(p, (err, result) => {
-      if (err) t.fail(err)
-
-      t.ok(shaGetStub.notCalled, 'Correct number of files hashed (none)')
-      t.notOk(result, 'Returned no result')
+      if (err) assert.fail(err)
+      assert.strictEqual(shaGetCalls.length, 0, 'Correct number of files hashed (none)')
+      assert.ok(!result, 'Returned no result')
+      done()
     })
   })
 })
 
-test('Teardown', t => {
-  t.plan(1)
+test('Teardown', () => {
   process.chdir(cwd)
-  t.equal(process.cwd(), cwd, 'Reset cwd')
+  assert.strictEqual(process.cwd(), cwd, 'Reset cwd')
 })

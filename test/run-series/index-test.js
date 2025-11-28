@@ -1,14 +1,12 @@
-let test = require('tape')
-let series = require('../../run-series')
+const { test } = require('node:test')
+const assert = require('node:assert')
+const series = require('../../run-series')
 
-test('Set up env', t => {
-  t.plan(1)
-  t.ok(series, 'Got series module')
+test('Set up env', () => {
+  assert.ok(series, 'Got series module')
 })
 
-test('series runs tasks in order', t => {
-  t.plan(4)
-
+test('series runs tasks in order', (t, done) => {
   let order = []
   let tasks = [
     (cb) => {
@@ -30,25 +28,23 @@ test('series runs tasks in order', t => {
   ]
 
   series(tasks, (err, results) => {
-    t.notOk(err, 'No error returned')
-    t.deepEqual(order, [ 1, 2, 3 ], 'Tasks ran in correct order')
-    t.deepEqual(results, [ 'first', 'second', 'third' ], 'Results in correct order')
-    t.equal(results.length, 3, 'All results returned')
+    assert.ok(!err, 'No error returned')
+    assert.deepStrictEqual(order, [ 1, 2, 3 ], 'Tasks ran in correct order')
+    assert.deepStrictEqual(results, [ 'first', 'second', 'third' ], 'Results in correct order')
+    assert.strictEqual(results.length, 3, 'All results returned')
+    done()
   })
 })
 
-test('series handles empty task array', t => {
-  t.plan(2)
-
+test('series handles empty task array', (t, done) => {
   series([], (err, results) => {
-    t.notOk(err, 'No error returned')
-    t.deepEqual(results, [], 'Empty results array returned')
+    assert.ok(!err, 'No error returned')
+    assert.deepStrictEqual(results, [], 'Empty results array returned')
+    done()
   })
 })
 
-test('series stops on first error', t => {
-  t.plan(3)
-
+test('series stops on first error', (t, done) => {
   let order = []
   let tasks = [
     (cb) => {
@@ -66,15 +62,14 @@ test('series stops on first error', t => {
   ]
 
   series(tasks, (err) => {
-    t.ok(err, 'Error returned')
-    t.equal(err.message, 'Task failed', 'Correct error message')
-    t.deepEqual(order, [ 1, 2 ], 'Only first two tasks ran')
+    assert.ok(err, 'Error returned')
+    assert.strictEqual(err.message, 'Task failed', 'Correct error message')
+    assert.deepStrictEqual(order, [ 1, 2 ], 'Only first two tasks ran')
+    done()
   })
 })
 
-test('series handles synchronous tasks', t => {
-  t.plan(3)
-
+test('series handles synchronous tasks', (t, done) => {
   let tasks = [
     (cb) => cb(null, 'sync1'),
     (cb) => cb(null, 'sync2'),
@@ -82,15 +77,14 @@ test('series handles synchronous tasks', t => {
   ]
 
   series(tasks, (err, results) => {
-    t.notOk(err, 'No error returned')
-    t.deepEqual(results, [ 'sync1', 'sync2', 'sync3' ], 'All sync results returned')
-    t.equal(results.length, 3, 'Correct number of results')
+    assert.ok(!err, 'No error returned')
+    assert.deepStrictEqual(results, [ 'sync1', 'sync2', 'sync3' ], 'All sync results returned')
+    assert.strictEqual(results.length, 3, 'Correct number of results')
+    done()
   })
 })
 
-test('series handles mixed sync and async tasks', t => {
-  t.plan(2)
-
+test('series handles mixed sync and async tasks', (t, done) => {
   let tasks = [
     (cb) => cb(null, 'sync'),
     (cb) => setTimeout(() => cb(null, 'async'), 10),
@@ -98,14 +92,13 @@ test('series handles mixed sync and async tasks', t => {
   ]
 
   series(tasks, (err, results) => {
-    t.notOk(err, 'No error returned')
-    t.deepEqual(results, [ 'sync', 'async', 'sync2' ], 'Mixed results returned correctly')
+    assert.ok(!err, 'No error returned')
+    assert.deepStrictEqual(results, [ 'sync', 'async', 'sync2' ], 'Mixed results returned correctly')
+    done()
   })
 })
 
-test('series handles undefined results', t => {
-  t.plan(2)
-
+test('series handles undefined results', (t, done) => {
   let tasks = [
     (cb) => cb(null),
     (cb) => cb(null, 'defined'),
@@ -113,7 +106,8 @@ test('series handles undefined results', t => {
   ]
 
   series(tasks, (err, results) => {
-    t.notOk(err, 'No error returned')
-    t.deepEqual(results, [ undefined, 'defined', undefined ], 'Undefined results handled correctly')
+    assert.ok(!err, 'No error returned')
+    assert.deepStrictEqual(results, [ undefined, 'defined', undefined ], 'Undefined results handled correctly')
+    done()
   })
 })

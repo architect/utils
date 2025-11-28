@@ -1,14 +1,12 @@
-let test = require('tape')
-let parallel = require('../../run-parallel')
+const { test } = require('node:test')
+const assert = require('node:assert')
+const parallel = require('../../run-parallel')
 
-test('Set up env', t => {
-  t.plan(1)
-  t.ok(parallel, 'Got parallel module')
+test('Set up env', () => {
+  assert.ok(parallel, 'Got parallel module')
 })
 
-test('parallel runs array tasks concurrently', t => {
-  t.plan(4)
-
+test('parallel runs array tasks concurrently', (t, done) => {
   let startTime = Date.now()
   let tasks = [
     (cb) => setTimeout(() => cb(null, 'first'), 50),
@@ -18,16 +16,15 @@ test('parallel runs array tasks concurrently', t => {
 
   parallel(tasks, (err, results) => {
     let elapsed = Date.now() - startTime
-    t.notOk(err, 'No error returned')
-    t.deepEqual(results, [ 'first', 'second', 'third' ], 'Results in original order')
-    t.equal(results.length, 3, 'All results returned')
-    t.ok(elapsed < 80, 'Tasks ran concurrently (should be ~50ms, not 90ms)')
+    assert.ok(!err, 'No error returned')
+    assert.deepStrictEqual(results, [ 'first', 'second', 'third' ], 'Results in original order')
+    assert.strictEqual(results.length, 3, 'All results returned')
+    assert.ok(elapsed < 80, 'Tasks ran concurrently (should be ~50ms, not 90ms)')
+    done()
   })
 })
 
-test('parallel runs object tasks concurrently', t => {
-  t.plan(4)
-
+test('parallel runs object tasks concurrently', (t, done) => {
   let startTime = Date.now()
   let tasks = {
     a: (cb) => setTimeout(() => cb(null, 'first'), 50),
@@ -37,34 +34,31 @@ test('parallel runs object tasks concurrently', t => {
 
   parallel(tasks, (err, results) => {
     let elapsed = Date.now() - startTime
-    t.notOk(err, 'No error returned')
-    t.deepEqual(results, { a: 'first', b: 'second', c: 'third' }, 'Results keyed correctly')
-    t.equal(Object.keys(results).length, 3, 'All results returned')
-    t.ok(elapsed < 80, 'Tasks ran concurrently')
+    assert.ok(!err, 'No error returned')
+    assert.deepStrictEqual(results, { a: 'first', b: 'second', c: 'third' }, 'Results keyed correctly')
+    assert.strictEqual(Object.keys(results).length, 3, 'All results returned')
+    assert.ok(elapsed < 80, 'Tasks ran concurrently')
+    done()
   })
 })
 
-test('parallel handles empty array', t => {
-  t.plan(2)
-
+test('parallel handles empty array', (t, done) => {
   parallel([], (err, results) => {
-    t.notOk(err, 'No error returned')
-    t.deepEqual(results, [], 'Empty array returned')
+    assert.ok(!err, 'No error returned')
+    assert.deepStrictEqual(results, [], 'Empty array returned')
+    done()
   })
 })
 
-test('parallel handles empty object', t => {
-  t.plan(2)
-
+test('parallel handles empty object', (t, done) => {
   parallel({}, (err, results) => {
-    t.notOk(err, 'No error returned')
-    t.deepEqual(results, {}, 'Empty object returned')
+    assert.ok(!err, 'No error returned')
+    assert.deepStrictEqual(results, {}, 'Empty object returned')
+    done()
   })
 })
 
-test('parallel stops on first error (array)', t => {
-  t.plan(2)
-
+test('parallel stops on first error (array)', (t, done) => {
   let tasks = [
     (cb) => setTimeout(() => cb(null, 'success'), 50),
     (cb) => setTimeout(() => cb(new Error('Task failed')), 10),
@@ -72,14 +66,13 @@ test('parallel stops on first error (array)', t => {
   ]
 
   parallel(tasks, (err) => {
-    t.ok(err, 'Error returned')
-    t.equal(err.message, 'Task failed', 'Correct error message')
+    assert.ok(err, 'Error returned')
+    assert.strictEqual(err.message, 'Task failed', 'Correct error message')
+    done()
   })
 })
 
-test('parallel stops on first error (object)', t => {
-  t.plan(2)
-
+test('parallel stops on first error (object)', (t, done) => {
   let tasks = {
     slow: (cb) => setTimeout(() => cb(null, 'success'), 50),
     fast: (cb) => setTimeout(() => cb(new Error('Task failed')), 10),
@@ -87,14 +80,13 @@ test('parallel stops on first error (object)', t => {
   }
 
   parallel(tasks, (err) => {
-    t.ok(err, 'Error returned')
-    t.equal(err.message, 'Task failed', 'Correct error message')
+    assert.ok(err, 'Error returned')
+    assert.strictEqual(err.message, 'Task failed', 'Correct error message')
+    done()
   })
 })
 
-test('parallel handles synchronous tasks', t => {
-  t.plan(2)
-
+test('parallel handles synchronous tasks', (t, done) => {
   let tasks = [
     (cb) => cb(null, 'sync1'),
     (cb) => cb(null, 'sync2'),
@@ -102,14 +94,13 @@ test('parallel handles synchronous tasks', t => {
   ]
 
   parallel(tasks, (err, results) => {
-    t.notOk(err, 'No error returned')
-    t.deepEqual(results, [ 'sync1', 'sync2', 'sync3' ], 'All sync results returned')
+    assert.ok(!err, 'No error returned')
+    assert.deepStrictEqual(results, [ 'sync1', 'sync2', 'sync3' ], 'All sync results returned')
+    done()
   })
 })
 
-test('parallel handles mixed sync and async tasks', t => {
-  t.plan(2)
-
+test('parallel handles mixed sync and async tasks', (t, done) => {
   let tasks = [
     (cb) => cb(null, 'sync'),
     (cb) => setTimeout(() => cb(null, 'async'), 10),
@@ -117,14 +108,13 @@ test('parallel handles mixed sync and async tasks', t => {
   ]
 
   parallel(tasks, (err, results) => {
-    t.notOk(err, 'No error returned')
-    t.deepEqual(results, [ 'sync', 'async', 'sync2' ], 'Mixed results returned correctly')
+    assert.ok(!err, 'No error returned')
+    assert.deepStrictEqual(results, [ 'sync', 'async', 'sync2' ], 'Mixed results returned correctly')
+    done()
   })
 })
 
-test('parallel handles undefined results', t => {
-  t.plan(2)
-
+test('parallel handles undefined results', (t, done) => {
   let tasks = [
     (cb) => cb(null),
     (cb) => cb(null, 'defined'),
@@ -132,14 +122,13 @@ test('parallel handles undefined results', t => {
   ]
 
   parallel(tasks, (err, results) => {
-    t.notOk(err, 'No error returned')
-    t.deepEqual(results, [ undefined, 'defined', undefined ], 'Undefined results handled correctly')
+    assert.ok(!err, 'No error returned')
+    assert.deepStrictEqual(results, [ undefined, 'defined', undefined ], 'Undefined results handled correctly')
+    done()
   })
 })
 
-test('parallel prevents multiple callback invocations', t => {
-  t.plan(3)
-
+test('parallel prevents multiple callback invocations', (t, done) => {
   let callbackCount = 0
   let tasks = [
     (cb) => {
@@ -152,12 +141,13 @@ test('parallel prevents multiple callback invocations', t => {
 
   parallel(tasks, (err, results) => {
     callbackCount++
-    t.notOk(err, 'No error returned')
-    t.deepEqual(results, [ 'first', 'second' ], 'Results returned correctly')
+    assert.ok(!err, 'No error returned')
+    assert.deepStrictEqual(results, [ 'first', 'second' ], 'Results returned correctly')
 
     // Wait a bit to ensure the delayed callback doesn't fire
     setTimeout(() => {
-      t.equal(callbackCount, 1, 'Callback only called once')
+      assert.strictEqual(callbackCount, 1, 'Callback only called once')
+      done()
     }, 50)
   })
 })

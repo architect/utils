@@ -1,10 +1,10 @@
-let utils = require('../')
-let test = require('tape')
+const { test } = require('node:test')
+const assert = require('node:assert')
+const utils = require('../')
 
-test('Test ensuring utils (and any deps) are present and accounted for', t => {
+test('Test ensuring utils (and any deps) are present and accounted for', () => {
   let all = Object.getOwnPropertyNames(utils)
-  t.plan(all.length)
   all.forEach(util => {
-    t.ok(utils[util], `${util} is present`)
+    assert.ok(utils[util], `${util} is present`)
   })
 })
