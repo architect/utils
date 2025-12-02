@@ -23,7 +23,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@aws-lite/client": "^0.21.1",
-    "glob": "~10.3.12",
     "lambda-runtimes": "2.0.5"
   },
   "devDependencies": {
