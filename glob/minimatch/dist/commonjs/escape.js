@@ -1,6 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.escape = void 0;
+'use strict'
+Object.defineProperty(exports, '__esModule', { value: true })
+exports.escape = void 0
 /**
  * Escape all magic characters in a glob pattern.
  *
@@ -10,13 +10,13 @@ exports.escape = void 0;
  * that exact character.  In this mode, `\` is _not_ escaped, because it is
  * not interpreted as a magic character, but instead as a path separator.
  */
-const escape = (s, { windowsPathsNoEscape = false, } = {}) => {
-    // don't need to escape +@! because we escape the parens
-    // that make those magic, and escaping ! as [!] isn't valid,
-    // because [!]] is a valid glob class meaning not ']'.
-    return windowsPathsNoEscape
-        ? s.replace(/[?*()[\]]/g, '[$&]')
-        : s.replace(/[?*()[\]\\]/g, '\\$&');
-};
-exports.escape = escape;
-//# sourceMappingURL=escape.js.map
+const escape = (s, { windowsPathsNoEscape = false } = {}) => {
+  // don't need to escape +@! because we escape the parens
+  // that make those magic, and escaping ! as [!] isn't valid,
+  // because [!]] is a valid glob class meaning not ']'.
+  return windowsPathsNoEscape
+    ? s.replace(/[?*()[\]]/g, '[$&]')
+    : s.replace(/[?*()[\]\\]/g, '\\$&')
+}
+exports.escape = escape
+// # sourceMappingURL=escape.js.map

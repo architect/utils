@@ -1,7 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.hasMagic = void 0;
-const minimatch_1 = require("./minimatch");
+'use strict'
+Object.defineProperty(exports, '__esModule', { value: true })
+exports.hasMagic = void 0
+const minimatch_1 = require('./minimatch')
 /**
  * Return true if the patterns provided contain any magic glob characters,
  * given the options provided.
@@ -14,14 +14,14 @@ const minimatch_1 = require("./minimatch");
  * is in the options, brace expansion _is_ treated as a pattern having magic.
  */
 const hasMagic = (pattern, options = {}) => {
-    if (!Array.isArray(pattern)) {
-        pattern = [pattern];
-    }
-    for (const p of pattern) {
-        if (new minimatch_1.Minimatch(p, options).hasMagic())
-            return true;
-    }
-    return false;
-};
-exports.hasMagic = hasMagic;
-//# sourceMappingURL=has-magic.js.map
+  if (!Array.isArray(pattern)) {
+    pattern = [ pattern ]
+  }
+  for (const p of pattern) {
+    if (new minimatch_1.Minimatch(p, options).hasMagic())
+      return true
+  }
+  return false
+}
+exports.hasMagic = hasMagic
+// # sourceMappingURL=has-magic.js.map
