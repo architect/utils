@@ -24,7 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 }
 Object.defineProperty(exports, '__esModule', { value: true })
 exports.PathScurry = exports.Path = exports.PathScurryDarwin = exports.PathScurryPosix = exports.PathScurryWin32 = exports.PathScurryBase = exports.PathPosix = exports.PathWin32 = exports.PathBase = exports.ChildrenCache = exports.ResolveCache = void 0
-const lru_cache_1 = require('lru-cache')
+const lru_cache_1 = require('../../../lru-cache')
 const node_path_1 = require('node:path')
 const node_url_1 = require('node:url')
 const fs_1 = require('fs')
