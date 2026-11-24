@@ -2,6 +2,12 @@
 
 ---
 
+## [6.0.1 - 6.0.4]
+
+- update lambda-dependencies
+
+---
+
 ## [6.0.0 - 6.0.1]
 
 - moved to node >= 22
